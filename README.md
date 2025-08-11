@@ -1,2 +1,2 @@
-# RUBICs_CUBE
+# RUBIKs_CUBE
 Lösen des Zauberwürfels
