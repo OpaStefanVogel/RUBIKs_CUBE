@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Rubik’s Cube</title>
+  </head>
+
+<body>
+<script>
+window.onerror=function(message, file, line, col, error) {alert('window.onerror:\nmessage '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error+'\n\n')};
+window.addEventListener('error',function(arg) {alert('window.addEventListener:\nERROR ERROR ERROR\n message '+arg.error.message+' '+arg.error.name+' '+arg.error['name'])});
+  </script>
+
+<!--importmap muß bleiben weil die module auch three aufrufen-->
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "./threejs2024/build/three.module.js",
+					"three/addons/": "./threejs2024/examples/jsm/"
+				}
+			}
+		</script>
+
+<script type="module">
+//alert(('’’').charCodeAt(0)+'  '+('’’').charCodeAt(1));
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+//import { XRButton } from 'three/addons/webxr/XRButton.js';
+import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+
+let canvas_width=288;//0.9*window.innerWidth;
+let canvas_height=288;//0.9*window.innerHeight;
+const renderer = new THREE.WebGLRenderer( { antialias: true } );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( canvas_width, canvas_height );
+  renderer.xr.enabled = true;
+  renderer.xr.setReferenceSpaceType( 'local' );
+  renderer.setAnimationLoop( animate );
+  canvas.appendChild( renderer.domElement );
+
+
+//const XRButt=XRButton.createButton( renderer );
+//  document.body.appendChild( XRButt);
+
+const scene = new THREE.Scene();
+  scene.background = new THREE.Color( 0xcccc66 );
+
+const light = new THREE.HemisphereLight();//( 0xfff0f0, 0x606066 );
+//  light.position.set( 1, 1, 1 );
+  scene.add( light );
+
+const directionalLight = new THREE.DirectionalLight( 0xffeeee, 1 );
+  directionalLight.position.set(-40,-1,0);
+  scene.add( directionalLight );
+
+const directionalLight2 = new THREE.DirectionalLight( 0xeeffee, 1 );
+  directionalLight2.position.set(0,-40,0);
+  scene.add( directionalLight2);
+
+const directionalLight3 = new THREE.DirectionalLight( 0xeeeeff, 1 );
+  directionalLight3.position.set(40,-1,0);
+  scene.add( directionalLight3);
+
+const directionalLight4 = new THREE.DirectionalLight( 0xffffff, 1 );
+  directionalLight4.position.set(0,0,40);
+  scene.add( directionalLight4);
+
+const directionalLight5 = new THREE.DirectionalLight( 0xffffee, 1 );
+  directionalLight5.position.set(0,40,0);
+  scene.add( directionalLight5);
+
+const directionalLight6 = new THREE.DirectionalLight( 0xccffff, 1 );
+  directionalLight6.position.set(0,0,-40);
+  scene.add( directionalLight6);
+
+const camera = new THREE.PerspectiveCamera( 35, canvas_width / canvas_height, 0.1, 500 );
+  scene.add( camera );
+
+const controls = new OrbitControls( camera, renderer.domElement );
+  controls.listenToKeyEvents( window );
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = true; //false = nur horizontal verschiebbar
+  controls.minDistance = 0;
+  controls.maxDistance = 100;
+  controls.maxPolarAngle = 2*Math.PI / 2;//das geht, original 1*
+  controls.minPolarAngle = 0;
+  controls.target.set(0,0,0);
+  controls.object.position.set(0.5,0.5,1.5);
+
+const controller1 = renderer.xr.getController( 0 );
+  controller1.addEventListener( 'selectstart', onSelectStart );
+  scene.add( controller1 );
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector3();
+const Flaechen = new THREE.Object3D();
+  scene.add(Flaechen);
+
+function raycast() {
+  const intersects = raycaster.intersectObjects(Flaechen.children);
+  for (let i = 0; i < intersects.length; i++) {
+    intersects[i].object.material.color.set(0x00ff00);
+    Tdok.innerHTML=intersects[i].object.userData.P.tdok;
+    }
+  //Log.innerHTML=JSON.stringify(Ecken)
+  let Dist = 0;
+  let minDist = 100000;
+  let gefunden = 0;
+return;
+  for (let i = 0; i < Ecken.length; i++) {
+    Dist = raycaster.ray.direction.angleTo(Ecken[i].position.clone().sub(raycaster.ray.origin))
+    if (Dist < minDist) { minDist = Dist; gefunden = Ecken[i].position }
+    }
+  Log.innerHTML = JSON.stringify(gefunden);
+  Ecke.position.copy(gefunden);
+  }
+
+function onClick(event) {
+  // calculate pointer position in normalized device coordinates, (-1 to +1) for both components
+  pointer.x = ( (event.clientX-event.target.getBoundingClientRect().left) / canvas_width) * 2 - 1;
+  pointer.y = - ( (event.clientY-event.target.getBoundingClientRect().top) / canvas_height) * 2 + 1;
+  pointer.z = 1;
+  raycaster.setFromCamera(pointer, camera);
+  raycast();
+  }
+//window.addEventListener('pointermove', onPointerMove);
+renderer.domElement.addEventListener('click', onClick);
+
+function onSelectStart( event ) {
+  const controller = event.target;
+  controller.updateMatrixWorld();
+  raycaster.setFromXRController(controller);
+  raycast();
+  }
+
+
+
+let frametime=0;
+function animate(timestamp,frame) {
+  frametime=timestamp;
+  controls.update();
+  //Ecke.position.copy(controls.target);
+  animate_go();
+  renderer.render( scene, camera );
+  }
+
+
+
+
+
+
+//Start Rubik’s cube-------------------------
+let m90=-Math.PI/2;
+let p180=Math.PI;
+let p90=Math.PI/2;
+
+let KANTEN=[
+  [,[0,1,0,0],,[0,3,2,0],[0,4,3,0],[0,5,1,0]],
+  [[1,0,0,1],,[1,2,6,1],,[1,4,8,0],[1,5,9,1]],
+  [,[2,1,6,0],,[2,3,4,0],[2,4,5,0],[2,5,7,0]],
+  [[3,0,2,1],,[3,2,4,1],,[3,4,11,1],[3,5,10,0]],
+  [[4,0,3,1],[4,1,8,1],[4,2,5,1],[4,3,11,0],,],
+  [[5,0,1,1],[5,1,9,0],[5,2,7,1],[5,3,10,1],,]];
+
+let ECKEN=[
+  [,[0,1,4,12,0],,[0,3,5,14,2],[0,4,3,15,0],[0,5,1,13,0]],
+  [[1,0,5,13,2],,[1,2,4,17,2],,[1,4,0,12,1],[1,5,2,18,0]],
+  [,[2,1,5,18,2],,[2,3,4,16,0],[2,4,1,17,0],[2,5,3,19,0]],
+  [[3,0,4,15,2],,[3,2,5,19,2],,[3,4,2,16,1],[3,5,0,14,0]],
+  [[4,0,1,12,2],[4,1,2,17,1],[4,2,3,16,2],[4,3,0,15,1],,],
+  [[5,0,3,14,1],[5,1,0,13,1],[5,2,1,18,1],[5,3,2,19,1],,]];
+
+let D=[[1,5,3,4,1,5,3,4],[0,4,2,5,0,4,2,5],[1,4,3,5,1,4,3,5],[2,4,0,5,2,4,0,5],[0,3,2,1,0,3,2,1],[0,1,2,3,0,1,2,3]];
+
+let WW=[structuredClone(KANTEN),structuredClone(ECKEN),structuredClone(KANTEN),structuredClone(ECKEN)];
+
+//alert(WW[0].join('\n')+'\n\n'+WW[1].join('\n'));
+
+let structuredClon=function(W){return W};
+let Drehliste_gesamt=[];//[0,4,3,2,5,8,9,7,6,10,11,1];
+let Drehliste=[];
+let Drehstart=-1000000;
+
+function drehe(n) {
+  beachte_Checkbox_Einzelschritte=false;weiter=1;
+  Drehliste_gesamt.push(n);
+  }
+
+function drehe2(n,j,k) {//Log0.innerHTML='drehe('+[n,j,k]+')';
+  let d=D[n];
+  let WWNEU=structuredClone(WW);
+  Drehliste=[];
+  for (let i=0;i<4;i++) {//alert(WW[1][n][d[i]]);
+    WWNEU[0][n][d[i+j]]=WW[0][n][d[i+k]];//ob das auch ohne clone() geht? ja
+    WWNEU[0][d[i+j]][n]=WW[0][d[i+k]][n];
+    WWNEU[1][n][d[i+j]]=WW[1][n][d[i+k]];
+    WWNEU[1][d[i+j]][d[i+3*k]]=WW[1][d[i+k]][d[i+3*j]];
+    WWNEU[1][d[i+3*k]][n]=WW[1][d[i+3*j]][n];
+    if (WW[0][n][d[i+k]][3]==0) Drehliste.push([WW[0][n][d[i+k]][2],Achsen[n],(j-k)*Winkel[n]]);
+    if (WW[0][d[i+k]][n][3]==0) Drehliste.push([WW[0][d[i+k]][n][2],Achsen[n],(j-k)*Winkel[n]]);
+    if (WW[1][n][d[i+k]][4]==0) Drehliste.push([WW[1][n][d[i+k]][3],Achsen[n],(j-k)*Winkel[n]]);
+    if (WW[1][d[i+k]][d[i+3*j]][4]==0) Drehliste.push([WW[1][d[i+k]][d[i+3*j]][3],Achsen[n],(j-k)*Winkel[n]]);
+    if (WW[1][d[i+3*j]][n][4]==0) Drehliste.push([WW[1][d[i+3*j]][n][3],Achsen[n],(j-k)*Winkel[n]]);    
+    if (WW[0][n][d[i+k]][3]==0) LISTE[WW[0][n][d[i+k]][2]].userData.P=[n,d[i+j]];
+    if (WW[0][d[i+k]][n][3]==0) LISTE[WW[0][d[i+k]][n][2]].userData.P=[d[i+j],n];
+    if (WW[1][n][d[i+k]][4]==0) LISTE[WW[1][n][d[i+k]][3]].userData.P=[n,d[i+j],d[i+3*k]];
+    if (WW[1][d[i+k]][d[i+3*j]][4]==0) LISTE[WW[1][d[i+k]][d[i+3*j]][3]].userData.P=[d[i+j],d[i+3*k],n];
+    if (WW[1][d[i+3*j]][n][4]==0) LISTE[WW[1][d[i+3*j]][n][3]].userData.P=[d[i+3*k],n,d[i+j]];
+    }
+  Drehliste.push([20+n,Achsen[n],(j-k)*Winkel[n]]);
+  
+  //alert(WW[1]k.join('\n')+'\n\n'+WWNEU[1].join('\n'));
+  WW=WWNEU;
+  //K014['rotateOnWorldAxis'](z_Achse,m90);
+  //alert(WW[0].join('\n')+'\n\n'+WW[1].join('\n'));
+
+//  if (WW[1][d[i+3]][n][3]!=undefined) {LISTE[WW[1][d[i+3]][n][3]]['rotateOnWorldAxis'](Achsen[n],Winkel[n])}
+  };
+
+for (let n=0;n<6;n++) for (let k=0;k<4;k++) {
+//  drehe(n);
+//  alert(WW[0].join('\n')+'\n\n'+WW[1].join('\n')+'\n\nnach drehe('+n+') für k='+k);
+  }
+
+
+
+//oder: dreh(0)= [1,1,1],[1,1,-1],[-1,1,-1],[-1,1,1],[1,1,1]  [x,y,z],[z,y,-x] [1,1,0],[...
+
+let RCube=new THREE.Group();
+RCube.setRotationFromEuler(new THREE.Euler(0.01,0.01,0.01));
+scene.add(RCube);
+let RCube_alte_Ausrichtung=RCube.rotation.clone();
+let RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime-100000];
+
+
+function Erzeuge_Ecke(rot,gruen,gelb) {
+let K014=new THREE.Group();
+let K014W=new THREE.Mesh(
+  new THREE.BoxGeometry(0.2,0.2,0.2),
+  new THREE.MeshStandardMaterial( {color: 'darkgray', transparent:false, opacity:0.8} )
+  );
+  K014W.position.set(0.2,0.2,0.2)
+  K014.add(K014W);
+let K0140=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: rot, transparent:false, roughness:1, vertexColors:false} )
+  );
+  K0140.position.set(0.2,0.2,0.301)
+  K0140.material.userData=rot;
+  K014.add(K0140);
+let K0141=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: gruen, transparent:false} )
+  );
+  K0141.position.set(0.301,0.2,0.2)
+  K0141.material.userData=gruen;
+  K0141.rotateY(Math.PI/2);
+  K014.add(K0141);
+let K0144=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: gelb, transparent:false} )
+  );
+  K0144.position.set(0.2,0.301,0.2)
+  K0144.material.userData=gelb;
+  K0144.rotateX(-Math.PI/2);
+  K014.add(K0144);
+  K014.name=rot+gruen+gelb;
+  K014.userData={P:[0,0,0], F:[K0140,K0141,K0144]};
+  RCube.add(K014);
+  //WW[1][0][1].push(K014);//alert(WW[1][0][1]);
+  return K014;
+  }
+
+function Erzeuge_Kante(rot,gruen) {
+let K014=new THREE.Group();
+let K014W=new THREE.Mesh(
+  new THREE.BoxGeometry(0.2,0.2,0.2),
+  new THREE.MeshStandardMaterial( {color: 'darkgray', transparent:false, opacity:0.8} )
+  );
+  K014W.position.set(0.2,0,0.2);
+  K014.add(K014W);
+let K0140=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: rot, transparent:false} )
+  );
+  K0140.position.set(0.2,0,0.301);
+  K0140.material.userData=rot;
+  K014.add(K0140);
+let K0141=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: gruen, transparent:false} )
+  );
+  K0141.position.set(0.301,0,0.2)
+  K0141.material.userData=gruen;
+  K0141.rotateY(Math.PI/2);
+  K014.add(K0141);
+  K014.name=rot+gruen;
+  K014.userData={P:[0,0], F:[K0140,K0141]};
+  RCube.add(K014);
+  //WW[1][0][1].push(K014);//alert(WW[1][0][1]);
+  return K014;
+  }
+
+function Erzeuge_Mitte(rot) {
+let K014=new THREE.Group();
+let K014W=new THREE.Mesh(
+  new THREE.BoxGeometry(0.2,0.2,0.2),
+  new THREE.MeshStandardMaterial( {color: 'darkgray', transparent:false, opacity:0.8} )
+  );
+  K014W.position.set(0,0,0.2)
+  K014.add(K014W);
+let K0140=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.19,0.19),
+  new THREE.MeshStandardMaterial( {color: rot, transparent:false} )
+  );
+  K0140.position.set(0,0,0.301)
+  K0140.material.userData=rot;
+  K014.add(K0140);
+  K014.userData={P:[0], F:[K0140]};
+  RCube.add(K014);
+  //WW[1][0][1].push(K014);//alert(WW[1][0][1]);
+  return K014;
+  }
+
+let LISTE=[];
+function ini() {
+let K014=Erzeuge_Ecke('red','green','yellow'); K014.userData.P=[0,1,4];
+let K051=Erzeuge_Ecke('red','white','green'); K051.userData.P=[0,5,1]; K051.rotateZ(m90);
+let K350=Erzeuge_Ecke('blue','white','red'); K350.userData.P=[3,5,0]; K350.rotateY(m90);K350.rotateZ(m90);
+let K043=Erzeuge_Ecke('red','yellow','blue'); K043.userData.P=[0,4,3]; K043.rotateZ(p90);
+let K234=Erzeuge_Ecke('orange','blue','yellow'); K234.userData.P=[2,3,4]; K234.rotateY(p180);
+let K241=Erzeuge_Ecke('orange','yellow','green'); K241.userData.P=[2,4,1]; K241.rotateY(p180);K241.rotateZ(p90);
+let K152=Erzeuge_Ecke('green','white','orange'); K152.userData.P=[1,5,2]; K152.rotateZ(m90);K152.rotateX(m90);
+let K253=Erzeuge_Ecke('orange','white','blue'); K253.userData.P=[2,5,3]; K253.rotateY(p180);K253.rotateZ(m90);
+let K01=Erzeuge_Kante('red','green'); K01.userData.P=[0,1];
+let K05=Erzeuge_Kante('red','white'); K05.userData.P=[0,5]; K05.rotateZ(m90);
+let K03=Erzeuge_Kante('red','blue'); K03.userData.P=[0,3]; K03.rotateZ(p180);
+let K04=Erzeuge_Kante('red','yellow'); K04.userData.P=[0,4]; K04.rotateZ(p90);
+let K23=Erzeuge_Kante('orange','blue'); K23.userData.P=[2,3]; K23.rotateY(p180);
+let K24=Erzeuge_Kante('orange','yellow'); K24.userData.P=[2,4]; K24.rotateY(p180);K24.rotateZ(p90);
+let K21=Erzeuge_Kante('orange','green'); K21.userData.P=[2,1]; K21.rotateY(p180);K21.rotateZ(p180);
+let K25=Erzeuge_Kante('orange','white'); K25.userData.P=[2,5]; K25.rotateY(p180);K25.rotateZ(m90);
+let K14=Erzeuge_Kante('green','yellow'); K14.userData.P=[1,4]; K14.rotateZ(p90);K14.rotateX(p90);
+let K51=Erzeuge_Kante('white','green'); K51.userData.P=[5,1]; K51.rotateX(p90);
+let K35=Erzeuge_Kante('blue','white'); K35.userData.P=[3,5]; K35.rotateZ(m90); K35.rotateX(p90);
+let K43=Erzeuge_Kante('yellow','blue'); K43.userData.P=[4,3]; K43.rotateX(p90); K43.rotateY(p180);
+let K0=Erzeuge_Mitte('red');
+let K1=Erzeuge_Mitte('green'); K1.rotateY(p90);
+let K2=Erzeuge_Mitte('orange'); K2.rotateY(p180);
+let K3=Erzeuge_Mitte('blue'); K3.rotateY(m90);
+let K4=Erzeuge_Mitte('yellow'); K4.rotateX(m90);
+let K5=Erzeuge_Mitte('white'); K5.rotateX(p90);
+LISTE=[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5];
+}
+ini();
+
+let x_Achse=new THREE.Vector3(1,0,0);
+let y_Achse=new THREE.Vector3(0,1,0);
+let z_Achse=new THREE.Vector3(0,0,1);
+let Achsen=[z_Achse,x_Achse,z_Achse,x_Achse,y_Achse,y_Achse];
+let Winkel=[m90,m90,p90,p90,m90,p90];
+id_drehe0.addEventListener('click',function() {drehe(0)});
+id_drehe1.addEventListener('click',function() {drehe(1)});
+id_drehe2.addEventListener('click',function() {drehe(2)});
+id_drehe3.addEventListener('click',function() {drehe(3)});
+id_drehe4.addEventListener('click',function() {drehe(4)});
+id_drehe5.addEventListener('click',function() {drehe(5)});
+id_drehe6.addEventListener('click',function() {drehe(6)});
+id_drehe7.addEventListener('click',function() {drehe(7)});
+id_drehe8.addEventListener('click',function() {drehe(8)});
+id_drehe9.addEventListener('click',function() {drehe(9)});
+id_drehe10.addEventListener('click',function() {drehe(10)});
+id_drehe11.addEventListener('click',function() {drehe(11)});
+
+function animate_start() {Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehliste_gesamt;
+  for (let dd=0;dd<Drehliste.length;dd++) {
+    let d=Drehliste[dd];
+    let Obj=LISTE[d[0]];
+    let Achs=d[1];
+    let Wink=d[2];
+    d[3]=Obj.rotation.clone();
+    Obj.rotateOnWorldAxis(Achs,Wink);
+    d[4]=Obj.rotation.clone();
+    Obj.rotateOnWorldAxis(Achs,-Wink);
+    }
+  //alert(Drehliste[0][3].toArray()+'\n'+Drehliste[0][4].toArray()+'\n'+Drehstart);
+  }
+
+let Drehzeit=600;//100, 200 oder 600
+let neue_Drehzeit=0;
+let weiter=1;
+let beachte_Checkbox_Einzelschritte=false;
+let Drehnummer=0;
+
+function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehliste_gesamt;
+  if (frametime<Drehstart+Drehzeit+100) {
+    let alpha=Math.min((frametime-Drehstart)/Drehzeit,1);
+    for (let dd=0;dd<Drehliste.length;dd++) {
+      let d=Drehliste[dd];
+      let Obj=LISTE[d[0]];
+      let Achs=d[1];
+      let Wink=d[2];
+      Obj.setRotationFromEuler(d[3]);
+      Obj.rotateOnWorldAxis(Achs,alpha*Wink);
+      }
+    } else if ((Drehliste_gesamt.length>0)&&frametime>2000&&weiter==1) {
+      if ((beachte_Checkbox_Einzelschritte==true)&&(id_Einzelschritte.checked==true)) weiter=0;
+      Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
+      let n=Drehliste_gesamt.shift();
+      while (n<0&&Drehliste_gesamt.length>0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */n=Drehliste_gesamt.shift()}
+      if (n<0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */return}
+      if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);//am Platz
+      if (n>-1) Drehnummer=Drehnummer+1;
+      Log0.innerHTML=Drehnummer+'. '+Loesetext[n];
+      //alert(n);
+      animate_start();
+      Drehstart=frametime;
+      }
+  if (frametime<RCube_neue_Ausrichtung[1]+Drehzeit+100) {
+    let alpha=Math.min((frametime-RCube_neue_Ausrichtung[1])/Drehzeit,1);
+ //   RCube.rotateY(0.01);
+    RCube.setRotationFromEuler(RCube_alte_Ausrichtung);
+    RCube.rotateOnWorldAxis(RCube_neue_Ausrichtung[0],alpha*Math.PI/2);
+    Log5.innerHTML=alpha+' '+JSON.stringify(RCube_neue_Ausrichtung);
+    } else RCube_alte_Ausrichtung=RCube.rotation.clone();
+  }
+
+function suche(i) {//if (i==4) alert('suche(4) gestartet');
+  let RET=scene.getObjectByName(LISTE[i].name);
+  let WET=RET.userData.P;
+  let GET=LOESUNGEN[i][WET[0]][WET[1]];
+  //if (i==4) alert('i='+i+': '+RET.name+' '+WET+' '+GET);
+  for (let j=0;j<GET.length;j++) {
+    let n=GET[j];
+    if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
+    Loeseliste.push(n);
+    }
+  if (GET.length>0) suche(i); else Loeseliste.push(-i-1);
+  return GET;
+  } 
+
+let Loesetext=[
+  'vorn (rot) plus',
+  'rechts (grün) plus',
+  'hinten (orange) plus',
+  'links (blau) plus',
+  'oben (gelb) plus',
+  'unten (weiß) plus',
+  'vorn (rot) minus',
+  'rechts (grün) minus',
+  'hinten (orange) minus',
+  'links (blau) minus',
+  'oben (gelb) minus',
+  'unten (weiß) minus',
+  ];
+//[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5]; 
+let Loesetext2=[
+  'Kante rot-grün',
+  'Kante rot-weiß',
+  'Kante rot-blau',
+  'Kante ',
+  'Kante orange-blau',
+  'Kante ',
+  'Kante orange-grün',
+  'Kante orange-weiß',
+  'Kante ',
+  'Kante grün-weiß',
+  'Kante blau-weiß',
+  'Kante ',
+  'Ecke ',
+  'Ecke rot-weiß-grün',
+  'Ecke blau-weiß-rot',
+  'Ecke ',
+  'Ecke ',
+  'Ecke ',
+  'Ecke grün-weiß-orange',
+  'Ecke orange-weiß-blau',
+  
+  ];
+let Loeseliste=[];
+function loese() {
+  beachte_Checkbox_Einzelschritte=true;
+/*//aus 
+const canvas = document.getElementById("canvas").firstChild;
+//const canvas = document.createElement("canvas");
+alert(canvas);
+const gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});alert(gl);alert(gl.drawingBufferWidth);
+const pixels = new Uint8Array(
+400//  gl.drawingBufferWidth * gl.drawingBufferHeight * 4,
+);
+alert(gl.readPixels);
+gl.readPixels(
+  100,//0
+  100,//0
+  10,//gl.drawingBufferWidth,
+  10,//gl.drawingBufferHeight,
+  gl.RGBA,
+  gl.UNSIGNED_BYTE,
+  pixels,
+);
+//console.log(pixels); // Uint8Array
+alert(pixels);
+*/
+
+
+  //Drehliste_gesamt=[7,7,11];return;
+  let WWMERK=structuredClone(WW);
+  //let LI=[];
+  //for (let i=0;i<LISTE.length;i++) LI[i]=LISTE[i].rotation;
+  Loeseliste=[];
+  suche(1);
+  suche(9);
+  suche(7);
+  suche(10);
+  suche(13);
+  suche(18);
+  suche(19);
+  suche(14);
+  suche(0);
+  suche(6);
+  suche(4);
+  suche(2)/**/
+  //alert(Loeseliste);
+  WW=structuredClone(WWMERK);
+  //for (let i=0;i<LISTE.length;i++) LISTE[i].setRotationFromEuler(LI[i]);
+  setTimeout(function() {Drehliste_gesamt=Loeseliste},100);
+  let Loesung='Lösung nach <a href="https://www.taurelin.de/downloads/anfaengermethode.pdf">taurelin anfaengermethode.pdf</a>: <div>Lege gelbe Mitte nach oben und grüne Mitte nach rechts.</div><div>plus heißt Drehung im Uhrzeigersinn.</div><div>minus heißt Drehung entgegen Uhrzeigersinn.</div>';
+  Drehnummer=0;
+  for (let i=0;i<Loeseliste.length;i++) if (Loeseliste[i]>-1) {
+    Drehnummer=Drehnummer+1;
+    Loesung=Loesung+'\n</div><div>'+Drehnummer+'. Drehung '+Loesetext[Loeseliste[i]];
+    } else Loesung=Loesung+', '+Loesetext2[-Loeseliste[i]-1]+' ist am Platz';
+  Log6.innerHTML=Loesung;
+  Drehnummer=0;
+  }
+
+id_loese.addEventListener('click',function() {if (beachte_Checkbox_Einzelschritte==false) loese(); else {weiter=1}});
+//id_weiter.addEventListener('click',function() {weiter=1});
+id_nochmal.addEventListener('click',function() {Drehstart=frametime});
+
+/*
+perms := [
+  (2,6,8,4)(48,18,56,36),
+  (12,16,18,14)(28,58,6,46),
+  (22,26,28,24)(34,54,12,42),
+  (32,36,38,34)(44,4,52,22),
+  (42,46,48,44)(24,14,2,32)
+  (52,56,58,54)(38,8,16,26)
+  ];
+puzzle := Group( perms );Size( puzzle );
+hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
+*/
+
+//[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5]; 
+let LOESUNGEN=[
+/*0:K01*/[
+    [,[/*0,1,0♣*/],,[/*0,3,2♥*/10,9,4,3,4,0,10,6],[/*0,4,3♥*/4,1,10,7,10,6,4,0],[/*0,5,1♠*/]],
+    [[/*1,0♥*/10,6,4,0,4,1,10,7],,[/*1,2♥*/10,7,4,1,4,2,10,8],,[/*1,4,8♥*/4],[/*1,5♠*/]],
+    [,[/*2,1,6♥*/10,7,4,1,4,2,10,8],,[/*2,3,4♥*/10,8,4,2,4,3,10,9],[/*2,4,5♥*/4,4],[/*2,5,7♠*/]],
+    [[/*3,0♥*/10,9,4,3,4,0,10,6],,[/*3,2♥*/10,8,4,2,4,3,10,9],,[/*3,4♥*/10],[/*3,5,10♠*/]],
+    [[/*4,0♥*/10],[/*4,1♥*/10,6,4,0,4,1,10,7],[/*4,2♥*/4],[/*4,3,11♥*/4,4],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♠*/],[/*5,3♠*/9,0,4,6,3,3],,]
+    ],
+/*1:K05*/[ 
+    [,[/*0,1,0*/0],,[/*0,3,2*/6],[/*0,4,3*/0,0],[/*0,5,1♣*/]],
+    [[/*1,0*/7,11],,[/*1,2*/2,11],,[/*1,4,8*/7,7,11],[/*1,5*/11]],
+    [,[/*2,1,6*/1,1,0],,[/*2,3,4*/3,3,6],[/*2,4,5*/4,4,0,0],[/*2,5,7*/5,5]],
+    [[/*3,0*/3,5],,[/*3,2*/9,5],,[/*3,4*/9,9,5],[/*3,5,10*/5]],
+    [[/*4,0*/10,7,0],[/*4,1*/7,0],[/*4,2*/4,7,0],[/*4,3,11*/3,6],,],
+    [[/*5,0*/5,1,0],[/*5,1,9*/1,0],[/*5,2*/11,1,0],[/*5,3*/9,6],,]
+    ],
+/*2:K03*/[
+    [,[/*0,1,0♠*/],,[/*0,3,2♣*/],[/*0,4,3♦*/10,9,4,3,4,0,10,6],[/*0,5,1♠*/]],
+    [[/*1,0♠*/],,[/*1,2♠*/],,[/*1,4,8♦*/4],[/*1,5♠*/]],
+    [,[/*2,1,6♠*/],,[/*2,3,4♠*/],[/*2,4,5♦*/4,4],[/*2,5,7♠*/]],
+    [[/*3,0♥*/10,9,4,3,4,0,10,6],,[/*3,2♠*/],,[/*3,4♦*/10],[/*3,5,10♠*/]],
+    [[/*4,0♥*/4],[/*4,1♥*/4,4],[/*4,2♥*/10],[/*4,3,11♥*/4,0,10,6,10,9,4,3],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♠*/],[/*5,3♠*/],,]    
+    ],
+  [],
+/*4:K23*/[
+    [,[/*0,1,0♠*/],,[/*0,3,2♥*/10,9,4,3,4,0,10,6],[/*0,4,3♦*/4,4],[/*0,5,1♠*/]],
+    [[/*1,0♠*/],,[/*1,2♠*/],,[/*1,4,8♦*/10],[/*1,5♠*/]],
+    [,[/*2,1,6♠*/],,[/*2,3,4♣*/],[/*2,4,5♦*/4,3,10,9,10,8,4,2],[/*2,5,7♠*/]],
+    [[/*3,0♥*/10,9,4,3,4,0,10,6],,[/*3,2♥*/10,8,4,2,4,3,10,9],,[/*3,4♦*/4],[/*3,5,10♠*/]],
+    [[/*4,0♥*/4],[/*4,1♥*/4,4],[/*4,2♥*/10],[/*4,3,11♥*/10,8,4,2,4,3,10,9],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♠*/],[/*5,3♠*/],,]    
+  ],
+  [],
+/*6:K21*/[
+    [,[/*0,1,0♠*/],,[/*0,3,2♥*/10,9,4,3,4,0,10,6],[/*0,4,3♦*/4,4],[/*0,5,1♠*/]],
+    [[/*1,0♠*/],,[/*1,2♥*/10,7,4,1,4,2,10,8],,[/*1,4,8♦*/10],[/*1,5♠*/]],
+    [,[/*2,1,6♣*/],,[/*2,3,4♥*/10,8,4,2,4,3,10,9],[/*2,4,5♦*/10,7,4,1,4,2,10,8],[/*2,5,7♠*/]],
+    [[/*3,0♥*/10,9,4,3,4,0,10,6],,[/*3,2♥*/10,8,4,2,4,3,10,9],,[/*3,4♦*/4],[/*3,5,10♠*/]],
+    [[/*4,0♥*/10],[/*4,1♥*/4,2,10,8,10,7,4,1],[/*4,2♥*/4],[/*4,3,11♥*/4,4],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♠*/],[/*5,3♠*/],,]    
+    ],
+/*7:K25♥*/[
+    [,[/*0,1,0♥*/6,4,4,0,2,2],,[/*0,3,2♥*/0,4,4,6,2,2],[/*0,4,3♥*/4,4,2,2],[/*0,5,1♠*/]],
+    [[/*1,0♥*/1,10,7,2,2],,[/*1,2♥*/7,10,1,2,2],,[/*1,4,8♥*/10,2,2],[/*1,5♠*/]],
+    [,[/*2,1,6♥*/8],,[/*2,3,4♥*/2],[/*2,4,5♥*/2,2,],[/*2,5,7♣*/]],
+    [[/*3,0♥*/9,4,2,2],,[/*3,2♥*/3,4,2,2],,[/*3,4♥*/4,2,2],[/*3,5,10♥*/3,3,4,2,2]],
+    [[/*4,0♥*/4,9,2],[/*4,1*/4,4,9,2],[/*4,2♥*/10,9,2],[/*4,3,11♥*/9,2],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♥*/5,3,11,2],[/*5,3♥*/3,2],,]
+    ],
+  [],
+/*9:K51♥*/[
+    [,[/*0,1,0♥*/7],,[/*0,3,2♥*/9,4,4,7,7],[/*0,4,3♥*/0,7,6],[/*0,5,1♠*/]],
+    [[/*1,0♥*/0,5,6],,[/*1,2♥*/5,8,11],,[/*1,4,8♥*/10,8,1],[/*1,5♥*/7,5,8,11]],
+    [,[/*2,1,6♥*/1],,[/*2,3,4♥*/2,2,1],[/*2,4,5♥*/8,1],[/*2,5,7*/2]],
+    [[/*3,0♥*/11,6,5],,[/*3,2♥*/5,2,11],,[/*3,4♥*/4,8,1],[/*3,5,10♥*/9,11,6,5]],
+    [[/*4,0♥*/10,1,1],[/*4,1♥*/1,1],[/*4,2♥*/4,1,1],[/*4,3,11♥*/4,4,1,1],,],
+    [[/*5,0♠*/],[/*5,1,9♣*/],[/*5,2♥*/2],[/*5,3♥*/3],,]
+    ],
+/*10:K35♥*/[
+    [,[/*0,1,0♥*/6,4,0,3,3],,[/*0,3,2♥*/0,4,6,3,3],[/*0,4,3♥*/4,9,9],[/*0,5,1♠*/]],
+    [[/*1,0♥*/1,4,4,3,3,7],,[/*1,2♥*/7,4,4,3,3,1],,[/*1,4,8♥*/4,4,3,3],[/*1,5♠*/]],
+    [,[/*2,1,6♥*/2,10,3,3,8],,[/*2,3,4♥*/8,10,2,3,3],[/*2,4,5♥*/10,9,9],[/*2,5,7♠*/]],
+    [[/*3,0♥*/3],,[/*3,2♥*/9],,[/*3,4♥*/3,3],[/*3,5,10♣*/]],
+    [[/*4,0♥*/6,3,0],[/*4,1♥*/4,6,3,0],[/*4,2♥*/4,4,6,3,0],[/*4,3,11♥*/10,6,3,0],,],
+    [[/*5,0♠*/],[/*5,1,9♠*/],[/*5,2♠*/],[/*5,3♥*/9,0,4,6,3,3],,]    
+    ],
+  [],
+  [
+  [,[/*0,1,4,12*/],,[/*0,3,5,14*/],[/*0,4,3*/],[/*0,5,1,13♣*/]],
+  [[/*1,0,5*/],,[/*1,2,4*/],,[/*1,4,0*/],[/*1,5,2*/]],
+  [,[/*2,1,5,18*/],,[/*2,3,4,16*/],[/*2,4,1,17*/],[/*2,5,3,19*/]],
+  [[/*3,0,4*/],,[/*3,2,5*/],,[/*3,4,2*/],[/*3,5,0*/]],
+  [[/*4,0,1*/],[/*4,1,2*/],[/*4,2,3*/],[/*4,3,0,15*/],,],
+  [[/*5,0,3*/],[/*5,1,0*/],[/*5,2,1*/],[/*5,3,2*/],,],
+  ],
+/*13:K051*/[
+  [,[/*0,1,4,12♥*/1,4,7],,[/*0,3,5,14*/0,4,6],[/*0,4,3♦*/10],[/*0,5,1,13♣*/]],
+  [[/*1,0,5♦*/1,4,7],,[/*1,2,4♦*/4],,[/*1,4,0♥*/1,4,4,7,10],[/*1,5,2*/2,4,8]],
+  [,[/*2,1,5,18*/2,4,8],,[/*2,3,4,16♦*/4,4],[/*2,4,1,17♦*/4],[/*2,5,3,19*/3,4,9]],
+  [[/*3,0,4♦*/10],,[/*3,2,5*/3,4,9],,[/*3,4,2♦*/4,4],[/*3,5,0*/0,4,6]],
+  [[/*4,0,1♥*/6,10,0],[/*4,1,2♦*/4],[/*4,2,3♦*/4,4],[/*4,3,0,15♦*/10],,],
+  [[/*5,0,3*/0,4,6],[/*5,1,0♦*/1,4,7],[/*5,2,1*/2,4,8],[/*5,3,2*/3,4,9],,],
+    ],
+/*14:K350*/[
+  [,[/*0,1,4,12♦*/4],,[/*0,3,5,14♦*/0,4,6],[/*0,4,3♦*/0,4,4,6,10],[/*0,5,1,13♠*/]],
+  [[/*1,0,5♠*/],,[/*1,2,4♦*/4,4],,[/*1,4,0♦*/4],[/*1,5,2♠*/]],
+  [,[/*2,1,5,18♠*/],,[/*2,3,4,16♦*/10],[/*2,4,1,17♦*/4,4],[/*2,5,3,19♠*/]],
+  [[/*3,0,4♥*/0,4,6],,[/*3,2,5♠*/],,[/*3,4,2♦*/10],[/*3,5,0♣*/]],
+  [[/*4,0,1♦*/4],[/*4,1,2♦*/4,4],[/*4,2,3♦*/10],[/*4,3,0,15♥*/9,10,3],,],
+  [[/*5,0,3♦*/0,4,6],[/*5,1,0♠*/],[/*5,2,1♠*/],[/*5,3,2♠*/],,],  
+    ],
+  [],
+  [],
+  [],
+/*18:K152*/[
+  [,[/*0,1,4,12♦*/10],,[/*0,3,5,14♦*/0,4,6],[/*0,4,3♦*/4,4],[/*0,5,1,13♠*/]],
+  [[/*1,0,5♠*/],,[/*1,2,4♥*/2,4,8],,[/*1,4,0♦*/10],[/*1,5,2♣*/]],
+  [,[/*2,1,5,18♦*/2,4,8],,[/*2,3,4,16♦*/4],[/*2,4,1,17♦*/2,4,4,8,10],[/*2,5,3,19♦*/3,4,9]],
+  [[/*3,0,4♦*/4,4],,[/*3,2,5♦*/3,4,9],,[/*3,4,2♦*/4],[/*3,5,0♦*/0,4,6]],
+  [[/*4,0,1♦*/10],[/*4,1,2♥*/7,10,1],[/*4,2,3♦*/4],[/*4,3,0,15♦*/4,4],,],
+  [[/*5,0,3♦*/0,4,6],[/*5,1,0♠*/],[/*5,2,1♦*/2,4,8],[/*5,3,2♦*/3,4,9],,],
+    ],
+/*19:K253*/[
+  [,[/*0,1,4,12♦*/4,4],,[/*0,3,5,14♦*/0,4,6],[/*0,4,3♦*/4],[/*0,5,1,13♠*/]],
+  [[/*1,0,5♠*/],,[/*1,2,4♦*/10],,[/*1,4,0♦*/4,4],[/*1,5,2♠*/]],
+  [,[/*2,1,5,18♠*/],,[/*2,3,4,16♥*/3,4,9],[/*2,4,1,17♦*/10],[/*2,5,3,19♣*/]],
+  [[/*3,0,4♦*/4],,[/*3,2,5♦*/3,4,9],,[/*3,4,2♦*/3,4,4,9,10],[/*3,5,0♦*/0,4,6]],
+  [[/*4,0,1♦*/4,4],[/*4,1,2♦*/10],[/*4,2,3♥*/8,10,2],[/*4,3,0,15♦*/4],,],
+  [[/*5,0,3♦*/0,4,6],[/*5,1,0♠*/],[/*5,2,1♠*/],[/*5,3,2♦*/3,4,9],,],
+    ],
+  ];
+  
+//[7,1,1,4,5,8,9,11,9,1,4,4,2,0,2,5,8,1,6,2]
+
+function mische(n) {
+  beachte_Checkbox_Einzelschritte=false;weiter=1;
+  let RET=[];
+  for (let i=0;i<n;i++) RET.push(Math.floor(Math.random()*12));
+  Log.innerHTML=Log.innerHTML+',<br/>'+RET;
+  setTimeout(function() {Drehliste_gesamt=RET},100);
+  }
+
+id_mische.addEventListener('click',function() {mische(20)});
+
+function fehlersuch(liste) {
+  let RET=liste;
+  Log.innerHTML=RET;
+  setTimeout(function() {Drehliste_gesamt=RET},100);
+  }
+
+id_fehlersuch.addEventListener('click',function() {fehlersuch([10,4,11,11,0,10,11,0,8,6,1,8,0,6,8,2,1,5,2,5])});
+
+let Farben=['red','green','orange','blue','yellow','white'];
+let Farben2=[];
+let Farben3=[];
+function pruefen() {
+  let RET=true;
+  for (let i of [1,9,7,10,13,18,19,14]) {
+    let F='';
+    let K=LISTE[i];
+    for (let j of K.userData.P) F=F+Farben[j];
+    //alert(K.name+'\n'+F+'\n'+K.userData.P);
+    if (K.name!=F) RET=false;
+    }
+    
+  return RET;
+  }
+
+function Dauertest() {
+  if (pruefen()==false) alert('Fehler!'); else {
+    setTimeout(function() {id_mische.click()},100);
+    setTimeout(function() {id_loese.click()},10000);
+    setTimeout(function() {id_Dauertest.click()},30000);
+    }
+  }
+
+id_Dauertest.addEventListener('click',function() {Dauertest()});
+
+
+let Testindex=5;
+let Testfarben=[
+  ['','','','','red','','','',''],
+  ['','','','','green','','','',''],
+  ['','','','','orange','','','',''],
+  ['','','','','blue','','','',''],
+  ['','','','','yellow','','','',''],
+  ['','','','','white','','','','']
+  ];
+Testfarben=[
+  ['blue','blue','yellow','orange','red','green','white','blue','orange'],
+  ['blue','red','green','yellow','green','orange','green','red','red'],
+  ['white','red','blue','blue','orange','green','yellow','blue','white'],
+  ['white','orange','orange','white','blue','white','orange','orange','green'],
+  ['orange','white','red','yellow','yellow','yellow','red','yellow','yellow'],
+  ['blue','green','red','white','white','red','green','green','yellow']
+  ];
+Testfarben=[
+  ['green','yellow','yellow','green','red','green','orange','yellow','white'],
+  ['red','blue','red','white','green','orange','green','green','white'],
+  ['white','white','white','blue','orange','orange','blue','orange','red'],
+  ['blue','blue','yellow','green','blue','red','blue','blue','blue'],
+  ['green','white','green','red','yellow','orange','orange','red','orange'],
+  ['yellow','yellow','yellow','white','white','red','red','yellow','orange']
+  ];
+Testfarben=[
+  ['white','blue','yellow','yellow','red','orange','red','yellow','red'],
+  ['green','orange','green','green','green','red','blue','orange','yellow'],
+  ['red','white','red','green','orange','white','blue','white','orange'],
+  ['green','orange','orange','green','blue','green','white','yellow','blue'],
+  ['white','blue','orange','blue','yellow','red','yellow','yellow','blue'],
+  ['green','red','white','red','white','blue','orange','white','yellow']
+  ];
+Testfarben=[
+  ['orange','white','white','red','red','yellow','red','blue','orange'],
+  ['red','white','red','orange','green','white','white','orange','yellow'],
+  ['white','white','blue','blue','orange','yellow','blue','blue','orange'],
+  ['red','yellow','blue','red','blue','green','green','blue','green'],
+  ['green','green','blue','orange','yellow','red','yellow','green','white'],
+  ['yellow','yellow','yellow','orange','white','red','orange','green','green']
+  ];
+
+let Testphotos=[
+  'photo_2025-06-05_10-46.jpg',
+  'photo_2025-06-05_10-46-1.jpg',
+  'photo_2025-06-05_10-46-2.jpg',
+  'photo_2025-06-05_10-46-3.jpg',
+  'photo_2025-06-05_10-46-4.jpg',
+  'photo_2025-06-05_10-47.jpg'];
+
+function knips() {
+  Testindex=(Testindex+1)%6;
+  canvas4.src=Testphotos[Testindex];
+  scanbit=0;
+  scannum=0;
+  myImg.src=Testphotos[Testindex];
+  setTimeout(function() {scannen(Farben)},100);
+  //return Testfarben[Testindex];
+  }
+
+let Farbtabelle={'red':'red','green':'green','orange':'orange','blue':'blue','yellow':'yellow','white':'white'}
+
+function setze_die_Farbe(ke,i,j,farbe) {
+  LISTE[WW[ke][i][j][2+ke]].userData.F[WW[ke][i][j][3+ke]].material.color.set(Farbtabelle[farbe]);
+  LISTE[WW[ke][i][j][2+ke]].userData.F[WW[ke][i][j][3+ke]].material.userData=farbe;
+  
+  }
+
+function scannen(Farben) {
+  //alert(controls.object.position.x+' '+controls.object.position.y+' '+controls.object.position.z);
+  //let Farben=knips();
+  if (scannum==0) for (let i=0;i<Farben.length;i++) if (Farbtabelle[Farben[i]]==Farben[i]) Farbtabelle[Farben[i]]=Farben3[i];
+  if (Farben[4]=='red') {
+    //alert(Farben+'\n'+WW[0][0].join('\n')+'\n----\n'+LISTE[WW[0][0][1][2]].userData.P.F[0].material.color.getHexString());
+    LISTE[20].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,0,1,Farben[5]);
+    setze_die_Farbe(0,0,3,Farben[3]);
+    setze_die_Farbe(0,0,4,Farben[1]);
+    setze_die_Farbe(0,0,5,Farben[7]);
+    setze_die_Farbe(1,0,1,Farben[2]);
+    setze_die_Farbe(1,0,3,Farben[6]);
+    setze_die_Farbe(1,0,4,Farben[0]);
+    setze_die_Farbe(1,0,5,Farben[8]);
+    //controls.object.position.x=0.5;
+    //controls.object.position.y=0.5;
+    //controls.object.position.z=1.5;
+    if (scannum==0) {dran_ist='blue';RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime]}
+    }  
+  if (Farben[4]=='green') {
+    LISTE[21].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,1,0,Farben[7]);
+    setze_die_Farbe(0,1,2,Farben[1]);
+    setze_die_Farbe(0,1,4,Farben[3]);
+    setze_die_Farbe(0,1,5,Farben[5]);
+    setze_die_Farbe(1,1,0,Farben[8]);
+    setze_die_Farbe(1,1,2,Farben[0]);
+    setze_die_Farbe(1,1,4,Farben[6]);
+    setze_die_Farbe(1,1,5,Farben[2]);
+    if (scannum==0) {dran_ist='yellow';RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime]}
+    }  
+  if (Farben[4]=='orange') {
+    LISTE[22].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,2,1,Farben[7]);
+    setze_die_Farbe(0,2,3,Farben[1]);
+    setze_die_Farbe(0,2,4,Farben[3]);
+    setze_die_Farbe(0,2,5,Farben[5]);
+    setze_die_Farbe(1,2,1,Farben[8]);
+    setze_die_Farbe(1,2,3,Farben[0]);
+    setze_die_Farbe(1,2,4,Farben[6]);
+    setze_die_Farbe(1,2,5,Farben[2]);
+    if (scannum==0) {dran_ist='green';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime]}
+    }  
+  if (Farben[4]=='blue') {
+    LISTE[23].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,3,2,Farben[3]);
+    setze_die_Farbe(0,3,0,Farben[5]);
+    setze_die_Farbe(0,3,4,Farben[1]);
+    setze_die_Farbe(0,3,5,Farben[7]);
+    setze_die_Farbe(1,3,2,Farben[6]);
+    setze_die_Farbe(1,3,0,Farben[2]);
+    setze_die_Farbe(1,3,4,Farben[0]);
+    setze_die_Farbe(1,3,5,Farben[8]);
+    if (scannum==0) {dran_ist='white';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime]}
+    }  
+  if (Farben[4]=='yellow') {
+    LISTE[24].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,4,0,Farben[7]);
+    setze_die_Farbe(0,4,1,Farben[5]);
+    setze_die_Farbe(0,4,2,Farben[1]);
+    setze_die_Farbe(0,4,3,Farben[3]);
+    setze_die_Farbe(1,4,0,Farben[8]);
+    setze_die_Farbe(1,4,1,Farben[2]);
+    setze_die_Farbe(1,4,2,Farben[0]);
+    setze_die_Farbe(1,4,3,Farben[6]);
+    if (scannum==0) {
+      dran_ist='red';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime]
+      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; canvas4.src=''; id_loese.click()};
+      }
+    }  
+  if (Farben[4]=='white') {
+    LISTE[25].userData.F[0].material.color.set(Farbtabelle[Farben[4]]);
+    setze_die_Farbe(0,5,0,Farben[5]);
+    setze_die_Farbe(0,5,1,Farben[7]);
+    setze_die_Farbe(0,5,2,Farben[3]);
+    setze_die_Farbe(0,5,3,Farben[1]);
+    setze_die_Farbe(1,5,0,Farben[2]);
+    setze_die_Farbe(1,5,1,Farben[8]);
+    setze_die_Farbe(1,5,2,Farben[6]);
+    setze_die_Farbe(1,5,3,Farben[0]);
+    if (scannum==0) {dran_ist='orange';RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime]}
+    }  
+  }
+
+id_scannen.addEventListener('click',function() {knips()});
+id_checken.addEventListener('click',function() {checken()});
+
+
+let Orientierungen_Kanten=['redgreen', 'redwhite', 'redblue', 'redyellow', 'orangeblue', 'orangeyellow', 'orangegreen', 'orangewhite', 'greenyellow', 'whitegreen', 'bluewhite', 'yellowblue'];
+let Flaechennummern_Kanten=[[6,18], [8,56], [4,36], [2,48], [22,34], [24,42], [28,12], [26,54], [14,46], [58,16], [38,52], [44,32]];
+let Flaechennummern_Kanten_gesamt=[];
+let Orientierungen_Ecken=['redgreenyellow', 'redwhitegreen', 'bluewhitered', 'redyellowblue', 'orangeblueyellow', 'orangeyellowgreen', 'greenwhiteorange', 'orangewhiteblue'];
+
+let NEUELISTE=[];
+let INDEXLISTE1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+let INDEXLISTE2=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+function checken() {
+  //alert('und los gehts');
+  let checktext='';
+  NEUELISTE=LISTE.slice();//wegen K0 bis K6
+  INDEXLISTE1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+  INDEXLISTE2=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+  Flaechennummern_Kanten_gesamt=[]; for (let i=0;i<60;i++) Flaechennummern_Kanten_gesamt[i]=i;
+  for (let i=0;i<20;i++) {
+    let ke=LISTE[i];
+    //alert(JSON.stringify(ke.userData));alert('i='+i);
+    ke.name=ke.userData.F[0].material.userData+ke.userData.F[1].material.userData;
+    let y=0;
+    let ungueltig=false;
+    if (ke.userData.F[2]) {
+      ke.name=ke.name+ke.userData.F[2].material.userData;
+      while ((Orientierungen_Ecken.indexOf(ke.name)==-1)&&y<4) {
+        y=y+1;
+        let x=ke.userData.P[0];
+        ke.userData.P[0]=ke.userData.P[1];
+        ke.userData.P[1]=ke.userData.P[2];
+        ke.userData.P[2]=x;
+        ke.name=ke.userData.F[(0+y)%3].material.userData+ke.userData.F[(1+y)%3].material.userData+ke.userData.F[(2+y)%3].material.userData;
+        //alert(ke.name);
+        }
+      if (Orientierungen_Ecken.indexOf(ke.name)==-1) ungueltig=true;
+      ke.userData.index=Orientierungen_Ecken.indexOf(ke.name)+12;
+      } else {
+        if (Orientierungen_Kanten.indexOf(ke.name)==-1) {
+          y=y+1;
+          let x=ke.userData.P[0];
+          ke.userData.P[0]=ke.userData.P[1];
+          ke.userData.P[1]=x;
+          ke.name=ke.userData.F[1].material.userData+ke.userData.F[0].material.userData;
+          //alert(ke.name);
+          }
+        ke.userData.index=Orientierungen_Kanten.indexOf(ke.name);//alert('ke.userData.index='+ke.userData.index);
+        if (Orientierungen_Kanten.indexOf(ke.name)==-1) ungueltig=true;
+        }
+    ke.userData.Orientierung=y;
+    checktext=checktext+i+' '+ke.name+' '+ke.userData.P+' '+ke.userData.index+' '+ke.userData.Orientierung+' ';
+    if (ke.userData.F[2]) {
+      } else {
+        if (ke.userData.Orientierung==0) {
+          checktext=checktext+Flaechennummern_Kanten[i];
+          Flaechennummern_Kanten_gesamt[Flaechennummern_Kanten[i][0]]=Flaechennummern_Kanten[ke.userData.index][0];
+          Flaechennummern_Kanten_gesamt[Flaechennummern_Kanten[i][1]]=Flaechennummern_Kanten[ke.userData.index][1];
+          }
+        if (ke.userData.Orientierung==1) {
+          checktext=checktext+Flaechennummern_Kanten[i].slice().reverse();
+          Flaechennummern_Kanten_gesamt[Flaechennummern_Kanten[i][1]]=Flaechennummern_Kanten[ke.userData.index][0];
+          Flaechennummern_Kanten_gesamt[Flaechennummern_Kanten[i][0]]=Flaechennummern_Kanten[ke.userData.index][1];
+          }
+        checktext=checktext+'→'+Flaechennummern_Kanten[ke.userData.index];
+        }
+    checktext=checktext+'\n';
+    Log4.innerHTML=checktext;
+    if (ungueltig) {return false} //keine gültige Färbung
+    NEUELISTE[ke.userData.index]=LISTE[i];
+    INDEXLISTE1[i]=ke.userData.index;
+    INDEXLISTE2[ke.userData.index]=[i];
+    }
+  checktext=checktext+'Flaechennummern_Kanten_gesamt='+Flaechennummern_Kanten_gesamt+'\n';
+  Log7.innerHTML=Log7.innerHTML+'perm := PermList(['+Flaechennummern_Kanten_gesamt+'])\nword := PreImagesRepresentative( hom,perm );\n';
+
+//       0   1   2   3   4   5   6   7   8   9  10  11   12   13  14   15   16   17   18   19 
+//LISTE=[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5]; 
+//LISTE=[K51,K14,K05,K24,K21,K43,K35,K03,K01,K23,K25,K04,K152,K350,K234,K014,K043,K051,K241,K253,K0,K1,K2,K3,K4,K5]; 
+LISTE=NEUELISTE;
+
+//alert(INDEXLISTE1);
+//alert(INDEXLISTE2);
+
+KANTEN=[
+  [,[0,1,0,0],,[0,3,2,0],[0,4,3,0],[0,5,1,0]],
+  [[1,0,0,1],,[1,2,6,1],,[1,4,8,0],[1,5,9,1]],
+  [,[2,1,6,0],,[2,3,4,0],[2,4,5,0],[2,5,7,0]],
+  [[3,0,2,1],,[3,2,4,1],,[3,4,11,1],[3,5,10,0]],
+  [[4,0,3,1],[4,1,8,1],[4,2,5,1],[4,3,11,0],,],
+  [[5,0,1,1],[5,1,9,0],[5,2,7,1],[5,3,10,1],,]];
+
+  WW[0]=structuredClone(WW[0]);
+  for (let i=0;i<6;i++) for (let j=0;j<6;j++) if (WW[0][i][j]) {
+    WW[0][i][j][2]=INDEXLISTE1[WW[0][i][j][2]];
+    WW[0][i][j][3]=(WW[0][i][j][3]+LISTE[WW[0][i][j][2]].userData.Orientierung)%2;
+    }
+  checktext=checktext+WW[0][0].join('\n')+'\n\n';
+//  alert(WW[0][1].join('\n'));
+//  alert(WW[0][2].join('\n'));
+//  alert(WW[0][3].join('\n'));
+/*  WW[0]=[
+  [,[0,1,8,0],,[0,3,7,0],[0,4,11,0],[0,5,2,0]],
+  [[1,0,8,1],,[1,2,4,1],,[1,4,1,0],[1,5,0,1]],
+  [,[2,1,4,0],,[2,3,9,1],[2,4,3,0],[2,5,10,0]],
+  [[3,0,7,1],,[3,2,9,0],,[3,4,5,1],[3,5,6,0]],
+  [[4,0,11,1],[4,1,1,1],[4,2,3,1],[4,3,5,0],,],
+  [[5,0,2,1],[5,1,0,0],[5,2,10,1],[5,3,6,1],,]];*/
+
+  ECKEN=[
+  [,[0,1,4,12,0],,[0,3,5,14,2],[0,4,3,15,0],[0,5,1,13,0]],
+  [[1,0,5,13,2],,[1,2,4,17,2],,[1,4,0,12,1],[1,5,2,18,0]],
+  [,[2,1,5,18,2],,[2,3,4,16,0],[2,4,1,17,0],[2,5,3,19,0]],
+  [[3,0,4,15,2],,[3,2,5,19,2],,[3,4,2,16,1],[3,5,0,14,0]],
+  [[4,0,1,12,2],[4,1,2,17,1],[4,2,3,16,2],[4,3,0,15,1],,],
+  [[5,0,3,14,1],[5,1,0,13,1],[5,2,1,18,1],[5,3,2,19,1],,]];
+
+  WW[1]=structuredClone(WW[1]);
+  for (let i=0;i<6;i++) for (let j=0;j<6;j++) if (WW[1][i][j]) {
+    WW[1][i][j][3]=INDEXLISTE1[WW[1][i][j][3]];
+    WW[1][i][j][4]=(3+WW[1][i][j][4]-LISTE[WW[1][i][j][3]].userData.Orientierung)%3;//na die 3♥
+    }
+
+  checktext=checktext+WW[1][0].join('\n')+'\n\n';
+//  alert(WW[1][0].join('\n'));
+//  alert(WW[1][1].join('\n'));
+//  alert(WW[1][2].join('\n'));
+//  alert(WW[1][3].join('\n'));
+
+/*  WW[1]=[
+  [,[0,1,4,15,0],,[0,3,5,13,1],[0,4,3,16,0],[0,5,1,17,0]],
+  [[1,0,5,17,2],,[1,2,4,18,0],,[1,4,0,15,1],[1,5,2,12,0]],
+  [,[2,1,5,12,2],,[2,3,4,14,0],[2,4,1,18,1],[2,5,3,19,1]],
+  [[3,0,4,16,2],,[3,2,5,19,0],,[3,4,2,14,1],[3,5,0,13,2]],
+  [[4,0,1,15,2],[4,1,2,18,2],[4,2,3,14,2],[4,3,0,16,1],,],
+  [[5,0,3,13,0],[5,1,0,17,1],[5,2,1,12,1],[5,3,2,19,2],,]];*/
+  
+  Log4.innerHTML=checktext;
+  return true;
+  }
+
+function Test() {
+  id_fullscreen.requestFullscreen();
+  //alert(K23.name+' '+K23.userData.P);
+  //alert(controls.object.position.y);
+  //controls.object.position.y=-1;
+  //RCube.rotateY(Math.PI/2);
+  //RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime];
+  //alert(RCube_neue_Ausrichtung);
+  //RCube.rotateY(-Math.PI/2);
+  }
+
+id_Test.addEventListener('click',function() {Test()});
+
+//let lll='';
+//for (let k of LISTE) lll=lll+"'"+k.name+"', ";
+//Log.innerHTML=lll;
+
+id_langsamer.addEventListener('click',function() {neue_Drehzeit=+100});
+id_schneller.addEventListener('click',function() {neue_Drehzeit=-100});
+
+
+function Anfang() {
+  RCube.clear();
+  ini();
+  WW[0]=structuredClone(WW[2]);
+  WW[1]=structuredClone(WW[3]);
+  scanbit=1;
+  RCube.rotation.set(0,0,0);
+  controls.object.position.set(0.5,0.5,1.5);
+  Log.innerHTML=' ';
+  beachte_Checkbox_Einzelschritte=false;
+  weiter=1;
+  Drehliste_gesamt=[];
+  Drehnummer=0;
+  }
+
+id_Anfang.addEventListener('click',function() {Anfang()});
+
+
+
+
+
+
+
+
+//IP-Kamera:
+
+//Test3 nur als Variante aufheben für alle Fälle...
+function Test3(event) {
+const canvas = document.getElementById("canvas");
+//const canvas = document.createElement("canvas");
+alert(canvas);
+const gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});
+alert(gl);alert(gl.drawingBufferWidth);
+const pixels = new Uint8Array(
+400//  gl.drawingBufferWidth * gl.drawingBufferHeight * 4,
+);
+//alert(gl.readPixels);
+gl.readPixels(
+  100,//0
+  100,//0
+  10,//gl.drawingBufferWidth,
+  10,//gl.drawingBufferHeight,
+  gl.RGBA,
+  gl.UNSIGNED_BYTE,
+  pixels,
+);
+//console.log(pixels); // Uint8Array
+alert('webgl2: '+pixels);
+}
+
+
+//aus https://thewebdev.info/2022/01/27/how-to-get-pixel-color-from-an-image-with-javascript/
+// und das data:image/gif aus .
+// https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript
+
+let dataArray=[];
+const myImg = new Image();
+myImg.crossOrigin = "Anonymous";
+myImg.onload = () => {//alert('onload');
+//  const context = document.createElement('canvas').getContext('webgpu');
+  const context = document.getElementById('canvas2').getContext('2d');//2d oder webgl2 geht auch und sogar auch webgpu!!!
+  //alert(context);
+  context.drawImage(myImg, 0, 0);
+  //context.drawImage(myImg, 0, 0, myImg.width,    myImg.height, 0, 0, canvas2.width, canvas2.height);
+  //let data = {};
+  dataArray=[];
+  let text = [];
+  for (let Location of [[eventLocation.x, eventLocation.y], 
+        [96,96], [144,96], [192,96], 
+        [96,144], [144,144], [192,144], 
+        [96,192], [144,192], [192,192], ]) {
+    let { data } = context.getImageData(Location[0], Location[1], 2, 2);
+    dataArray.push(data);
+    text=text+data+'\n';
+    }
+  //console.log(data);
+  Log3.innerHTML=eventLocation.x+' '+eventLocation.y+'\n'+text;
+  Farben_aus_Daten_bestimmen();
+  }
+
+
+
+
+
+
+function Test4(event) {
+  canvas4.src=id_port.value+'/video';
+  }
+
+let eventLocation={x:30,y:30};
+function Test5(event) {
+  //for (let i of canvas) alert(i);
+  eventLocation={x:event.offsetX,y:event.offsetY};
+  myImg.src=canvas4.src;
+  //myImg.src='http://127.0.0.1:56147/video';
+  }
+
+//myImg.src = 'http://127.0.0.1:56147/video';
+
+id_Test4.addEventListener('click',function() {Test4(event)});
+id_rectangle.addEventListener('click',function() {Test5(event)});
+id_rectangle2.addEventListener('click',function() {Test5(event)});
+id_Blende.addEventListener('click',function() {scanbit=1-scanbit});
+id_Drehen.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime]});
+id_Kippen.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime]});
+
+let Vergleichsfarben=[
+  [0,99,30,'green',63,0.3,0,4,0.5],
+  [0,76,99,'blue',57,0.53,0.65,0.5],
+  [99,39,0,'orange',109,0.06,0.9,0.5],
+  [85,99,0,'yellow',85,0.16,0.6,0.5],
+  [99,0,34,'red',79,0.96,0.5,0.5],
+  [0,33,99,'white',203,0.6,0.3,0.9]
+  ];
+ 
+/*
+1,84,99,0,yellow,141,0.1915204678362573,1,0.7764705882352941
+2,0,87,99,blue,79,0.519723865877712,0.923497267759563,0.6411764705882352
+3,0,99,52,blue,87,0.42207792207792205,0.846153846153846,0.6431372549019607
+4,99,0,40,red,102,0.9322033898305085,0.6276595744680852,0.6313725490196078
+5,99,0,34,red,104,0.9411764705882354,0.6502732240437159,0.6411764705882352
+6,93,99,0,yellow,144,0.17567567567567569,1,0.7823529411764706
+7,99,30,0,orange,115,0.05137844611528824,0.9047619047619047,0.711764705882353
+8,0,99,43,green,58,0.40617283950617283,0.5378486055776893,0.492156862745098
+9,0,34,99,white,219,0.6078431372549019,0.8947368421052635,0.9254901960784314
+30 30
+119,119,127,255,127,127,135,255,146,146,154,255,149,149,157,255
+238,255,141,255,238,255,141,255,238,255,141,255,238,255,141,255
+79,228,248,255,79,228,248,255,79,228,248,255,79,228,248,255
+87,241,169,255,87,241,169,255,86,240,168,255,86,240,168,255
+220,102,150,255,219,101,149,255,221,101,149,255,221,101,149,255
+223,104,146,255,222,103,143,255,223,104,144,255,222,103,143,255
+249,255,144,255,249,255,142,255,250,255,145,255,250,255,143,255
+248,156,115,255,247,155,114,255,247,155,114,255,247,155,114,255
+58,193,117,255,58,193,117,255,57,192,116,255,57,192,116,255
+219,231,253,255,219,231,253,255,217,229,251,255,217,229,251,255
+*/
+
+function MinDist_alt(fr,fg,fb,fm,h,s,l) {
+  //if (fm>180) return 'white';
+  //if (fm<30) return 'black';
+  let imin=0;
+  let mindist=1000000;
+  for (let i=0;i<6;i++) {
+    let fv=Vergleichsfarben[i];
+    //let dist=((fr-fv[0])**2+(fg-fv[1])**2+(fb-fv[2])**2);
+    let dist=((h-fv[5])**2+0*(s-fv[6])**2+0*(l-fv[7])**2);
+    if (dist<mindist) {mindist=dist;imin=i}
+    }
+  if ((imin==1)&&(l>0.8)) imin=5;
+  return Vergleichsfarben[imin][3];
+  }
+
+Vergleichsfarben=[
+  [0,99,43,'green',58,0.4,0,5,0.5],
+  [0,87,99,'blue',79,0.53,0.9,0.6],
+  [99,30,0,'orange',109,0.06,0.9,0.7],
+  [93,99,0,'yellow',144,0.16,1,0.8],
+  [99,0,34,'red',102,0.96,0.6,0.6],
+  [0,33,99,'white',220,0.6,0.9,0.9]
+  ];
+ 
+function MinDist(fr,fg,fb,fm,h,s,l) {
+  let RET='gray';
+  if (fr==99&fg>0&&fb==0) RET='orange';
+  if (fr==99&fg==0&&fb>0) RET='red';
+  if (fg==99&fr<50&&fb<80) RET='green';
+  if (fg>80&fr>50) RET='yellow';
+  if (fm>180) RET='white';
+  if (fb==99&fg>50&&fm<150) RET='blue';
+  return RET;
+  }
+
+function Farben_aus_Daten_bestimmen() {
+  Farben=[];
+  Farben2=[];
+  Farben3=[];
+  for (let i=0;i<10;i++) {
+    let [fr,fg,fb]=dataArray[i];//alert([fr,fg,fb]);
+    let [fr0,fg0,fb0]=dataArray[i];//alert(dataArray[i]);
+    let hsl=new THREE.Color().setRGB( fr/255,fg/255,fb/255);
+    let hs={h:0,s:0,l:0};
+    hsl.getHSL(hs);
+    let fm=Math.min(fr,fg,fb);
+    fr=fr-fm;fg=fg-fm;fb=fb-fm;
+    let fn=Math.max(fr,fg,fb);
+    fr=Math.floor(fr/fn*99);fg=Math.floor(fg/fn*99);fb=Math.floor(fb/fn*99);
+    let Farbe=MinDist(fr,fg,fb,fm,hs.h,hs.s,hs.l);
+    Farben2.push([i,fr,fg,fb,Farbe,fm,hs.h,hs.s,hs.l]);
+    Farben.push(Farbe);
+    Farben3.push('rgb('+fr0+','+fg0+','+fb0+')');
+    }
+  Log4.innerHTML='Farben: '+Farben2.join('\n');
+  Farben.shift();
+  Farben3.shift();
+  linksoben.setAttribute('fill',Farben[0]);
+  mitteoben.setAttribute('fill',Farben[1]);
+  rechtsoben.setAttribute('fill',Farben[2]);
+  linksmitte.setAttribute('fill',Farben[3]);
+  mittemitte.setAttribute('fill',Farben[4]);
+  rechtsmitte.setAttribute('fill',Farben[5]);
+  linksunten.setAttribute('fill',Farben[6]);
+  mitteunten.setAttribute('fill',Farben[7]);
+  rechtsunten.setAttribute('fill',Farben[8]);
+  }
+
+let scannum=5;
+let scanbit=1;
+let dran_ist='red';
+let dran_merk='none';
+
+setInterval(function(){
+  if (scanbit==1) {
+    scannum=scannum-1;
+    myImg.src=canvas4.src;//endet mit Farben_aus_Daten_bestimmen()
+    if (Farben.join('-')!=dran_merk) scannum=5;
+    dran_merk=Farben.join('-');
+    if (scannum==-1) scannum=5;
+    if (Farben[4]==dran_ist) scannen(Farben); else scannum=5;
+    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='?'; 
+    }
+  },1000);
+  
+Test4();
+
+window.addEventListener('error',function(event) {alert('aha '+event+'\n'+event.error.name+'\n'+event.error.cause+'\n'+event.error.stack+'\n'+event.error.columnNumber+'\n'+event.error.fileName+'\n'+event.error.lineNumber+'\n'+event.error.message)});
+window.onerror=function(message, file, line, col, error) {alert('message '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error)};
+//alert(window.onerror);
+//window.onerror();
+//Error('ooooh');
+//alert(8);
+
+/*jetzt noch:  
+ok bei Farbwechsel wieder 5
+ok fullscreen geht nur nach click-event
+ok andere Drehrichtung von rot auf blau
+ok Lösung ausgeben, rot-weiß fertig dazuschreiben
+ok Anfangsstellung
+ok Eingabe Adresse IP-Webcam 
+ok die circle auch färben
+ok Lösung als Einzelschritte
+ok mit den echten Farben einfärben
+.. Log-files neu anordnen
+.. Verbindung zu gap
+.. zu Robi verbinden
+.. das Farbensechseck
+.. nochmal mit sichtbarem Zurückdrehen
+.. Lösung nicht gleich starten
+.. Anzeige des einzelnen Lösungstextes
+*/
+
+  </script>
+
+
+<!---IP-Kamera:--->
+<div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> auf Videoauflösung 352x288 und Port <input id='id_port' value='http://localhost:56147'/> konfigurieren, dann <button id='id_Test4'>verbinden</button>.
+
+<div id='id_fullscreen'>
+
+<svg width="352" height="288">
+
+<foreignObject x="0" y="0" width="352" height="288" style="border:none">
+  <iframe id='canvas4' src='threejs2024/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/textures/World_ap.11_baseColor.jpeg' width="352" height="288" style="border:none"> jjj</iframe>
+  </foreignObject>
+ 
+<rect id='id_Blende' x='288' y='0' width='64' height='288' fill='white'/>
+<text id='id_scannum' x='290' y='200' style='font-size:700%'>5</text>
+<rect id='id_rectangle' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>
+<g transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='1' stroke='black'>
+  <rect x='72' y='72' width='144' height='144'/>
+  <circle id="linksoben" cx="96" cy="96" r="10"/>
+  <circle id="mitteoben" cx="144" cy="96" r="10"/>
+  <circle id="rechtsoben" cx="192" cy="96" r="10"/>
+  <circle id="linksmitte" cx="96" cy="144" r="10"/>
+  <circle id="mittemitte" cx="144" cy="144" r="10"/>
+  <circle id="rechtsmitte" cx="192" cy="144" r="10"/>
+  <circle id="linksunten" cx="96" cy="192" r="10"/>
+  <circle id="mitteunten" cx="144" cy="192" r="10"/>
+  <circle id="rechtsunten" cx="192" cy="192" r="10"/>
+  </g>
+  </svg>
+
+<svg width="352" height="288" style='display:none'>
+
+<foreignObject x="0" y="0" width="352" height="288" style="border:none">
+<canvas id='canvas2' style='display:non; border:none;' width='288' height='288' onclick='Test2(event)' xmlns="http://www.w3.org/1999/xhtml"></canvas>
+  </foreignObject>
+      
+<rect x='288' y='0' width='64' height='288' fill='white'/>
+<rect id='id_rectangle2' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>
+<g transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='4'>
+  <circle cx="48" cy="48" r="10" stroke="green"/>
+  <circle cx="144" cy="48" r="10" stroke="red"/>
+  <circle cx="240" cy="48" r="10" stroke="yellow"/>,
+  <circle cx="48" cy="144" r="10" stroke="green"/>
+  <circle cx="144" cy="144" r="10" stroke="red"/>
+  <circle cx="240" cy="144" r="10" stroke="yellow"/>
+  <circle cx="48" cy="240" r="10" stroke="green"/>
+  <circle cx="144" cy="240" r="10" stroke="red"/>
+  <circle cx="240" cy="240" r="10" stroke="yellow"/>
+  </g>
+  </svg>
+
+<div id="canvas" style='display:inline-block'> </div>
+
+<div style='display:inline-block; min-width:64px'> </div>
+
+<div style='display:inline-block'>
+
+<div>
+<button id='id_Drehen' style='background-color:yellow; font-size:200%'>Drehen</button>
+<button id='id_Kippen' style='background-color:yellow; font-size:200%'>Kippen</button>
+  </div>
+
+
+<div>
+<button id='id_drehe4' style='background-color:yellow; font-size:200%'>↷</button>
+<button id='id_drehe10' style='background-color:yellow; font-size:200%'>↶</button>
+  </div>
+<div>
+<button id='id_drehe0' style='background-color:red; font-size:200%'>↷</button>
+<button id='id_drehe1' style='background-color:green; font-size:200%'>↷</button>
+<button id='id_drehe2' style='background-color:orange; font-size:200%'>↷</button>
+<button id='id_drehe3' style='background-color:blue; font-size:200%'>↷</button>
+  </div>
+<div>
+<button id='id_drehe6' style='background-color:red; font-size:200%'>↶</button>
+<button id='id_drehe7' style='background-color:green; font-size:200%'>↶</button>
+<button id='id_drehe8' style='background-color:orange; font-size:200%'>↶</button>
+<button id='id_drehe9' style='background-color:blue; font-size:200%'>↶</button>
+  </div>
+<div>
+<button id='id_drehe5' style='background-color:white; font-size:200%'>↻</button>
+<button id='id_drehe11' style='background-color:white; font-size:200%'>↺</button>
+  </div>
+
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</div>
+
+<div style='display:inline-block; min-width:64px'> </div>
+
+<div style='display:inline-block'>
+<div><button id='id_Anfang' style='font-size:300%'>Anfang</button></div>
+<div><button id='id_mische' style='font-size:300%'>mischen</button></div>
+<div><button id='id_loese' style='font-size:300%'>lösen</button> <input id='id_Einzelschritte' type='checkbox' checked='checked'>Einzelschritte</input></div>
+<!--div><button id='id_weiter' style='font-size:300%'>weiter</button></div-->
+<div id='Log0' style='display:flex; display:non; overflow:auto; font-family:monospace; font-size:140%; white-space:pre;'>1.</div>
+<div><button id='id_nochmal' style='font-size:300%'>(nochmal)</button></div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+  </div>
+
+  </div>
+
+<div>
+<button id='id_fehlersuch' style='font-size:300%; float:right'>Fehlersuche</button>
+<button id='id_Dauertest' style='font-size:300%; float:right'>Dauertest</button>
+<button id='id_checken' style='font-size:300%; float:right'>Check</button>
+<button id='id_scannen' style='font-size:300%; float:right'>Testbild</button>
+  </div>
+
+<!--div>
+<button id='id_drehe0' style='background-color:red; font-size:200%'>↷</button>
+<button id='id_drehe1' style='background-color:green; font-size:200%'>↷</button>
+<button id='id_drehe2' style='background-color:orange; font-size:200%'>↷</button>
+<button id='id_drehe3' style='background-color:blue; font-size:200%'>↷</button>
+<button id='id_drehe4' style='background-color:yellow; font-size:200%'>↷</button>
+<button id='id_drehe5' style='background-color:white; font-size:200%'>↻</button>
+  </div>
+<div>
+<button id='id_drehe6' style='background-color:red; font-size:200%'>↶</button>
+<button id='id_drehe7' style='background-color:green; font-size:200%'>↶</button>
+<button id='id_drehe8' style='background-color:orange; font-size:200%'>↶</button>
+<button id='id_drehe9' style='background-color:blue; font-size:200%'>↶</button>
+<button id='id_drehe10' style='background-color:yellow; font-size:200%'>↶</button>
+<button id='id_drehe11' style='background-color:white; font-size:200%'>↺</button>
+  </div-->
+<button id='id_Test' style='background-color:white; font-size:200%'>Test</button>
+<button id='id_langsamer' style='background-color:white; font-size:200%'>langsamer</button>
+<button id='id_schneller' style='background-color:white; font-size:200%'>schneller</button>
+
+
+<div id='Log' style='display:non; font-family:Courier,monospace; white-space:wrap;'> </div>
+<div id='Tdok' style='display:none; font-family:Courier,monospace; white-space:wrap;'>raycaster</div>
+<div style='display:none'><i>"one-touchmove"→drehen, "two-touchmove"→verschieben+zoomen</i></div>
+<div id='Log2' style='display:non; font-family:Courier,monospace; white-space:wrap; overflow:auto'> </div>
+<div id='Log6' style='display:n; font-family:Courier,monospace; white-space:wrap;'>Lösung:</div>
+<div id='Log4' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:blue'> </div>
+<div id='Log5' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
+<div id='Log3' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
+<div id='Log7' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
+perms := [
+  (2,6,8,4)(48,18,56,36),
+  (12,16,18,14)(28,58,6,46),
+  (22,26,28,24)(34,54,12,42),
+  (32,36,38,34)(44,4,52,22),
+  (42,46,48,44)(24,14,2,32)
+  (52,56,58,54)(38,8,16,26)
+  ];
+puzzle := Group( perms );Size( puzzle );
+hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
+
+#perm:=PermList([1,46,3,38,5,44,7,6,9,10,11,48,13,24,15,26,17,32,19,20,21,58,23,34,25,4,27,2,29,30,31,56,33,16,35,52,37,12,39,40,41,22,43,8,45,42,47,14,49,50,51,28,53,36,55,18,57,54,59]);
+
+#V^-1*R*V^-1*R^-1*V^-2*O^-1*R^-1*V^-1*R*V*O*V*R*V^-1*O*V^-1*L*V*L^-1*O^-1*R^-1*V^-1*O*R^-1*H*R*H^-1*O^-1*R^-1*O^-1*R*O*R^-1*O^-1*V*R^-1*O^2*R^-1*O^-3*R^-2*H^-2*R
+
+
+</div>
+
+<script>
+  </script></body></html>
