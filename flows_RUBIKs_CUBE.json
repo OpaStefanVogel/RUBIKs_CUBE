@@ -35,15 +35,15 @@
         "topic": "",
         "payload": "0",
         "payloadType": "str",
-        "repeat": "",
+        "repeat": "0.5",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 610,
-        "y": 80,
+        "x": 290,
+        "y": 20,
         "wires": [
             [
-                "4f1772f5.13d30c"
+                "4313b4b2.03c8e4"
             ]
         ]
     },
@@ -549,11 +549,16 @@
                 "t": "eq",
                 "v": "Motor_1_Loslassen",
                 "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "Motor_LED",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 9,
+        "outputs": 10,
         "x": 330,
         "y": 560,
         "wires": [
@@ -583,6 +588,9 @@
             ],
             [
                 "1db66ff7.3572d"
+            ],
+            [
+                "1ca8da31.76b966"
             ]
         ]
     },
@@ -1173,6 +1181,98 @@
             [
                 "7a515ccc.76b344",
                 "1be2a623.46d662"
+            ]
+        ]
+    },
+    {
+        "id": "4313b4b2.03c8e4",
+        "type": "trigger",
+        "z": "1777d44f.558154",
+        "op1": "1",
+        "op2": "0",
+        "op1type": "val",
+        "op2type": "val",
+        "duration": "250",
+        "extend": "false",
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "name": "",
+        "x": 480,
+        "y": 80,
+        "wires": [
+            [
+                "d5e61016.3ca1"
+            ]
+        ]
+    },
+    {
+        "id": "1ca8da31.76b966",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "global.set(\"Motor_LED\",msg.payload);",
+        "func": "node.status({\"text\":msg.payload});\nglobal.set(\"Motor_LED\",msg.payload);",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ceb6e035.d2991",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "Motor_LED_1",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 640,
+        "wires": [
+            [
+                "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "4dad3901.e86e6",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "Motor_LED_0",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 680,
+        "wires": [
+            [
+                "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "d5e61016.3ca1",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "node.status({\"text\":global.get(\"Motor_LED\")});\nif ((global.get(\"Motor_LED\")==\"Motor_LED_0\")||msg.payload==1) return msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 690,
+        "y": 80,
+        "wires": [
+            [
+                "4f1772f5.13d30c"
             ]
         ]
     }
