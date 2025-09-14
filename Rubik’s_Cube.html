@@ -7,7 +7,7 @@
   <title>Rubik’s Cube</title>
   </head>
 
-<body>
+<body onload="websocket_verbinden()">
 <script>
 window.onerror=function(message, file, line, col, error) {alert('window.onerror:\nmessage '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error+'\n\n')};
 window.addEventListener('error',function(arg) {alert('window.addEventListener:\nERROR ERROR ERROR\n message '+arg.error.message+' '+arg.error.name+' '+arg.error['name'])});
@@ -1196,12 +1196,12 @@ Vergleichsfarben=[
  
 function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
-  if (fr==99&fg>0&&fb==0) RET='orange';
-  if (fr==99&fg==0&&fb>0) RET='red';
-  if (fg==99&fr<50&&fb<80) RET='green';
-  if (fg>80&fr>50) RET='yellow';
+  if (fr==99&&fg>10&&fb==0) RET='orange';
+  if (fr==99&&fg<=10&&fb<10) RET='red';
+  if (fg==99&&fr<50&&fb<80) RET='green';
+  if (fg>80&&fr>50) RET='yellow';
   if (fm>180) RET='white';
-  if (fb==99&fg>50&&fm<150) RET='blue';
+  if (fb>90&&fm<150) RET='blue';
   return RET;
   }
 
@@ -1286,15 +1286,80 @@ ok mit den echten Farben einfärben
   </script>
 
 
+<style>
+button {font-size:1.3em}
+.nicht_verbunden {color:darkred}
+.versuche_zu_verbinden {
+  color:orange;
+  animation: textflimmern 500ms infinite alternate;
+  border-radius:15px;
+  padding:5px;
+  }
+.verbunden {color:green}
+.c {text-align:center}
+.Hilfetext{color:grey;font-style:italic;font-size:85%}
+
+@keyframes textflimmern {
+  0% {background-color:lightgreen}
+  50% {background-color:yellow}
+  100% {background-color:pink}
+ds  }
+
+  </style>
+	
+<script id="scr" type="application/ecmascript">
+var websocket;
+function websocket_verbinden() {
+  websocket = new WebSocket("ws://192.168.1.134:1880/ws/motoren","fiktiv");
+  websocket.onerror=function(event) {
+    };
+  websocket.onmessage = function(event) {
+    var w=event.data;
+    //alert(w);
+    Antwort_auswerten(w);
+    };
+  websocket.onopen = function() {
+    //websocket.send('Aktualisieren');
+    //restart_GAP();
+    //alert("open");
+    }; 
+  websocket.onclose = function() {
+    //alert(77);
+    websocket.send("close");
+    };
+  }
+
+function wsend(text) {
+  //alert(text);
+  document.getElementById("Antwort").firstChild.nodeValue=text;
+  websocket.send(text);
+  }
+
+function websocket_verbunden() {
+  if (websocket!=0) {
+    document.getElementById("Websocket_Status").firstChild.nodeValue=(["CONNECTING", "OPEN", "CLOSING", "CLOSED"])[websocket.readyState];
+    }
+  }
+setInterval(websocket_verbunden,1000);
+  </script>
+
+
 <!---IP-Kamera:--->
-<div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> auf Videoauflösung 352x288 und Port <input id='id_port' value='http://localhost:56147'/> konfigurieren, dann <button id='id_Test4'>verbinden</button>.
+<div>Websocket <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
+  <button onclick='websocket.send("Motor_2_minus")'>Drehen ↶</button>, 
+  <button onclick='websocket.send("Motor_2_plus")'>Drehen ↷</button>,
+  <button onclick='websocket.send("Motor_1_Kippen")'>Kippen</button>,
+  <button onclick='websocket.send("Motor_1_Festhalten")'>Festhalten</button>,
+  <button onclick='websocket.send("Motor_1_Loslassen")'>Loslassen</button>.
+  </div>
+<div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> installieren, auf Videoauflösung 352x288 und Port <input id='id_port' value='http://localhost:56147'/> konfigurieren, dann starten und <button id='id_Test4'>verbinden</button>.
 
 <div id='id_fullscreen'>
 
 <svg width="352" height="288">
 
 <foreignObject x="0" y="0" width="352" height="288" style="border:none">
-  <iframe id='canvas4' src='threejs2024/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/textures/World_ap.11_baseColor.jpeg' width="352" height="288" style="border:none"> jjj</iframe>
+  <iframe id='canvas4' src='../KLETTERN_UND_RUTSCHEN/threejs2024/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/textures/World_ap.11_baseColor.jpeg' width="352" height="288" style="border:none"> jjj</iframe>
   </foreignObject>
  
 <rect id='id_Blende' x='288' y='0' width='64' height='288' fill='white'/>
