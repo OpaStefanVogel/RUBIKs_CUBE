@@ -7,7 +7,7 @@
   <title>Rubik’s Cube</title>
   </head>
 
-<body onload="websocket_verbinden()">
+<body>
 <script>
 window.onerror=function(message, file, line, col, error) {alert('window.onerror:\nmessage '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error+'\n\n')};
 window.addEventListener('error',function(arg) {alert('window.addEventListener:\nERROR ERROR ERROR\n message '+arg.error.message+' '+arg.error.name+' '+arg.error['name'])});
@@ -412,6 +412,9 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
       let n=Drehliste_gesamt.shift();
       while (n<0&&Drehliste_gesamt.length>0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */n=Drehliste_gesamt.shift()}
+      if (n==12) {Drehstart=frametime;Drehliste.length=0;id_DreheL.click();return}
+      if (n==13) {Drehstart=frametime;Drehliste.length=0;id_Kippe.click();return}
+      if (n==14) {Drehstart=frametime;Drehliste.length=0;id_DreheR.click();return}
       if (n<0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */return}
       if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);//am Platz
       if (n>-1) Drehnummer=Drehnummer+1;
@@ -420,7 +423,7 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       animate_start();
       Drehstart=frametime;
       }
-  if (frametime<RCube_neue_Ausrichtung[1]+Drehzeit+100) {
+  if (frametime<RCube_neue_Ausrichtung[1]+Drehzeit+50) {
     let alpha=Math.min((frametime-RCube_neue_Ausrichtung[1])/Drehzeit,1);
  //   RCube.rotateY(0.01);
     RCube.setRotationFromEuler(RCube_alte_Ausrichtung);
@@ -436,6 +439,27 @@ function suche(i) {//if (i==4) alert('suche(4) gestartet');
   //if (i==4) alert('i='+i+': '+RET.name+' '+WET+' '+GET);
   for (let j=0;j<GET.length;j++) {
     let n=GET[j];
+    let n6=n%6;
+    if (Ausrichtung_der_Mitten.indexOf(n6)==0) {
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      } else
+    if (Ausrichtung_der_Mitten.indexOf(n6)==1) {
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      } else
+    if (Ausrichtung_der_Mitten.indexOf(n6)==2) {
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      } else
+    if (Ausrichtung_der_Mitten.indexOf(n6)==3) {
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      } else
+    if (Ausrichtung_der_Mitten.indexOf(n6)==4) {
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      }
     if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
     Loeseliste.push(n);
     }
@@ -524,6 +548,7 @@ alert(pixels);
   suche(6);
   suche(4);
   suche(2)/**/
+  Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   //alert(Loeseliste);
   WW=structuredClone(WWMERK);
   //for (let i=0;i<LISTE.length;i++) LISTE[i].setRotationFromEuler(LI[i]);
@@ -1045,6 +1070,9 @@ function Anfang() {
   weiter=1;
   Drehliste_gesamt=[];
   Drehnummer=0;
+  Test4();
+  Ausrichtung_der_Mitten=[0,1,2,3,4,5];
+  id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
   }
 
 id_Anfang.addEventListener('click',function() {Anfang()});
@@ -1135,8 +1163,9 @@ id_Test4.addEventListener('click',function() {Test4(event)});
 id_rectangle.addEventListener('click',function() {Test5(event)});
 id_rectangle2.addEventListener('click',function() {Test5(event)});
 id_Blende.addEventListener('click',function() {scanbit=1-scanbit});
-id_Drehen.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime]});
-id_Kippen.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime]});
+id_DreheL.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime],permutiere_die_Mitten(DreheLpermutation)});
+id_DreheR.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(0,-1,0),frametime],permutiere_die_Mitten(DreheRpermutation)});
+id_Kippe.addEventListener('click',function() {RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime],permutiere_die_Mitten(Kippepermutation)});
 
 let Vergleichsfarben=[
   [0,99,30,'green',63,0.3,0,4,0.5],
@@ -1196,12 +1225,10 @@ Vergleichsfarben=[
  
 function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
-  if (fr==99&&fg>10&&fb==0) RET='orange';
-  if (fr==99&&fg<=10&&fb<10) RET='red';
-  if (fg==99&&fr<50&&fb<80) RET='green';
-  if (fg>80&&fr>50) RET='yellow';
-  if (fm>180) RET='white';
-  if (fb>90&&fm<150) RET='blue';
+  if (fr==99) if (fg>fb+10) RET='orange'; else RET='red';
+  if (fg==99) RET='green';
+  if ((fr>70)&&(fg>90)) RET='yellow';
+  if (fb==99) if (fm<90) RET='blue'; else RET='white';
   return RET;
   }
 
@@ -1255,7 +1282,7 @@ setInterval(function(){
     }
   },1000);
   
-setTimeout(Test4,3000);
+setTimeout(Test4,2000);
 
 window.addEventListener('error',function(event) {alert('aha '+event+'\n'+event.error.name+'\n'+event.error.cause+'\n'+event.error.stack+'\n'+event.error.columnNumber+'\n'+event.error.fileName+'\n'+event.error.lineNumber+'\n'+event.error.message)});
 window.onerror=function(message, file, line, col, error) {alert('message '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error)};
@@ -1264,50 +1291,7 @@ window.onerror=function(message, file, line, col, error) {alert('message '+messa
 //Error('ooooh');
 //alert(8);
 
-/*jetzt noch:  
-ok bei Farbwechsel wieder 5
-ok fullscreen geht nur nach click-event
-ok andere Drehrichtung von rot auf blau
-ok Lösung ausgeben, rot-weiß fertig dazuschreiben
-ok Anfangsstellung
-ok Eingabe Adresse IP-Webcam 
-ok die circle auch färben
-ok Lösung als Einzelschritte
-ok mit den echten Farben einfärben
-.. Log-files neu anordnen
-.. Verbindung zu gap
-.. zu Robi verbinden
-.. das Farbensechseck
-.. nochmal mit sichtbarem Zurückdrehen
-.. Lösung nicht gleich starten
-.. Anzeige des einzelnen Lösungstextes
-*/
-
-  </script>
-
-
-<style>
-button {font-size:1.3em}
-.nicht_verbunden {color:darkred}
-.versuche_zu_verbinden {
-  color:orange;
-  animation: textflimmern 500ms infinite alternate;
-  border-radius:15px;
-  padding:5px;
-  }
-.verbunden {color:green}
-.c {text-align:center}
-.Hilfetext{color:grey;font-style:italic;font-size:85%}
-
-@keyframes textflimmern {
-  0% {background-color:lightgreen}
-  50% {background-color:yellow}
-  100% {background-color:pink}
-ds  }
-
-  </style>
-	
-<script id="scr" type="application/ecmascript">
+////Websocket:
 var websocket;
 function websocket_verbinden() {
   websocket = new WebSocket("ws://192.168.1.134:1880/ws/motoren","fiktiv");
@@ -1336,13 +1320,70 @@ function wsend(text) {
   }
 
 function websocket_verbunden() {
-  if (websocket!=0) {//alert(websocket.readyState);
+  if (websocket!=0) {
     document.getElementById("Websocket_Status").firstChild.nodeValue=(["CONNECTING", "OPEN", "CLOSING", "CLOSED"])[websocket.readyState];
     }
   }
+
+setTimeout(websocket_verbinden,200);
 setInterval(websocket_verbunden,1000);
+
+////Ausrichtungen:
+let Ausrichtung_der_Mitten=[0,1,2,3,4,5];
+let DreheRpermutation=       [3,0,1,2,4,5];
+let DreheLpermutation=       [1,2,3,0,4,5];
+let Kippepermutation=       [4,1,5,3,2,0];
+function permutiere_die_Mitten(perm) {
+  let RET=[];
+  for (let i=0;i<6;i++) RET[perm[i]]=Ausrichtung_der_Mitten[i];
+  Ausrichtung_der_Mitten=RET;
+  id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
+  }
+   
+
+/*jetzt noch:  
+ok bei Farbwechsel wieder 5
+ok fullscreen geht nur nach click-event
+ok andere Drehrichtung von rot auf blau
+ok Lösung ausgeben, rot-weiß fertig dazuschreiben
+ok Anfangsstellung
+ok Eingabe Adresse IP-Webcam 
+ok die circle auch färben
+ok Lösung als Einzelschritte
+ok mit den echten Farben einfärben
+ok Lösung nicht gleich starten
+.. Log-files neu anordnen
+.. Verbindung zu gap
+.. zu Robi verbinden
+.. das Farbensechseck
+.. nochmal mit sichtbarem Zurückdrehen
+.. Anzeige des einzelnen Lösungstextes
+.. die 4 schwarzen Lücken erkennen
+*/
+
   </script>
 
+
+<style>
+button {font-size:1.3em}
+.nicht_verbunden {color:darkred}
+.versuche_zu_verbinden {
+  color:orange;
+  animation: textflimmern 500ms infinite alternate;
+  border-radius:15px;
+  padding:5px;
+  }
+.verbunden {color:green}
+.c {text-align:center}
+.Hilfetext{color:grey;font-style:italic;font-size:85%}
+
+@keyframes textflimmern {
+  0% {background-color:lightgreen}
+  50% {background-color:yellow}
+  100% {background-color:pink}
+  }
+
+  </style>
 
 <!---IP-Kamera:--->
 <div>Websocket <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
@@ -1406,9 +1447,12 @@ setInterval(websocket_verbunden,1000);
 
 <div style='display:inline-block'>
 
+<div id='id_Ausrichtung_der_Mitten'>0,1,2,3,4,5</div>
+
 <div>
-<button id='id_Drehen' style='background-color:yellow; font-size:200%'>Drehen</button>
-<button id='id_Kippen' style='background-color:yellow; font-size:200%'>Kippen</button>
+<button id='id_DreheL' style='background-color:yellow; font-size:200%'>DrL</button>
+<button id='id_DreheR' style='background-color:yellow; font-size:200%'>DrR</button>
+<button id='id_Kippe' style='background-color:yellow; font-size:200%'>Kippe</button>
   </div>
 
 
