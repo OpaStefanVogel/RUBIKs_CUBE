@@ -376,7 +376,7 @@ id_drehe9.addEventListener('click',function() {drehe(9)});
 id_drehe10.addEventListener('click',function() {drehe(10)});
 id_drehe11.addEventListener('click',function() {drehe(11)});
 
-function animate_start() {Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehliste_gesamt;
+function animate_start() {
   for (let dd=0;dd<Drehliste.length;dd++) {
     let d=Drehliste[dd];
     let Obj=LISTE[d[0]];
@@ -411,14 +411,15 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       if ((beachte_Checkbox_Einzelschritte==true)&&(id_Einzelschritte.checked==true)) weiter=0;
       Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
       let n=Drehliste_gesamt.shift();
-      while (n<0&&Drehliste_gesamt.length>0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */n=Drehliste_gesamt.shift()}
+      while (n<0&&Drehliste_gesamt.length>0) {n=Drehliste_gesamt.shift()}
+      if (n<0) return;
+      Drehnummer=Drehnummer+1;
+      Log0.innerHTML='das war '+Drehnummer+'. '+Loesetext[n];
+      Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehliste_gesamt;
       if (n==12) {Drehstart=frametime;Drehliste.length=0;id_DreheL.click();return}
       if (n==13) {Drehstart=frametime;Drehliste.length=0;id_Kippe.click();return}
       if (n==14) {Drehstart=frametime;Drehliste.length=0;id_DreheR.click();return}
-      if (n<0) {/*Log0.innerHTML=Log0.innerHTML+' n='+n; */return}
       if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);//am Platz
-      if (n>-1) Drehnummer=Drehnummer+1;
-      Log0.innerHTML=Drehnummer+'. '+Loesetext[n];
       //alert(n);
       animate_start();
       Drehstart=frametime;
@@ -432,6 +433,39 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
     } else RCube_alte_Ausrichtung=RCube.rotation.clone();
   }
 
+function Ergaenze_Loeseliste_mit(n) {
+  let n6=n%6;
+  switch (Ausrichtung_der_Mitten.indexOf(n6)) {
+    case 0: if (Loeseliste.length%2==0) {
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      } else {
+        Loeseliste.push(14);permutiere_die_Mitten(DreheLpermutation);
+        Loeseliste.push(14);permutiere_die_Mitten(DreheLpermutation);
+        Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+        }
+      break;
+    case 1:
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      break;
+    case 2:
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      break;
+    case 3:
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      break;
+    case 4:
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      break;
+    }
+  if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
+  Loeseliste.push(n);  
+  }
+
 function suche(i) {//if (i==4) alert('suche(4) gestartet');
   let RET=scene.getObjectByName(LISTE[i].name);
   let WET=RET.userData.P;
@@ -439,47 +473,28 @@ function suche(i) {//if (i==4) alert('suche(4) gestartet');
   //if (i==4) alert('i='+i+': '+RET.name+' '+WET+' '+GET);
   for (let j=0;j<GET.length;j++) {
     let n=GET[j];
-    let n6=n%6;
-    if (Ausrichtung_der_Mitten.indexOf(n6)==0) {
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      } else
-    if (Ausrichtung_der_Mitten.indexOf(n6)==1) {
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      } else
-    if (Ausrichtung_der_Mitten.indexOf(n6)==2) {
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      } else
-    if (Ausrichtung_der_Mitten.indexOf(n6)==3) {
-      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      } else
-    if (Ausrichtung_der_Mitten.indexOf(n6)==4) {
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      }
-    if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
-    Loeseliste.push(n);
+    Ergaenze_Loeseliste_mit(n);
     }
   if (GET.length>0) suche(i); else Loeseliste.push(-i-1);
   return GET;
   } 
 
 let Loesetext=[
-  'vorn (rot) plus',
-  'rechts (grün) plus',
-  'hinten (orange) plus',
-  'links (blau) plus',
-  'oben (gelb) plus',
-  'unten (weiß) plus',
-  'vorn (rot) minus',
-  'rechts (grün) minus',
-  'hinten (orange) minus',
-  'links (blau) minus',
-  'oben (gelb) minus',
-  'unten (weiß) minus',
+  'rot plus',
+  'grün plus',
+  'orange plus',
+  'blau plus',
+  'gelb plus',
+  'weiß plus',
+  'rot minus',
+  'grün minus',
+  'orange minus',
+  'blau minus',
+  'gelb minus',
+  'weiß minus',
+  'gesamt vorn nach rechts',
+  'gesamt vorn nach oben',
+  'gesamt vorn nach links',
   ];
 //[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5]; 
 let Loesetext2=[
@@ -548,6 +563,9 @@ alert(pixels);
   suche(6);
   suche(4);
   suche(2)/**/
+  Ergaenze_Loeseliste_mit(5);
+  Ergaenze_Loeseliste_mit(11);
+  while (Ausrichtung_der_Mitten[0]>0) {Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation)}
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   //alert(Loeseliste);
   WW=structuredClone(WWMERK);
@@ -1488,7 +1506,7 @@ button {font-size:1.3em}
 <div><button id='id_mische' style='font-size:300%'>mischen</button></div>
 <div><button id='id_loese' style='font-size:300%'>lösen</button> <input id='id_Einzelschritte' type='checkbox' checked='checked'>Einzelschritte</input></div>
 <!--div><button id='id_weiter' style='font-size:300%'>weiter</button></div-->
-<div id='Log0' style='display:flex; display:non; overflow:auto; font-family:monospace; font-size:140%; white-space:pre;'>1.</div>
+<div id='Log0' style='display:flex; display:non; overflow:auto; font-family:monospace; font-size:100%; white-space:pre;'>1.</div>
 <div><button id='id_nochmal' style='font-size:300%'>(nochmal)</button></div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
