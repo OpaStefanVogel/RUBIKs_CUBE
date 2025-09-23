@@ -429,7 +429,7 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
  //   RCube.rotateY(0.01);
     RCube.setRotationFromEuler(RCube_alte_Ausrichtung);
     RCube.rotateOnWorldAxis(RCube_neue_Ausrichtung[0],alpha*Math.PI/2);
-    Log5.innerHTML=alpha+' '+JSON.stringify(RCube_neue_Ausrichtung);
+    //Log5.innerHTML=alpha+' '+JSON.stringify(RCube_neue_Ausrichtung);
     } else RCube_alte_Ausrichtung=RCube.rotation.clone();
   }
 
@@ -1089,6 +1089,7 @@ function Anfang() {
   weiter=1;
   Drehliste_gesamt=[];
   Drehnummer=0;
+  Testindex=5;
   Test4();
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
@@ -1246,8 +1247,9 @@ function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
   if (fr==99) if (fg>fb+10) RET='orange'; else RET='red';
   if (fg==99) RET='green';
-  if ((fr>70)&&(fg>90)) RET='yellow';
+  if ((fr>70)&&(fg>70)) RET='yellow';
   if (fb==99) if (fm<90) RET='blue'; else RET='white';
+  if (fr==99) if (fm>130) RET='white';
   return RET;
   }
 
@@ -1352,7 +1354,7 @@ Lenken_rechtsrum.addEventListener('click',function() {wsend('Motor_2_plus')});
 Kippen_hochzu.addEventListener('click',function() {wsend('Motor_1_Kippen')});
 Festhalten.addEventListener('click',function() {wsend('Motor_1_Festhalten')});
 Loslassen.addEventListener('click',function() {wsend('Motor_1_Loslassen')});
-Loesung_schicken.addEventListener('click',function() {wsend('Loeseliste=['+Loeseliste.slice(0,10)+',...]')});
+Loesung_schicken.addEventListener('click',function() {wsend('msg.Loeseliste=['+Loeseliste.slice(0,10)+',...]')});
 
 
 ////Ausrichtungen:
@@ -1580,5 +1582,30 @@ hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
 
 </div>
 
+
+<svg width='600' height='600' style='border:solid' id='Farbensechseck'>
+  <defs>
+    <path id='farbe_255_0_0_1' d='M0,0 v-13 h-6 v13 h6' transform='translate(300,300) rotate(0) scale(1)' fill='rgba(255,0,0,1)'/>
+    </defs>
+  </svg>
 <script>
+function zeichne_Farbe(r,g,b,a,phi) {
+  let p=farbe_255_0_0_1.cloneNode();
+  p.removeAttribute('id');
+  p.setAttribute('fill','rgba('+r+','+g+','+b+','+(a/256)+')');
+  p.setAttribute('transform','translate(300,300) rotate('+phi+') translate('+(200*a/256)+',0) scale(1,'+(a/256)+')');
+  Farbensechseck.appendChild(p);
+  }
+
+for (let a=0;a<=256;a=a+8) for (let phi=0;phi<=60;phi=phi+4) {
+  let r=255;
+  let g=255*phi/60;
+  let b=0;
+  zeichne_Farbe(r,g,b,a,-phi);
+  r=255*phi/60;g=255;b=0;zeichne_Farbe(r,g,b,a,-120+phi);
+  b=255*phi/60;g=255;r=0;zeichne_Farbe(r,g,b,a,-120-phi);
+  g=255*phi/60;b=255;r=0;zeichne_Farbe(r,g,b,a,-240+phi);
+  r=255*phi/60;b=255;g=0;zeichne_Farbe(r,g,b,a,-240-phi);
+  b=255*phi/60;r=255;g=0;zeichne_Farbe(r,g,b,a,0+phi);
+  }
   </script></body></html>
