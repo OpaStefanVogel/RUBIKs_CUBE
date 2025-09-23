@@ -411,8 +411,8 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       if ((beachte_Checkbox_Einzelschritte==true)&&(id_Einzelschritte.checked==true)) weiter=0;
       Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
       let n=Drehliste_gesamt.shift();
-      while (n<0&&Drehliste_gesamt.length>0) {n=Drehliste_gesamt.shift()}
-      if (n<0) return;
+      while (((n<0)||(n>14))&&Drehliste_gesamt.length>0) {n=Drehliste_gesamt.shift()}
+      if (n<0||n>14) return;
       Drehnummer=Drehnummer+1;
       Log0.innerHTML='das war '+Drehnummer+'. '+Loesetext[n];
       Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehliste_gesamt;
@@ -463,7 +463,7 @@ function Ergaenze_Loeseliste_mit(n) {
       break;
     }
   if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
-  Loeseliste.push(n);  
+  Loeseliste.push(15,n,16);  
   }
 
 function suche(i) {//if (i==4) alert('suche(4) gestartet');
@@ -574,8 +574,10 @@ alert(pixels);
   let Loesung='Lösung nach <a href="https://www.taurelin.de/downloads/anfaengermethode.pdf">taurelin anfaengermethode.pdf</a>: <div>Lege gelbe Mitte nach oben und grüne Mitte nach rechts.</div><div>plus heißt Drehung im Uhrzeigersinn.</div><div>minus heißt Drehung entgegen Uhrzeigersinn.</div>';
   Drehnummer=0;
   for (let i=0;i<Loeseliste.length;i++) if (Loeseliste[i]>-1) {
-    Drehnummer=Drehnummer+1;
-    Loesung=Loesung+'\n</div><div>'+Drehnummer+'. Drehung '+Loesetext[Loeseliste[i]];
+    if (Loeseliste[i]<15) {
+      Drehnummer=Drehnummer+1;
+      Loesung=Loesung+'\n</div><div>'+Drehnummer+'. Drehung '+Loesetext[Loeseliste[i]];
+      }
     } else Loesung=Loesung+', '+Loesetext2[-Loeseliste[i]-1]+' ist am Platz';
   Log6.innerHTML=Loesung;
   Drehnummer=0;
@@ -1354,7 +1356,7 @@ Lenken_rechtsrum.addEventListener('click',function() {wsend('Motor_2_plus')});
 Kippen_hochzu.addEventListener('click',function() {wsend('Motor_1_Kippen')});
 Festhalten.addEventListener('click',function() {wsend('Motor_1_Festhalten')});
 Loslassen.addEventListener('click',function() {wsend('Motor_1_Loslassen')});
-Loesung_schicken.addEventListener('click',function() {wsend('msg.Loeseliste=['+Loeseliste.slice(0,10)+',...]')});
+Loesung_schicken.addEventListener('click',function() {wsend('msg.Loeseliste=['+Loeseliste.slice(0,8)+',...]')});
 
 
 ////Ausrichtungen:
