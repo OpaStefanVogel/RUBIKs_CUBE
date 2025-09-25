@@ -818,7 +818,7 @@ function knips() {
   scanbit=0;
   scannum=0;
   myImg.src=Testphotos[Testindex];
-  setTimeout(function() {scannen(Farben)},100);
+  setTimeout(function() {scannen(Farben)},2000);
   //return Testfarben[Testindex];
   }
 
@@ -1149,6 +1149,42 @@ myImg.onload = () => {//alert('onload');
   context.drawImage(myImg, 0, 0);
   //context.drawImage(myImg, 0, 0, myImg.width,    myImg.height, 0, 0, canvas2.width, canvas2.height);
   //let data = {};
+
+  Schattenarray=[];
+  for (let i=48;i<220;i=i+1) {
+    Schattenarray[i]=[];
+    for (let j=48;j<220;j=j+1) {
+      let { data } = context.getImageData(j, i, 1, 1);
+      //alert(data);
+      let w=data[0]+data[1]+data[2];
+      Schattenarray[i][j]=Math.floor(w/100);
+      }
+    //if (i>100&&i<130) alert(i+' '+Schattenarray[i].slice(100,130));
+    }
+  //Log8.innerHTML=Schattenarray.slice(88,200).join('\n');
+  let min=9999999;
+  let s=0,t=Schattenarray,u=0,v=0,uv=[];
+  for (let k=0;k<4;k++) {
+    min=9999999;
+    for (let i=106;i<180;i=i+1) for (let j=106;j<180;j=j+1) {
+      s=t[i][j]+t[i-1][j]+t[i-2][j]+t[i-3][j]+t[i-4][j]+t[i+1][j]+t[i+2][j]+t[i+3][j]+t[i+4][j]
+               +t[i][j-1]+t[i][j-2]+t[i][j-3]+t[i][j-4]+t[i][j+1]+t[i][j+2]+t[i][j+3]+t[i][j+4]
+               +t[i+1][j-1]+t[i+1][j-1]+t[i-1][j+1]+t[i-1][j-1];
+      if (s<min) {min=s;u=i;v=j}
+      }
+    for (let i=u-30;i<u+30;i=i+1) for (let j=v-30;j<v+30;j=j+1) Schattenarray[i][j]=8;
+    uv.push([v,u]);//alert([u,v]);
+    }
+  uv.sort();
+  if (uv[0][1]>uv[1][1]) uv.splice(0,2,uv[1],uv[0]);
+  if (uv[2][1]<uv[3][1]) uv.splice(2,2,uv[3],uv[2]);
+  Log8.innerHTML='uv=\n'+uv.join('\n')+'\n';//+Schattenarray.slice(88,200).join('\n');
+  Mittelstein.setAttribute('d','M'+uv[0][0]+','+uv[0][1]
+    +' L'+uv[1][0]+','+uv[1][1]
+    +' '+uv[2][0]+','+uv[2][1]
+    +' '+uv[3][0]+','+uv[3][1]
+    +' Z');
+
   dataArray=[];
   let text = [];
   for (let Location of [[eventLocation.x, eventLocation.y], 
@@ -1163,18 +1199,6 @@ myImg.onload = () => {//alert('onload');
   //console.log(data);
   Log3.innerHTML=eventLocation.x+' '+eventLocation.y+'\n'+text;
   Farben_aus_Daten_bestimmen();//alert(canvas2.height);
-  Schattenarray=[];
-  for (let i=88;i<200;i=i+1) {
-    Schattenarray[i]=[];
-    for (let j=88;j<200;j=j+1) {
-      let { data } = context.getImageData(j, i, 1, 1);
-      //alert(data);
-      let w=data[0]+data[1]+data[2];
-      Schattenarray[i][j-88]=Math.floor(w/100);
-      }
-    //if (i>100&&i<130) alert(i+' '+Schattenarray[i].slice(100,130));
-    }
-  Log8.innerHTML=Schattenarray.slice(88,200).join('\n');
   }
 
 
@@ -1488,7 +1512,8 @@ button {font-size:1.3em}
 <text id='id_scannum' x='290' y='200' style='font-size:700%'>5</text>
 <rect id='id_rectangle' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>
 <g transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='1' stroke='black'>
-  <rect x='72' y='72' width='144' height='144'/>
+  <!--rect x='72' y='72' width='144' height='144'/-->
+  <path id='Mittelstein' d='M72,72 L72,216 216,216 216,72 Z' stroke='green'/>
   <circle id="linksoben" cx="96" cy="96" r="10"/>
   <circle id="mitteoben" cx="144" cy="96" r="10"/>
   <circle id="rechtsoben" cx="192" cy="96" r="10"/>
