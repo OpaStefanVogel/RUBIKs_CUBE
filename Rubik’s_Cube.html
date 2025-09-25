@@ -1184,13 +1184,43 @@ myImg.onload = () => {//alert('onload');
     +' '+uv[2][0]+','+uv[2][1]
     +' '+uv[3][0]+','+uv[3][1]
     +' Z');
+  let cc=[];
+  cc[0]=[uv[0][0]-(uv[3][0]-uv[0][0])/2,uv[0][1]-(uv[1][1]-uv[0][1])/2];
+  linksoben.setAttribute('cx',cc[0][0]);
+  linksoben.setAttribute('cy',cc[0][1]);
+  cc[2]=[uv[3][0]+(uv[3][0]-uv[0][0])/2,uv[3][1]-(uv[2][1]-uv[3][1])/2];
+  rechtsoben.setAttribute('cx',cc[2][0]);
+  rechtsoben.setAttribute('cy',cc[2][1]);
+  cc[6]=[uv[1][0]-(uv[2][0]-uv[1][0])/2,uv[1][1]+(uv[1][1]-uv[0][1])/2];
+  linksunten.setAttribute('cx',cc[6][0]);
+  linksunten.setAttribute('cy',cc[6][1]);
+  cc[8]=[uv[2][0]+(uv[2][0]-uv[1][0])/2,uv[2][1]+(uv[2][1]-uv[3][1])/2];
+  rechtsunten.setAttribute('cx',cc[8][0]);
+  rechtsunten.setAttribute('cy',cc[8][1]);
+  cc[1]=[(cc[0][0]+cc[2][0])/2,(cc[0][1]+cc[2][1])/2];
+  mitteoben.setAttribute('cx',cc[1][0]);
+  mitteoben.setAttribute('cy',cc[1][1]);
+  cc[3]=[(cc[0][0]+cc[6][0])/2,(cc[0][1]+cc[6][1])/2];
+  linksmitte.setAttribute('cx',cc[3][0]);
+  linksmitte.setAttribute('cy',cc[3][1]);
+  cc[5]=[(cc[2][0]+cc[8][0])/2,(cc[2][1]+cc[8][1])/2];
+  rechtsmitte.setAttribute('cx',cc[5][0]);
+  rechtsmitte.setAttribute('cy',cc[5][1]);
+  cc[4]=[(cc[3][0]+cc[5][0])/2,(cc[3][1]+cc[5][1])/2];
+  mittemitte.setAttribute('cx',cc[4][0]);
+  mittemitte.setAttribute('cy',cc[4][1]);
+  cc[7]=[(cc[6][0]+cc[8][0])/2,(cc[6][1]+cc[8][1])/2];
+  mitteunten.setAttribute('cx',cc[7][0]);
+  mitteunten.setAttribute('cy',cc[7][1]);
 
+  
   dataArray=[];
-  let text = [];
+  let text = [];//alert(cc);
   for (let Location of [[eventLocation.x, eventLocation.y], 
-        [96,96], [144,96], [192,96], 
-        [96,144], [144,144], [192,144], 
-        [96,192], [144,192], [192,192], ]) {
+        cc[0], cc[1], cc[2], //[96, 96], [144, 96], [192, 96],
+        cc[3], cc[4], cc[5], //[96,144], [144,144], [192,144], 
+        cc[6], cc[7], cc[8], //[96,192], [144,192], [192,192], 
+        ]) {
     let { data } = context.getImageData(Location[0], Location[1], 2, 2);
     //alert(JSON.stringify(context.getImageData(Location[0], Location[1], 2, 2)));//{"data":{"0":0,"1":105,...,"15":255}}
     dataArray.push(data);
@@ -1513,7 +1543,7 @@ button {font-size:1.3em}
 <rect id='id_rectangle' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>
 <g transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='1' stroke='black'>
   <!--rect x='72' y='72' width='144' height='144'/-->
-  <path id='Mittelstein' d='M72,72 L72,216 216,216 216,72 Z' stroke='green'/>
+  <path id='Mittelstein' d='M72,72 L72,216 216,216 216,72 Z' stroke='none'/>
   <circle id="linksoben" cx="96" cy="96" r="10"/>
   <circle id="mitteoben" cx="144" cy="96" r="10"/>
   <circle id="rechtsoben" cx="192" cy="96" r="10"/>
