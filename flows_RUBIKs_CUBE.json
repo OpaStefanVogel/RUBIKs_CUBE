@@ -554,11 +554,28 @@
                 "t": "cont",
                 "v": "Motor_LED",
                 "vt": "str"
+            },
+            {
+                "t": "regex",
+                "v": "Loeseliste*",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "regex",
+                "v": "Motor_Summer*",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 10,
+        "outputs": 13,
         "x": 330,
         "y": 560,
         "wires": [
@@ -575,7 +592,9 @@
                 "98f86cbc.8653b8"
             ],
             [
-                "31469676.19663a"
+                "31469676.19663a",
+                "8cdb281c.c88cd",
+                "a034968.0baa268"
             ],
             [
                 "81b39bde.744b58"
@@ -591,6 +610,15 @@
             ],
             [
                 "1ca8da31.76b966"
+            ],
+            [
+                "182547ce.903f08"
+            ],
+            [
+                "8c339de4.4167d"
+            ],
+            [
+                "a9783c38.9ddef8"
             ]
         ]
     },
@@ -603,8 +631,8 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
-        "x": 540,
+        "complete": "true",
+        "x": 520,
         "y": 820,
         "wires": []
     },
@@ -634,7 +662,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "2",
+        "timeout": "1.5",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -647,7 +675,8 @@
         "y": 1180,
         "wires": [
             [
-                "bcd059c6.a3f3c"
+                "bcd059c6.a3f3c",
+                "f3b0edad.9b4fe8"
             ]
         ]
     },
@@ -725,7 +754,7 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 70,
+        "x": 90,
         "y": 1340,
         "wires": [
             [
@@ -920,7 +949,8 @@
         "y": 1520,
         "wires": [
             [
-                "c6f7a9d4.4a168"
+                "c6f7a9d4.4a168",
+                "f3b0edad.9b4fe8"
             ]
         ]
     },
@@ -1175,12 +1205,12 @@
         "syntax": "mustache",
         "template": "0",
         "output": "str",
-        "x": 230,
-        "y": 1320,
+        "x": 70,
+        "y": 1560,
         "wires": [
             [
                 "7a515ccc.76b344",
-                "1be2a623.46d662"
+                "35e0cad4.cd6f66"
             ]
         ]
     },
@@ -1190,10 +1220,10 @@
         "z": "1777d44f.558154",
         "op1": "1",
         "op2": "0",
-        "op1type": "val",
-        "op2type": "val",
+        "op1type": "str",
+        "op2type": "str",
         "duration": "250",
-        "extend": "false",
+        "extend": false,
         "units": "ms",
         "reset": "",
         "bytopic": "all",
@@ -1274,6 +1304,220 @@
             [
                 "4f1772f5.13d30c"
             ]
+        ]
+    },
+    {
+        "id": "c29e705d.0a2258",
+        "type": "rpi-gpio in",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pin": "40",
+        "intype": "up",
+        "debounce": "80",
+        "read": true,
+        "x": 500,
+        "y": 920,
+        "wires": [
+            [
+                "3588684.d223618",
+                "8cbdd510.eeb86"
+            ]
+        ]
+    },
+    {
+        "id": "3588684.d223618",
+        "type": "debug",
+        "z": "1777d44f.558154",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 590,
+        "y": 1660,
+        "wires": []
+    },
+    {
+        "id": "8cbdd510.eeb86",
+        "type": "switch",
+        "z": "1777d44f.558154",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 750,
+        "y": 880,
+        "wires": [
+            [],
+            [
+                "31469676.19663a",
+                "f3b0edad.9b4fe8"
+            ]
+        ]
+    },
+    {
+        "id": "96ba110f.8b2b78",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "Testlösung erster Schritt",
+        "topic": "",
+        "payload": "Loeseliste=[12,12,13,15,0,16,-2,14,13,15,1,16,-10,13,15,2,16,-8,13,15,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,14,13,15,5,16,15,11,16,12,12,12]",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 760,
+        "wires": [
+            [
+                "a9783c38.9ddef8"
+            ]
+        ]
+    },
+    {
+        "id": "182547ce.903f08",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "eval(msg.payload)",
+        "func": "eval(msg.payload);\nmsg.Loeseliste=Loeseliste;\n//node.status({\"text\":Loeseliste});\nglobal.set(\"Loeseliste\",Loeseliste);\nmsg.payload=0;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 530,
+        "y": 780,
+        "wires": [
+            [
+                "b9558c61.7571f",
+                "8c339de4.4167d"
+            ]
+        ]
+    },
+    {
+        "id": "8c339de4.4167d",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "switch 0 zu Motor_2_plus",
+        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      Loeseliste.unshift(z+6,z+6);\n      global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: msg.payload='Motor_1_Loslassen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 790,
+        "y": 740,
+        "wires": [
+            [
+                "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "cd650767.bbb04",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "Testlösung nächster Schritt",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 180,
+        "y": 820,
+        "wires": [
+            [
+                "8c339de4.4167d"
+            ]
+        ]
+    },
+    {
+        "id": "35e0cad4.cd6f66",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1.6",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 240,
+        "y": 1580,
+        "wires": [
+            [
+                "c6f7a9d4.4a168",
+                "f3b0edad.9b4fe8"
+            ]
+        ]
+    },
+    {
+        "id": "f3b0edad.9b4fe8",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 840,
+        "y": 1180,
+        "wires": [
+            [
+                "8c339de4.4167d"
+            ]
+        ]
+    },
+    {
+        "id": "a9783c38.9ddef8",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Testbeispiel",
+        "func": "msg.payload='Loeseliste=[12,12,13,15,0,16,-2,14,13,15,1,16,-10,13,15,2,16,-8,13,15,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,14,13,15,5,16,15,11,16,12,12,12]';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 210,
+        "y": 720,
+        "wires": [
+            [
+                "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "8cdb281c.c88cd",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Loeseliste=[]",
+        "func": "global.set('Loeseliste',[]);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 600,
+        "wires": [
+            []
         ]
     }
 ]
