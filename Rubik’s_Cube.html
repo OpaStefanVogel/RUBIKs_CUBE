@@ -816,9 +816,9 @@ function knips() {
   Testindex=(Testindex+1)%6;
   canvas4.src=Testphotos[Testindex];
   scanbit=0;
-  scannum=0;
+  scannum=4;//bewirkt cc setzen
   myImg.src=Testphotos[Testindex];
-  setTimeout(function() {scannen(Farben)},2000);
+  setTimeout(function() {scannum=0;scannen(Farben)},2000);//scannum=0 bewirkt weiterdrehen
   //return Testfarben[Testindex];
   }
 
@@ -1154,6 +1154,7 @@ myImg.onload = () => {//alert('onload');
   //context.drawImage(myImg, 0, 0, myImg.width,    myImg.height, 0, 0, canvas2.width, canvas2.height);
   //let data = {};
 
+  if (mit_Fokus.checked) ; else cc=structuredClone(cc1);
   if (scannum==4&&cc[0][0]==144&&mit_Fokus.checked) {
     Schattenarray=[];
     for (let i=48;i<220;i=i+1) {
@@ -1398,18 +1399,19 @@ let scannum=5;
 let scanbit=1;
 let dran_ist='red';
 let dran_merk='none';
-let Focusbit=false;
-
 
 setInterval(function(){
   if (scanbit==1) {
     scannum=scannum-1;
     myImg.src=canvas4.src;//endet mit Farben_aus_Daten_bestimmen()
-    if (Farben.join('-')!=dran_merk) scannum=6;
+    if (Farben.join('-')!=dran_merk) scannum=5;
     dran_merk=Farben.join('-');
     if (scannum==-1) scannum=5;
-    if (Farben[4]==dran_ist) scannen(Farben); else {cc=structuredClone(cc0); scannum=6; }
-    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='.'; 
+    if (Farben[4]==dran_ist) scannen(Farben); else {
+      if (mit_Fokus.checked) cc=structuredClone(cc0); else cc=structuredClone(cc1); 
+      scannum=5;
+      }
+    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='?';
     }
   },1000);
   
@@ -1723,6 +1725,7 @@ ok die circle auch färben
 ok Lösung als Einzelschritte
 ok mit den echten Farben einfärben
 ok Lösung nicht gleich starten
+.. Error wenn Farben keine Lösung ergeben
 .. Log-files neu anordnen
 .. Verbindung zu gap
 .. zu Robi verbinden
