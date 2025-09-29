@@ -1140,6 +1140,10 @@ alert('webgl2: '+pixels);
 
 let dataArray=[];
 let Schattenarray=[];
+let cc0=[[144,144], [144,144], [144,144], [144,144], [144,144], [144,144], [144,144], [144,144], [144,144]];
+let cc1=[[96, 96], [144, 96], [192, 96], [96,144], [144,144], [192,144], [96,192], [144,192], [192,192]];
+
+let cc=structuredClone(cc0);
 const myImg = new Image();
 myImg.crossOrigin = "Anonymous";
 myImg.onload = () => {//alert('onload');
@@ -1150,11 +1154,7 @@ myImg.onload = () => {//alert('onload');
   //context.drawImage(myImg, 0, 0, myImg.width,    myImg.height, 0, 0, canvas2.width, canvas2.height);
   //let data = {};
 
-  let cc=[
-    [96, 96], [144, 96], [192, 96],
-    [96,144], [144,144], [192,144], 
-    [96,192], [144,192], [192,192]];
-  if (mit_Fokus.checked) {
+  if (scannum==4&&cc[0][0]==144&&mit_Fokus.checked) {
     Schattenarray=[];
     for (let i=48;i<220;i=i+1) {
       Schattenarray[i]=[];
@@ -1323,8 +1323,8 @@ function MinDist(fr,fg,fb,fm,h,s,l) {
   if (fr==99) if (fg>fb+10) RET='orange'; else RET='red';
   if (fg==99) RET='green';
   if ((fr>70)&&(fg>70)) RET='yellow';
-  if (fb==99) if (fm<90) RET='blue'; else RET='white';
-  if (fr==99) if (fm>130) RET='white';
+  if (fb==99) if (fm<50) RET='blue'; else RET='white';
+  if (fr==99) if (fm>70) RET='white';
   return RET;
   }
 
@@ -1398,16 +1398,18 @@ let scannum=5;
 let scanbit=1;
 let dran_ist='red';
 let dran_merk='none';
+let Focusbit=false;
+
 
 setInterval(function(){
   if (scanbit==1) {
     scannum=scannum-1;
     myImg.src=canvas4.src;//endet mit Farben_aus_Daten_bestimmen()
-    if (Farben.join('-')!=dran_merk) scannum=5;
+    if (Farben.join('-')!=dran_merk) scannum=6;
     dran_merk=Farben.join('-');
     if (scannum==-1) scannum=5;
-    if (Farben[4]==dran_ist) scannen(Farben); else scannum=5;
-    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='?'; 
+    if (Farben[4]==dran_ist) scannen(Farben); else {cc=structuredClone(cc0); scannum=6; }
+    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='.'; 
     }
   },1000);
   
@@ -1462,7 +1464,7 @@ Lenken_rechtsrum.addEventListener('click',function() {wsend('Motor_2_plus')});
 Kippen_hochzu.addEventListener('click',function() {wsend('Motor_1_Kippen')});
 Festhalten.addEventListener('click',function() {wsend('Motor_1_Festhalten')});
 Loslassen.addEventListener('click',function() {wsend('Motor_1_Loslassen')});
-Loesung_schicken.addEventListener('click',function() {wsend('msg.Loeseliste=['+Loeseliste.slice(0,8)+',...]')});
+Loesung_schicken.addEventListener('click',function() {wsend('Loeseliste=['+Loeseliste+']')});
 
 
 ////Ausrichtungen:
@@ -1478,25 +1480,6 @@ function permutiere_die_Mitten(perm) {
   }
    
 
-/*jetzt noch:  
-ok bei Farbwechsel wieder 5
-ok fullscreen geht nur nach click-event
-ok andere Drehrichtung von rot auf blau
-ok Lösung ausgeben, rot-weiß fertig dazuschreiben
-ok Anfangsstellung
-ok Eingabe Adresse IP-Webcam 
-ok die circle auch färben
-ok Lösung als Einzelschritte
-ok mit den echten Farben einfärben
-ok Lösung nicht gleich starten
-.. Log-files neu anordnen
-.. Verbindung zu gap
-.. zu Robi verbinden
-.. das Farbensechseck
-.. nochmal mit sichtbarem Zurückdrehen
-.. Anzeige des einzelnen Lösungstextes
-.. die 4 schwarzen Lücken erkennen
-*/
 
   </script>
 
@@ -1728,4 +1711,35 @@ for (let a=0;a<=256;a=a+8) for (let phi=0;phi<=60;phi=phi+4) {
   }
   </script>
 
+<div id='Log8' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
+/*jetzt noch:  
+ok bei Farbwechsel wieder 5
+ok fullscreen geht nur nach click-event
+ok andere Drehrichtung von rot auf blau
+ok Lösung ausgeben, rot-weiß fertig dazuschreiben
+ok Anfangsstellung
+ok Eingabe Adresse IP-Webcam 
+ok die circle auch färben
+ok Lösung als Einzelschritte
+ok mit den echten Farben einfärben
+ok Lösung nicht gleich starten
+.. Log-files neu anordnen
+.. Verbindung zu gap
+.. zu Robi verbinden
+ok das Farbensechseck
+  .. wirklich Sechseck
+  .. weiter oben
+  .. Bereiche variabel eingrenzen
+nö nochmal mit sichtbarem Zurückdrehen nö rastet ein
+.. Anzeige des einzelnen Lösungstextes
+ok die 4 schwarzen Lücken erkennen
+  .. noch abschaltbar machen
+.. die Mandeln
+.. das Gewicht
+.. 14 15 u.a. zusammenfassen
+.. rechtsrum auch in Gang bringen noch
+.. die Summer
+.. 'jetzt noch' als Minichat oder sowas
+*/
+  </div>
 </body></html>
