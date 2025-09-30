@@ -564,7 +564,8 @@ alert(pixels);
   suche(4);
   suche(2)/**/
   Ergaenze_Loeseliste_mit(5);
-  Ergaenze_Loeseliste_mit(11);
+  //Ergaenze_Loeseliste_mit(11);
+  Loeseliste.pop();Loeseliste.pop();
   while (Ausrichtung_der_Mitten[0]>0) {Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation)}
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   //alert(Loeseliste);
@@ -818,7 +819,7 @@ function knips() {
   scanbit=0;
   scannum=4;//bewirkt cc setzen
   myImg.src=Testphotos[Testindex];
-  setTimeout(function() {scannum=0;scannen(Farben)},2000);//scannum=0 bewirkt weiterdrehen
+  setTimeout(function() {scannum=0;scannen(Farben)},200);//scannum=0 bewirkt weiterdrehen
   //return Testfarben[Testindex];
   }
 
@@ -899,7 +900,7 @@ function scannen(Farben) {
     if (scannum==0) {
       mf();dran_ist='red';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime];wsend('Motor_1_Kippen');
       //nur if ... setTimeout(id_loese.click,1000) geht nicht
-      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; canvas4.src=''; setTimeout(function() {id_loese.click(); Loesung_schicken.click()},3000)};
+      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; /*canvas4.src='';*/ setTimeout(function() {id_loese.click(); weiter=0; Loesung_schicken.click()},3000)};
       }
     }  
   if (Farben[4]=='white') {
@@ -1197,7 +1198,7 @@ myImg.onload = () => {//alert('onload');
     cc[1]=[(cc[0][0]+cc[2][0])/2,(cc[0][1]+cc[2][1])/2];
     cc[3]=[(cc[0][0]+cc[6][0])/2,(cc[0][1]+cc[6][1])/2];
     cc[5]=[(cc[2][0]+cc[8][0])/2,(cc[2][1]+cc[8][1])/2];
-    cc[4]=[(cc[3][0]+cc[5][0])/2,(cc[3][1]+cc[5][1])/2];
+    //cc[4]=[(cc[3][0]+cc[5][0])/2,(cc[3][1]+cc[5][1])/2];
     cc[7]=[(cc[6][0]+cc[8][0])/2,(cc[6][1]+cc[8][1])/2];
     }
   
@@ -1481,7 +1482,9 @@ function permutiere_die_Mitten(perm) {
   id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
   }
    
-
+function Antwort_auswerten(w) {
+  setTimeout(function() {id_loese.click()},100);
+  }
 
   </script>
 
@@ -1515,7 +1518,7 @@ button {font-size:1.3em}
   <button id='Festhalten'>Festhalten</button>,
   <button id='Loslassen'>Loslassen</button>,
   <button id='Loesung_schicken'>Lösung schicken</button>,
-  gesendet: <span id='Antwort' style='display:inline-flex; overflow:auto; white.space:pre'> </span>.
+  gesendet: <span id='Antwort' style='display:flex; overflow:auto; white.space:pre'> </span>.
   </div>
 
 <div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> installieren, auf Videoauflösung 352x288 und Port <input id='id_port' value='http://localhost:56147'/> konfigurieren, dann starten und <button id='id_Test4'>verbinden</button>,
@@ -1714,7 +1717,7 @@ for (let a=0;a<=256;a=a+8) for (let phi=0;phi<=60;phi=phi+4) {
   </script>
 
 <div id='Log8' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
-/*jetzt noch:  
+jetzt noch:  
 ok bei Farbwechsel wieder 5
 ok fullscreen geht nur nach click-event
 ok andere Drehrichtung von rot auf blau
@@ -1743,6 +1746,7 @@ ok die 4 schwarzen Lücken erkennen
 .. rechtsrum auch in Gang bringen noch
 .. die Summer
 .. 'jetzt noch' als Minichat oder sowas
-*/
+o. websocket Antwort
+
   </div>
 </body></html>
