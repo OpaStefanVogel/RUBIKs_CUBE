@@ -589,7 +589,9 @@
                 "6fc0a8ed.a6e568"
             ],
             [
-                "98f86cbc.8653b8"
+                "98f86cbc.8653b8",
+                "6021b993.1a6ac8",
+                "30d7e4f9.41a73c"
             ],
             [
                 "31469676.19663a",
@@ -597,13 +599,16 @@
                 "a034968.0baa268"
             ],
             [
-                "81b39bde.744b58"
+                "81b39bde.744b58",
+                "6021b993.1a6ac8",
+                "30d7e4f9.41a73c"
             ],
             [
                 "da7848c2.d67c08"
             ],
             [
-                "3ce7c0d7.cf1fd8"
+                "3ce7c0d7.cf1fd8",
+                "30d7e4f9.41a73c"
             ],
             [
                 "1db66ff7.3572d"
@@ -662,7 +667,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "1.2",
+        "timeout": "1.1",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -705,7 +710,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "2.2",
+        "timeout": "2.0",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -808,7 +813,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "2",
+        "timeout": "1.8",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -1143,28 +1148,13 @@
         "intype": "up",
         "debounce": "80",
         "read": true,
-        "x": 500,
-        "y": 920,
+        "x": 660,
+        "y": 1060,
         "wires": [
             [
-                "3588684.d223618",
                 "8cbdd510.eeb86"
             ]
         ]
-    },
-    {
-        "id": "3588684.d223618",
-        "type": "debug",
-        "z": "1777d44f.558154",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "x": 590,
-        "y": 1660,
-        "wires": []
     },
     {
         "id": "8cbdd510.eeb86",
@@ -1193,8 +1183,8 @@
         "wires": [
             [],
             [
-                "f3b0edad.9b4fe8",
-                "eac81e50.4dbe38"
+                "eac81e50.4dbe38",
+                "c44e353c.d3662"
             ]
         ]
     },
@@ -1240,7 +1230,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "switch 0 zu Motor_2_plus",
-        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      Loeseliste.unshift(z+6,z+6);\n      global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: msg.payload='Motor_1_Loslassen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }",
+        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      Loeseliste.unshift(z+6,z+6);\n      global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: msg.payload='Motor_1_Loslassen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
         "outputs": 1,
         "noerr": 0,
         "x": 790,
@@ -1277,7 +1267,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "1.4",
+        "timeout": "1.6",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -1356,7 +1346,7 @@
         "server": "330aaaaf.0cce26",
         "client": "",
         "x": 510,
-        "y": 340,
+        "y": 400,
         "wires": []
     },
     {
@@ -1383,11 +1373,11 @@
         "id": "6021b993.1a6ac8",
         "type": "function",
         "z": "1777d44f.558154",
-        "name": "",
-        "func": "\nreturn msg;",
+        "name": "global.set Drehung",
+        "func": "global.set('Drehung','läuft');\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 400,
+        "x": 790,
         "y": 440,
         "wires": [
             []
@@ -1432,6 +1422,45 @@
         "wires": [
             [
                 "31469676.19663a"
+            ]
+        ]
+    },
+    {
+        "id": "82b5c82a.6b04b",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 840,
+        "y": 1120,
+        "wires": [
+            [
+                "f3b0edad.9b4fe8"
+            ]
+        ]
+    },
+    {
+        "id": "c44e353c.d3662",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "global.get Drehung",
+        "func": "if (global.get('Drehung')=='läuft') {\n  global.set('Drehung','');\n  return msg;\n  }\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 930,
+        "y": 880,
+        "wires": [
+            [
+                "82b5c82a.6b04b"
             ]
         ]
     }
