@@ -436,18 +436,15 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
 function Ergaenze_Loeseliste_mit(n) {
   let n6=n%6;
   switch (Ausrichtung_der_Mitten.indexOf(n6)) {
-    case 0: if (Loeseliste.length%2==0) {
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+    case 0:
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
       Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      } else {
-        Loeseliste.push(14);permutiere_die_Mitten(DreheLpermutation);
-        Loeseliste.push(14);permutiere_die_Mitten(DreheLpermutation);
-        Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-        }
       break;
     case 1:
-      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
+      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
       Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
       break;
     case 2:
@@ -463,7 +460,13 @@ function Ergaenze_Loeseliste_mit(n) {
       break;
     }
   if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
-  Loeseliste.push(15,n,16);  
+  if (n<6) {
+    if ((Loeseliste.length>2)&&(Loeseliste[Loeseliste.length-2]==n+6)) {
+      Loeseliste.pop();
+      Loeseliste.pop();
+      Loeseliste.push(16);
+      } else Loeseliste.push(15,n+6,n+6,n+6,16); 
+    } else Loeseliste.push(15,n,16);  
   }
 
 function suche(i) {//if (i==4) alert('suche(4) gestartet');
@@ -563,10 +566,10 @@ alert(pixels);
   suche(6);
   suche(4);
   suche(2)/**/
-  Ergaenze_Loeseliste_mit(5);
-  //Ergaenze_Loeseliste_mit(11);
-  Loeseliste.pop();Loeseliste.pop();
-  while (Ausrichtung_der_Mitten[0]>0) {Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation)}
+  Ergaenze_Loeseliste_mit(11);
+  //Ergaenze_Loeseliste_mit(5);
+  Loeseliste.pop();Loeseliste.pop();Loeseliste.pop();
+  while (Ausrichtung_der_Mitten[0]>0) {Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation)}
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   //alert(Loeseliste);
   WW=structuredClone(WWMERK);
@@ -900,7 +903,7 @@ function scannen(Farben) {
     if (scannum==0) {
       mf();dran_ist='red';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime];wsend('Motor_1_Kippen');
       //nur if ... setTimeout(id_loese.click,1000) geht nicht
-      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; /*canvas4.src='';*/ setTimeout(function() {id_loese.click(); weiter=0; Loesung_schicken.click()},3000)};
+      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; /*canvas4.src='';*/ setTimeout(function() {id_loese.click(); weiter=0; Loesung_schicken.click()},6000)};
       }
     }  
   if (Farben[4]=='white') {
@@ -1412,7 +1415,7 @@ setInterval(function(){
       if (mit_Fokus.checked) cc=structuredClone(cc0); else cc=structuredClone(cc1); 
       scannum=5;
       }
-    if (Farben[4]==dran_ist) id_scannum.innerHTML=scannum; else id_scannum.innerHTML='?';
+    if (Farben[4]==dran_ist) {if (cc[0][0]==cc[1][0]) id_scannum.innerHTML=scannum+2; else id_scannum.innerHTML=scannum} else id_scannum.innerHTML='?';
     }
   },1000);
   
@@ -1483,7 +1486,7 @@ function permutiere_die_Mitten(perm) {
   }
    
 function Antwort_auswerten(w) {
-  setTimeout(function() {id_loese.click()},100);
+  if (Loeseliste.length>0) setTimeout(function() {id_loese.click()},100);
   }
 
   </script>
