@@ -408,6 +408,16 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       Obj.rotateOnWorldAxis(Achs,alpha*Wink);
       }
     } else if ((Drehliste_gesamt.length>0)&&frametime>2000&&weiter==1) {
+      for (let dd=0;dd<Drehliste.length;dd++) {
+        let d=Drehliste[dd];
+        let Obj=LISTE[d[0]];
+        let Achs=d[1];
+        let Wink=d[2];
+        if (d[3]) {
+          Obj.setRotationFromEuler(d[3]);
+          Obj.rotateOnWorldAxis(Achs,Wink);
+          }
+        }
       if ((beachte_Checkbox_Einzelschritte==true)&&(id_Einzelschritte.checked==true)) weiter=0;
       Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
       let n=Drehliste_gesamt.shift();
@@ -1734,22 +1744,26 @@ ok Lösung nicht gleich starten
 .. Error wenn Farben keine Lösung ergeben
 .. Log-files neu anordnen
 .. Verbindung zu gap
-.. zu Robi verbinden
+ok zu Robi verbinden
 ok das Farbensechseck
   .. wirklich Sechseck
   .. weiter oben
   .. Bereiche variabel eingrenzen
 nö nochmal mit sichtbarem Zurückdrehen nö rastet ein
-.. Anzeige des einzelnen Lösungstextes
+ok Anzeige des einzelnen Lösungstextes
 ok die 4 schwarzen Lücken erkennen
-  .. noch abschaltbar machen
-.. die Mandeln
-.. das Gewicht
+  ok noch abschaltbar machen ok als 'mit Fokus'.
+ok die Mandeln
+  .. noch das Aufrichten ohne Gewicht
+ok Arretieren mit Gewicht
+  .. Arretieren auch ohne Gewicht
 .. 14 15 u.a. zusammenfassen
 .. rechtsrum auch in Gang bringen noch
 .. die Summer
 .. 'jetzt noch' als Minichat oder sowas
-o. websocket Antwort
+ok websocket Antwort
+  .. ist noch behelfsmäßig mit if (Loeseliste.length>0)
+.. Button Anfang geht nicht mehr
 
   </div>
 </body></html>
