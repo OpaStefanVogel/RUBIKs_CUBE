@@ -595,6 +595,7 @@ alert(pixels);
     } else Loesung=Loesung+', '+Loesetext2[-Loeseliste[i]-1]+' ist am Platz';
   Log6.innerHTML=Loesung;
   Drehnummer=0;
+  id_Fokus.setAttribute('style','display:none');
   }
 
 id_loese.addEventListener('click',function() {if (beachte_Checkbox_Einzelschritte==false) loese(); else {weiter=1}});
@@ -1110,6 +1111,7 @@ function Anfang() {
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
   id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
   while (Farbensechseck.lastChild.tagName=='circle') Farbensechseck.removeChild(Farbensechseck.lastChild);
+  id_Fokus.removeAttribute('style');
   }
 
 id_Anfang.addEventListener('click',function() {Anfang()});
@@ -1549,7 +1551,7 @@ button {font-size:1.3em}
 <rect id='id_Blende' x='288' y='0' width='64' height='288' fill='white'/>
 <text id='id_scannum' x='290' y='200' style='font-size:700%'>5</text>
 <rect id='id_rectangle' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>
-<g transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='1' stroke='black'>
+<g id='id_Fokus' transform="translate(0,0) rotate(0) translate(0)" fill='none' stroke-width='1' stroke='black'>
   <!--rect x='72' y='72' width='144' height='144'/-->
   <path id='Mittelstein' d='M72,72 L72,216 216,216 216,72 Z' stroke='none'/>
   <circle id="linksoben" cx="96" cy="96" r="10"/>
@@ -1757,7 +1759,8 @@ ok die Mandeln
   ok noch das Aufrichten ohne Gewicht ok mit Stützhebel
 ok Arretieren mit Gewicht
   ok Arretieren auch ohne Gewicht ok perfekt mit besserer Wanne
-.. 14 15 u.a. zusammenfassen
+ok 16 15 zusammenfassen
+  .. andere auch
 ok rechtsrum auch in Gang bringen noch ok ging von alleine wieder
 .. umschaltbar nur eine oder zwei Richtungen
 .. die Summer
@@ -1765,6 +1768,8 @@ ok rechtsrum auch in Gang bringen noch ok ging von alleine wieder
 ok websocket Antwort
   .. ist noch behelfsmäßig mit if (Loeseliste.length>0)
 .. Button Anfang geht nicht mehr
+o. das tcl vom RPI4 mit auf RPI2 nauf
+.. hostname RUBIK_CUBE_PI
 
   </div>
 </body></html>
