@@ -914,7 +914,7 @@ function scannen(Farben) {
     if (scannum==0) {
       mf();dran_ist='red';RCube_neue_Ausrichtung=[new THREE.Vector3(-1,0,0),frametime];wsend('Motor_1_Kippen');
       //nur if ... setTimeout(id_loese.click,1000) geht nicht
-      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; /*canvas4.src='';*/ setTimeout(function() {id_loese.click(); weiter=0; Loesung_schicken.click()},6000)};
+      if (checken()) {scanbit=0; id_scannum.innerHTML='-'; /*canvas4.src='';*/ setTimeout(function() {id_loese.click(); if (Websocket_Status.innerHTML=='OPEN') weiter=0; Loesung_schicken.click()},6000)};
       }
     }  
   if (Farben[4]=='white') {
@@ -1099,7 +1099,11 @@ function Anfang() {
   WW[0]=structuredClone(WW[2]);
   WW[1]=structuredClone(WW[3]);
   scanbit=1;
-  RCube.rotation.set(0,0,0);
+  //RCube.rotation.set(0,0,0);
+  Drehstart=0;
+  RCube.setRotationFromEuler(new THREE.Euler(0.01,0.01,0.01));
+  RCube_alte_Ausrichtung=RCube.rotation.clone();
+  RCube_neue_Ausrichtung=[new THREE.Vector3(0,1,0),frametime-100000];
   controls.object.position.set(0.5,0.5,1.5);
   Log.innerHTML=' ';
   beachte_Checkbox_Einzelschritte=false;
@@ -1113,6 +1117,7 @@ function Anfang() {
   id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
   while (Farbensechseck.lastChild.tagName=='circle') Farbensechseck.removeChild(Farbensechseck.lastChild);
   id_Fokus.removeAttribute('style');
+  Antwort.innerHTML=' ';
   }
 
 id_Anfang.addEventListener('click',function() {Anfang()});
