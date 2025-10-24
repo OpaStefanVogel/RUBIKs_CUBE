@@ -581,11 +581,21 @@
                 "t": "eq",
                 "v": "Motor_Testbeispiel2",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Pause",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_weiter",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 15,
+        "outputs": 17,
         "x": 330,
         "y": 560,
         "wires": [
@@ -593,7 +603,8 @@
                 "1e08c8c.20fbc37"
             ],
             [
-                "a034968.0baa268"
+                "a034968.0baa268",
+                "31469676.19663a"
             ],
             [
                 "6fc0a8ed.a6e568"
@@ -601,7 +612,8 @@
             [
                 "98f86cbc.8653b8",
                 "6021b993.1a6ac8",
-                "30d7e4f9.41a73c"
+                "30d7e4f9.41a73c",
+                "c6c280ac.a81a7"
             ],
             [
                 "31469676.19663a",
@@ -611,7 +623,8 @@
             [
                 "81b39bde.744b58",
                 "6021b993.1a6ac8",
-                "30d7e4f9.41a73c"
+                "30d7e4f9.41a73c",
+                "faec0a28.154268"
             ],
             [
                 "da7848c2.d67c08"
@@ -639,6 +652,12 @@
             ],
             [
                 "927763a2.5a0db"
+            ],
+            [
+                "37dec65c.707fca"
+            ],
+            [
+                "615abcff.cba604"
             ]
         ]
     },
@@ -1237,7 +1256,7 @@
         "wires": [
             [
                 "b9558c61.7571f",
-                "8c339de4.4167d"
+                "615abcff.cba604"
             ]
         ]
     },
@@ -1320,7 +1339,7 @@
         "y": 1180,
         "wires": [
             [
-                "8c339de4.4167d"
+                "d1e77f32.6c7808"
             ]
         ]
     },
@@ -1556,6 +1575,90 @@
         "wires": [
             [
                 "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "c6c280ac.a81a7",
+        "type": "template",
+        "z": "1777d44f.558154",
+        "name": "1",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "1",
+        "output": "str",
+        "x": 870,
+        "y": 680,
+        "wires": [
+            [
+                "27349da6.c02052"
+            ]
+        ]
+    },
+    {
+        "id": "faec0a28.154268",
+        "type": "template",
+        "z": "1777d44f.558154",
+        "name": "1",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "1",
+        "output": "str",
+        "x": 870,
+        "y": 480,
+        "wires": [
+            [
+                "7371a023.02488"
+            ]
+        ]
+    },
+    {
+        "id": "d1e77f32.6c7808",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Pause?",
+        "func": "if (global.get(\"Pause\")==false) return msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 810,
+        "y": 980,
+        "wires": [
+            [
+                "8c339de4.4167d"
+            ]
+        ]
+    },
+    {
+        "id": "37dec65c.707fca",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Pause=true",
+        "func": "global.set(\"Pause\",true)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "615abcff.cba604",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Pause=false",
+        "func": "global.set(\"Pause\",false)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 960,
+        "wires": [
+            [
+                "8c339de4.4167d"
             ]
         ]
     }
