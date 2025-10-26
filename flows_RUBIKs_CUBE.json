@@ -591,11 +591,26 @@
                 "t": "eq",
                 "v": "Motor_weiter",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel_Y",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel_Q",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Hochkippen",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 17,
+        "outputs": 20,
         "x": 330,
         "y": 560,
         "wires": [
@@ -658,6 +673,15 @@
             ],
             [
                 "615abcff.cba604"
+            ],
+            [
+                "423447f.8b18bb8"
+            ],
+            [
+                "31ce5720.301fe8"
+            ],
+            [
+                "ee79bfa2.b4a0d"
             ]
         ]
     },
@@ -861,7 +885,7 @@
         "wires": [
             [
                 "2db67214.92dac6",
-                "ee79bfa2.b4a0d"
+                "615abcff.cba604"
             ]
         ]
     },
@@ -1265,7 +1289,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "switch 0 zu Motor_2_plus",
-        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: if (Loeseliste.length>2&&Loeseliste[0]==13) {\n      Loeseliste.shift();\n      msg.payload='Motor_1_schnell_Kippen';\n      break;\n      } else msg.payload='Motor_1_Loslassen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
+        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: if (Loeseliste.length>2&&Loeseliste[0]==13) {\n      Loeseliste.shift();\n      msg.payload='Motor_1_schnell_Kippen';\n      break;\n      } else msg.payload='Motor_1_Loslassen';break;\n    case 17: msg.payload='Motor_1_Hochkippen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
         "outputs": 1,
         "noerr": 0,
         "x": 790,
@@ -1348,7 +1372,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "Testbeispiel",
-        "func": "msg.payload='Loeseliste=[14,14,13,15,0,16,-2,14,13,15,1,16,13,15,2,16,13,15,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,14,13,14]';\nreturn msg;",
+        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,16,-2,14,13,17,15,1,16,-10,13,17,15,2,16,-8,13,17,15,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,14,13,17,14]';\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "x": 210,
@@ -1538,8 +1562,8 @@
         "y": 1000,
         "wires": [
             [
-                "ee79bfa2.b4a0d",
-                "bc98e9fd.82f1d8"
+                "bc98e9fd.82f1d8",
+                "615abcff.cba604"
             ]
         ]
     },
@@ -1654,11 +1678,43 @@
         "func": "global.set(\"Pause\",false)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 610,
+        "x": 630,
         "y": 960,
         "wires": [
             [
                 "8c339de4.4167d"
+            ]
+        ]
+    },
+    {
+        "id": "423447f.8b18bb8",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Testbeispiel Y",
+        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,0,16,-2,14,13,17,15,1,1,16,-10,13,17,15,2,2,16,-8,13,17,15,3,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,14,13,17,14]';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 200,
+        "y": 940,
+        "wires": [
+            [
+                "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "31ce5720.301fe8",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "Testbeispiel Q",
+        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,16,-2,13,17,13,17,15,2,16,14,13,17,15,1,16,-10,-8,13,17,13,17,15,3,16,-11,-14,-19,-20,-15,-1,-7,-5,-3,12,13,17,14]';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 200,
+        "y": 980,
+        "wires": [
+            [
+                "681f320e.1093c4"
             ]
         ]
     }
