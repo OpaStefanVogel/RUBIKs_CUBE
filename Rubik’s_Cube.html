@@ -7,7 +7,7 @@
   <title>Rubik’s Cube</title>
   </head>
 
-<body>
+<body>Rubik’s’
 <script>
 window.onerror=function(message, file, line, col, error) {alert('window.onerror:\nmessage '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error+'\n\n')};
 window.addEventListener('error',function(arg) {alert('window.addEventListener:\nERROR ERROR ERROR\n message '+arg.error.message+' '+arg.error.name+' '+arg.error['name'])});
@@ -17,8 +17,8 @@ window.addEventListener('error',function(arg) {alert('window.addEventListener:\n
 		<script type="importmap">
 			{
 				"imports": {
-					"three": "../KLETTERN_UND_RUTSCHEN/threejs2024/build/three.module.js",
-					"three/addons/": "../KLETTERN_UND_RUTSCHEN/threejs2024/examples/jsm/"
+					"three": "../submodules/three.js/build/three.module.js",
+					"three/addons/": "../submodules/three.js/examples/jsm/"
 				}
 			}
 		</script>
@@ -390,7 +390,7 @@ function animate_start() {
   //alert(Drehliste[0][3].toArray()+'\n'+Drehliste[0][4].toArray()+'\n'+Drehstart);
   }
 
-let Drehzeit=600;//100, 200 oder 600
+let Drehzeit=1400;//100, 200 oder 600 oder 1400
 let neue_Drehzeit=0;
 let weiter=1;
 let beachte_Checkbox_Einzelschritte=false;
@@ -1776,6 +1776,13 @@ ok websocket Antwort
 .. Button Anfang geht nicht mehr
 o. das tcl vom RPI4 mit auf RPI2 nauf
 .. hostname RUBIK_CUBE_PI
-
+.. Länge der Lösung
+.. Drehzeit umschaltbar
+.. wenn das Fach leer ist
+.. schnelle Farberkennung
+.. Wanne auch aus Lego
+.. Farbband statt Sechseck
+.. usb-Verbindung zum Tablet
+.. 
   </div>
 </body></html>
