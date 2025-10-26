@@ -449,28 +449,28 @@ function Ergaenze_Loeseliste_mit(n) {
     case 0:
       Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
       Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     case 1:
       Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
 //      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
 //      Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     case 2:
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     case 3:
       Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     case 4:
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
-      Loeseliste.push(13);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
+      Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     }
   if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
-  if (n<-6) {
+  if (n<-66) {//das war n<6 alle Links- in Rechtsdrehungen umwandeln
     if ((Loeseliste.length>2)&&(Loeseliste[Loeseliste.length-2]==n+6)) {
       Loeseliste.pop();
       Loeseliste.pop();
