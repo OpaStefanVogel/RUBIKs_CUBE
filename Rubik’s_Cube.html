@@ -30,6 +30,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 //import { XRButton } from 'three/addons/webxr/XRButton.js';
 import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+//import WebGL from 'three/addons/capabilities/WebGL.js';alert (WebGL.isWebGL2Available());
 
 let canvas_width=288;//0.9*window.innerWidth;
 let canvas_height=288;//0.9*window.innerHeight;
@@ -1073,6 +1074,8 @@ KANTEN=[
   }
 
 function Test() {
+  //throw 111111;
+  throw Error('Errortext',{cause:'causetext'}); alert(8);
   id_fullscreen.requestFullscreen();
   //alert(K23.name+' '+K23.userData.P);
   //alert(controls.object.position.y);
@@ -1343,11 +1346,11 @@ Vergleichsfarben=[
  
 function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
-  if (fr==99) if (fg>fb+10) RET='orange'; else RET='red';
+  if (fr==99) if (fg>fb+30) RET='orange'; else RET='red';
   if (fg==99) RET='green';
   if ((fr>70)&&(fg>70)) RET='yellow';
   if (fb==99) if (fm<50) RET='blue'; else RET='white';
-  if (fr==99) if (fm>70) RET='white';
+  if (fm>70) RET='white';
   return RET;
   }
 
@@ -1737,7 +1740,7 @@ for (let a=0;a<=256;a=a+8) for (let phi=0;phi<=60;phi=phi+4) {
   }
   </script>
 
-<div id='Log8' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
+<div id='Log8' style='display:flex; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
 jetzt noch:  
 ok bei Farbwechsel wieder 5
 ok fullscreen geht nur nach click-event
