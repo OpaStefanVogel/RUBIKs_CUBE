@@ -606,11 +606,16 @@
                 "t": "eq",
                 "v": "Motor_1_Hochkippen",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Runterkippen",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 20,
+        "outputs": 21,
         "x": 330,
         "y": 560,
         "wires": [
@@ -682,6 +687,9 @@
             ],
             [
                 "ee79bfa2.b4a0d"
+            ],
+            [
+                "e1f0460c.caaf6"
             ]
         ]
     },
@@ -778,7 +786,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "x": 240,
-        "y": 1400,
+        "y": 1420,
         "wires": [
             [
                 "c8dcd8e0.140c7",
@@ -885,7 +893,8 @@
         "wires": [
             [
                 "2db67214.92dac6",
-                "615abcff.cba604"
+                "615abcff.cba604",
+                "ee79bfa2.b4a0d"
             ]
         ]
     },
@@ -914,7 +923,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "0.2",
+        "timeout": "0.1",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -927,9 +936,9 @@
         "y": 1340,
         "wires": [
             [
-                "1be2a623.46d662",
                 "40e88507.0d6a4c",
-                "30d7e4f9.41a73c"
+                "30d7e4f9.41a73c",
+                "1be2a623.46d662"
             ]
         ]
     },
@@ -1207,8 +1216,8 @@
         "intype": "up",
         "debounce": "80",
         "read": true,
-        "x": 660,
-        "y": 1060,
+        "x": 640,
+        "y": 1040,
         "wires": [
             [
                 "8cbdd510.eeb86"
@@ -1242,7 +1251,6 @@
         "wires": [
             [],
             [
-                "eac81e50.4dbe38",
                 "c44e353c.d3662"
             ]
         ]
@@ -1289,7 +1297,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "switch 0 zu Motor_2_plus",
-        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Kippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: if (Loeseliste.length>2&&Loeseliste[0]==13) {\n      Loeseliste.shift();\n      msg.payload='Motor_1_schnell_Kippen';\n      break;\n      } else msg.payload='Motor_1_Loslassen';break;\n    case 17: msg.payload='Motor_1_Hochkippen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
+        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Runterkippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: if (Loeseliste.length>2&&Loeseliste[0]==13) {\n      Loeseliste.shift();\n      msg.payload='Motor_1_schnell_Kippen';\n      break;\n      } else msg.payload='Motor_1_Loslassen';break;\n    case 17: msg.payload='Motor_1_Hochkippen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
         "outputs": 1,
         "noerr": 0,
         "x": 790,
@@ -1433,7 +1441,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "global.set Drehung",
-        "func": "global.set('Drehung','läuft');\nreturn msg;",
+        "func": "global.set('Drehung',msg.payload);\nnode.status({\"text\":msg.payload});\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 790,
@@ -1467,7 +1475,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "0.0",
+        "timeout": "0.01",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -1476,8 +1484,8 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 860,
-        "y": 820,
+        "x": 1130,
+        "y": 840,
         "wires": [
             [
                 "31469676.19663a"
@@ -1512,14 +1520,19 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "global.get Drehung",
-        "func": "if (global.get('Drehung')=='läuft') {\n  global.set('Drehung','');\n  return msg;\n  }\n",
-        "outputs": 1,
+        "func": "if (global.get('Drehung')=='Motor_2_plus') {\n  global.set('Drehung','');\n  return [msg,null];\n  }\nif (global.get('Drehung')=='Motor_2_minus') {\n  global.set('Drehung','');\n  return [null,msg];\n  }\n",
+        "outputs": 2,
         "noerr": 0,
         "x": 930,
         "y": 880,
         "wires": [
             [
-                "82b5c82a.6b04b"
+                "82b5c82a.6b04b",
+                "eac81e50.4dbe38"
+            ],
+            [
+                "d004ecd9.2341f8",
+                "aca9621.434a1a"
             ]
         ]
     },
@@ -1591,7 +1604,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "großes Testbeispiel",
-        "func": "msg.payload='Loeseliste=[14,14,13,15,0,16,-2,14,13,15,1,16,-10,13,15,2,16,-8,13,15,3,16,-11,13,15,6,16,12,13,15,10,16,14,14,13,15,0,16,-14,12,13,15,7,16,12,13,15,10,16,14,14,13,15,1,16,-19,12,13,15,8,16,12,13,15,10,16,14,14,13,15,2,16,-20,-15,-1,-7,-5,-3]';\nreturn msg;",
+        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,16,-2,14,13,17,15,1,16,-10,13,17,15,2,16,-8,13,17,15,3,16,-11,13,17,15,6,16,12,13,17,15,10,16,14,14,13,17,15,0,16,-14,12,13,17,15,7,16,12,13,17,15,10,16,14,14,13,17,15,1,16,-19,12,13,17,15,8,16,12,13,17,15,10,16,14,14,13,17,15,2,16,-20,-15,-1,-7,-5,-3,13,17,14,14]';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 200,
@@ -1715,6 +1728,119 @@
         "wires": [
             [
                 "681f320e.1093c4"
+            ]
+        ]
+    },
+    {
+        "id": "7b94a79c.a17c1",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1.5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 60,
+        "y": 1340,
+        "wires": [
+            [
+                "2db67214.92dac6",
+                "c4af5447.453a38"
+            ]
+        ]
+    },
+    {
+        "id": "e1f0460c.caaf6",
+        "type": "template",
+        "z": "1777d44f.558154",
+        "name": "0",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "0",
+        "output": "str",
+        "x": 70,
+        "y": 1280,
+        "wires": [
+            [
+                "48ad0f28.c0d76",
+                "7b94a79c.a17c1"
+            ]
+        ]
+    },
+    {
+        "id": "d004ecd9.2341f8",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 900,
+        "y": 1040,
+        "wires": [
+            [
+                "82b5c82a.6b04b"
+            ]
+        ]
+    },
+    {
+        "id": "aca9621.434a1a",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.01",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 1130,
+        "y": 900,
+        "wires": [
+            [
+                "31469676.19663a"
+            ]
+        ]
+    },
+    {
+        "id": "c4af5447.453a38",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.05",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 690,
+        "y": 1080,
+        "wires": [
+            [
+                "d1e77f32.6c7808"
             ]
         ]
     }
