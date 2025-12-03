@@ -7,7 +7,7 @@
   <title>Rubik’s Cube</title>
   </head>
 
-<body>Rubik’s’
+<body onclick='log_id.innerHTML=event.target.getAttribute("id")'>
 <script>
 window.onerror=function(message, file, line, col, error) {alert('window.onerror:\nmessage '+message+'\nfile: '+file+'\nline: '+line+'\ncol: '+col+'\nerror: '+error+'\n\n')};
 window.addEventListener('error',function(arg) {alert('window.addEventListener:\nERROR ERROR ERROR\n message '+arg.error.message+' '+arg.error.name+' '+arg.error['name'])});
@@ -159,7 +159,7 @@ let m90=-Math.PI/2;
 let p180=Math.PI;
 let p90=Math.PI/2;
 
-let KANTEN=[
+let KANTEN=[//♥//
   [,[0,1,0,0],,[0,3,2,0],[0,4,3,0],[0,5,1,0]],
   [[1,0,0,1],,[1,2,6,1],,[1,4,8,0],[1,5,9,1]],
   [,[2,1,6,0],,[2,3,4,0],[2,4,5,0],[2,5,7,0]],
@@ -391,7 +391,7 @@ function animate_start() {
   //alert(Drehliste[0][3].toArray()+'\n'+Drehliste[0][4].toArray()+'\n'+Drehstart);
   }
 
-let Drehzeit=1400;//100, 200 oder 600 oder 1400
+let Drehzeit=200;//100, 200 oder 600 oder 1400
 let neue_Drehzeit=0;
 let weiter=1;
 let beachte_Checkbox_Einzelschritte=false;
@@ -602,19 +602,6 @@ alert(pixels);
 id_loese.addEventListener('click',function() {if (beachte_Checkbox_Einzelschritte==false) loese(); else {weiter=1}});
 //id_weiter.addEventListener('click',function() {weiter=1});
 id_nochmal.addEventListener('click',function() {Drehstart=frametime});
-
-/*
-perms := [
-  (2,6,8,4)(48,18,56,36),
-  (12,16,18,14)(28,58,6,46),
-  (22,26,28,24)(34,54,12,42),
-  (32,36,38,34)(44,4,52,22),
-  (42,46,48,44)(24,14,2,32)
-  (52,56,58,54)(38,8,16,26)
-  ];
-puzzle := Group( perms );Size( puzzle );
-hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
-*/
 
 //[K01,K05,K03,K04,K23,K24,K21,K25,K14,K51,K35,K43,K014,K051,K350,K043,K234,K241,K152,K253,K0,K1,K2,K3,K4,K5]; 
 let LOESUNGEN=[
@@ -1074,7 +1061,22 @@ KANTEN=[
   }
 
 function Test() {
-  alert(LISTE[4].name+' '+LISTE[4].userData.P);
+  let t4='';
+  let t5=[];
+  let t6=[];
+  for (let i=0;i<6;i++) for (let j=0;j<6;j++) if (WW[0][i][j]!=null) {
+    let x=WW[2][i][j][2]; if (x==0) x=20;
+    let y=WW[0][i][j][2]; if (y==0) y=20;
+    t5[x-1]=y;
+    t6[y-1]=x;
+    x=WW[3][i][j][3]; if (x==0) x=20;
+    y=WW[1][i][j][3]; if (y==0) y=20;
+    t5[x-1]=y;
+    t6[y-1]=x;
+    }
+  t4=t4+(JSON.stringify(WW[0])+'\n'+JSON.stringify(WW[2])+'\n'+JSON.stringify(WW[1])+'\n'+JSON.stringify(WW[3]))+'\nperm2 := PermList(['+t5+']);\n'+'perm2 := PermList(['+t6+']);\nword2 := PreImagesRepresentative(hom2,perm2);\nextrep2 := ExtRepOfObj(word2);';
+  t4
+  Log7.innerHTML=t4;
   return;
   //throw 111111;
   throw Error('Errortext',{cause:'causetext'}); alert(8);
@@ -1679,7 +1681,7 @@ button {font-size:1.3em}
   </div-->
 <button id='id_Test' style='background-color:white; font-size:200%'>Test</button>
 <button id='id_langsamer' style='background-color:white; font-size:200%'>langsamer</button>
-<button id='id_schneller' style='background-color:white; font-size:200%'>schneller</button>
+<button id='id_schneller' style='background-color:white; font-size:200%'>schneller</button><span id='log_id'> </span>
 
 
 <div id='Log' style='display:non; font-family:Courier,monospace; white-space:wrap;'> </div>
@@ -1707,7 +1709,21 @@ hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
 
 #V^-1*R*V^-1*R^-1*V^-2*O^-1*R^-1*V^-1*R*V*O*V*R*V^-1*O*V^-1*L*V*L^-1*O^-1*R^-1*V^-1*O*R^-1*H*R*H^-1*O^-1*R^-1*O^-1*R*O*R^-1*O^-1*V*R^-1*O^2*R^-1*O^-3*R^-2*H^-2*R
 
-
+perms0:=[(20,1,2,3),(20,8,6,9),(6,5,4,7),(2,10,4,11),(3,11,5,8),(1,9,7,10)];
+perms1:=[(12,13,14,15),(13,12,17,18),(18,17,16,19),(15,14,19,16),(12,15,16,17),(14,13,18,19)];
+perms2:=[
+  (20,1,2,3)(12,13,14,15),
+  (20,8,6,9)(13,12,17,18),
+  (6,5,4,7)(18,17,16,19),
+  (2,10,4,11)(15,14,19,16),
+  (3,11,5,8)(12,15,16,17),
+  (1,9,7,10)(14,13,18,19)
+  ];
+puzzle2 := Group( perms2 );Size( puzzle2 );
+hom2:=EpimorphismFromFreeGroup(puzzle2:names:=["V", "R", "H", "L", "O", "U"]);
+perm2:=PermList([20,1,2,4,5,6,7,8,9,10,11,15,12,13,14,16,17,18,19,3]);//-V
+word2 := PreImagesRepresentative(hom2,perm2);//V
+extrep2 := ExtRepOfObj(word2);
 </div>
 
 
