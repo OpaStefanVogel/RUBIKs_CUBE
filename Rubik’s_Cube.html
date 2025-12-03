@@ -1074,6 +1074,8 @@ KANTEN=[
   }
 
 function Test() {
+  alert(LISTE[4].name+' '+LISTE[4].userData.P);
+  return;
   //throw 111111;
   throw Error('Errortext',{cause:'causetext'}); alert(8);
   id_fullscreen.requestFullscreen();
@@ -1121,6 +1123,7 @@ function Anfang() {
   while (Farbensechseck.lastChild.tagName=='circle') Farbensechseck.removeChild(Farbensechseck.lastChild);
   id_Fokus.removeAttribute('style');
   Antwort.innerHTML=' ';
+  Log6.innerHTML='';
   }
 
 id_Anfang.addEventListener('click',function() {Anfang()});
@@ -1346,11 +1349,11 @@ Vergleichsfarben=[
  
 function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
-  if (fr==99) if (fg>fb+30) RET='orange'; else RET='red';
+  if (fr==99) if (fg>fb+25) RET='orange'; else RET='red';
   if (fg==99) RET='green';
   if ((fr>70)&&(fg>70)) RET='yellow';
-  if (fb==99) if (fm<50) RET='blue'; else RET='white';
-  if (fm>70) RET='white';
+  if (fb==99) if (fm<70) RET='blue'; else RET='white';
+  	if (fm>70) RET='white';
   return RET;
   }
 
@@ -1452,7 +1455,7 @@ window.onerror=function(message, file, line, col, error) {alert('message '+messa
 ////Websocket:
 var websocket;
 function websocket_verbinden() {
-  websocket = new WebSocket("ws://192.168.1.134:1880/ws/motoren","fiktiv");
+  websocket = new WebSocket(websocket_Adresse.value,"fiktiv");
   websocket.onerror=function(event) {
     };
   websocket.onmessage = function(event) {
@@ -1535,7 +1538,7 @@ button {font-size:1.3em}
   </style>
 
 <!---IP-Kamera:--->
-<div>Websocket <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
+<div>Websocket <input id='websocket_Adresse' size='30' value="ws://192.168.1.134:1880/ws/motoren"/> <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
   <button id='Lenken_linksrum'>Drehen→</button>, 
   <button id='Lenken_rechtsrum'>Drehen←</button>,
   <button id='Kippen_hochzu'>Kippen↑</button>,
@@ -1683,7 +1686,7 @@ button {font-size:1.3em}
 <div id='Tdok' style='display:none; font-family:Courier,monospace; white-space:wrap;'>raycaster</div>
 <div style='display:none'><i>"one-touchmove"→drehen, "two-touchmove"→verschieben+zoomen</i></div>
 <div id='Log2' style='display:non; font-family:Courier,monospace; white-space:wrap; overflow:auto'> </div>
-<div id='Log6' style='display:n; font-family:Courier,monospace; white-space:wrap;'>Lösung:</div>
+<div id='Log6' style='display:non; font-family:Courier,monospace; white-space:wrap;'>Lösung:</div>
 <div id='Log4' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:blue'> </div>
 <div id='Log5' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
 <div id='Log3' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
