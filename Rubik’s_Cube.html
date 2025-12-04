@@ -821,7 +821,7 @@ function knips() {
   scanbit=0;
   scannum=4;//bewirkt cc setzen
   myImg.src=Testphotos[Testindex];
-  setTimeout(function() {scannum=0;scannen(Farben)},200);//scannum=0 bewirkt weiterdrehen
+  setTimeout(function() {scannum=0;scannen(Farben);Drehstart=frametime},800);//scannum=0 bewirkt weiterdrehen,
   //return Testfarben[Testindex];
   }
 
@@ -1117,6 +1117,7 @@ function Anfang() {
   weiter=1;
   Loeseliste=[];
   Drehliste_gesamt=[];
+  Drehliste=[];
   Drehnummer=0;
   Testindex=5;
   Test4();
@@ -1264,6 +1265,7 @@ myImg.onload = () => {//alert('onload');
   //console.log(data);
   Log3.innerHTML=eventLocation.x+' '+eventLocation.y+'\n'+text;
   Farben_aus_Daten_bestimmen();//alert(canvas2.height);
+//  setTimeout(function() {scannum=0;scannen(Farben);Drehstart=frametime},80);//scannum=0 bewirkt weiterdrehen,
   }
 
 
