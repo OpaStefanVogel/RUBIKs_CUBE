@@ -1064,18 +1064,42 @@ function Test() {
   let t4='';
   let t5=[];
   let t6=[];
+  let t7=[];
+  let t8=[];
+  let t11=[];
+  let t12=[];
   for (let i=0;i<6;i++) for (let j=0;j<6;j++) if (WW[0][i][j]!=null) {
-    let x=WW[2][i][j][2]; if (x==0) x=20;
-    let y=WW[0][i][j][2]; if (y==0) y=20;
+    let x=WW[2][i][j][2]+1;
+    let y=WW[0][i][j][2]+1;
     t5[x-1]=y;
     t6[y-1]=x;
-    x=WW[3][i][j][3]; if (x==0) x=20;
-    y=WW[1][i][j][3]; if (y==0) y=20;
+    x=WW[3][i][j][3]+1;
+    y=WW[1][i][j][3]+1;
     t5[x-1]=y;
     t6[y-1]=x;
+    x=(WW[2][i][j][0]+1)*10+WW[2][i][j][1]+1;
+    y=(WW[0][i][j][0]+1)*10+WW[0][i][j][1]+1;
+    t7.push(y);
+    t8.push(x);
+    x=((WW[3][i][j][0]+1)*10+WW[3][i][j][1]+1)*10+WW[3][i][j][2]+1;
+    y=((WW[1][i][j][0]+1)*10+WW[1][i][j][1]+1)*10+WW[1][i][j][2]+1;
+    t11.push(y);
+    t12.push(x);
     }
-  t4=t4+(JSON.stringify(WW[0])+'\n'+JSON.stringify(WW[2])+'\n'+JSON.stringify(WW[1])+'\n'+JSON.stringify(WW[3]))+'\nperm2 := PermList(['+t5+']);\n'+'perm2 := PermList(['+t6+']);\nword2 := PreImagesRepresentative(hom2,perm2);\nextrep2 := ExtRepOfObj(word2);';
-  t4
+  t4=t4+(JSON.stringify(WW[0])+'\n'
+    +JSON.stringify(WW[2])+'\n'
+    +JSON.stringify(WW[1])+'\n'
+    +JSON.stringify(WW[3]))+'\n'
+    +'perm2 := PermList(['+t5+']);\n'
+    +'perm2 := PermList(['+t6+']);\n'
+    +'word2 := PreImagesRepresentative(hom2,perm2);\n'
+    +'extrep2 := ExtRepOfObj(word2);\n'
+    +'t7 := ['+t7+'];\n'
+    +'t8 := ['+t8+'];\n'
+    +'perm3 := MappingPermListList(t7,t8)\n'
+    +'t11 := ['+t11+'];\n'
+    +'t12 := ['+t12+'];\n'
+    +'perm4 := MappingPermListList(t11,t12)\n\n'
   Log7.innerHTML=t4;
   return;
   //throw 111111;
