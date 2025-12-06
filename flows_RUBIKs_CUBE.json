@@ -18,7 +18,7 @@
         "type": "rpi-gpio out",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "3",
+        "pin": "5",
         "set": true,
         "level": "0",
         "freq": "",
@@ -879,7 +879,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "1.5",
+        "timeout": "1.6",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -1297,7 +1297,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "switch 0 zu Motor_2_plus",
-        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Runterkippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: if (Loeseliste.length>2&&Loeseliste[0]==13) {\n      Loeseliste.shift();\n      msg.payload='Motor_1_schnell_Kippen';\n      break;\n      } else msg.payload='Motor_1_Loslassen';break;\n    case 17: msg.payload='Motor_1_Hochkippen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
+        "func": "let Loeseliste=global.get(\"Loeseliste\");\nif (Loeseliste&&Loeseliste.length>0) {\n  let z=Loeseliste.shift();\n  global.set(\"Loeseliste\",Loeseliste);\n  switch (z) {\n    case 0:\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5: \n      //Loeseliste.unshift(z+6,z+6);\n      //global.set(\"Loeseliste\",Loeseliste);\n      msg.payload='Motor_2_plus';\n      //msg.payload='Motor_2_minus';//weil momentan pluss nicht genau genug\n      break;\n    case 6:\n    case 7:\n    case 8:\n    case 9:\n    case 10:\n    case 11: msg.payload='Motor_2_minus'; break;\n    case 12: msg.payload='Motor_2_plus';break;\n    case 13: msg.payload='Motor_1_Runterkippen';break;\n    case 14: msg.payload='Motor_2_minus';break;\n    case 15: msg.payload='Motor_1_Festhalten';break;\n    case 16: \n      while (Loeseliste.length>2&&Loeseliste[0]<0) Loeseliste.shift(); \n      if (Loeseliste.length>2&&Loeseliste[0]==13) {\n        Loeseliste.shift();\n        msg.payload='Motor_1_schnell_Kippen';\n        break;\n        } else msg.payload='Motor_1_Loslassen';break;\n    case 17: msg.payload='Motor_1_Hochkippen';break;\n    }\n  if (z<0) msg.payload='Motor_Summer_'+(-z);\n  node.status({'text':'jetzt '+z+' dann '+Loeseliste.slice(0,8)});\n  return msg;\n  }\nnode.status({'text':'nix'});\n",
         "outputs": 1,
         "noerr": 0,
         "x": 790,
@@ -1604,7 +1604,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "großes Testbeispiel",
-        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,16,-2,14,13,17,15,1,16,-10,13,17,15,2,16,-8,13,17,15,3,16,-11,13,17,15,6,16,12,13,17,15,10,16,14,14,13,17,15,0,16,-14,12,13,17,15,7,16,12,13,17,15,10,16,14,14,13,17,15,1,16,-19,12,13,17,15,8,16,12,13,17,15,10,16,14,14,13,17,15,2,16,-20,-15,-1,-7,-5,-3,13,17,14,14]';\nreturn msg;",
+        "func": "msg.payload='Loeseliste=[14,14,13,17,15,0,16,-2,14,13,17,15,1,16,13,17,15,2,16,13,17,15,3,16,13,17,15,6,16,12,13,17,15,10,16,14,14,13,17,15,0,16,-14,12,13,17,15,7,16,12,13,17,15,10,16,14,14,13,17,15,1,16,-19,12,13,17,15,8,16,12,13,17,15,10,16,14,14,13,17,15,2,16,13,17,14,14]';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 200,
@@ -1843,5 +1843,111 @@
                 "d1e77f32.6c7808"
             ]
         ]
+    },
+    {
+        "id": "ad3db172.f619b8",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 90,
+        "y": 60,
+        "wires": [
+            [
+                "6c5f3ca3.b499ec"
+            ]
+        ]
+    },
+    {
+        "id": "6c5f3ca3.b499ec",
+        "type": "trigger",
+        "z": "1777d44f.558154",
+        "op1": "100",
+        "op2": "0",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "0.5",
+        "extend": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "name": "",
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "5b69c334.baf2d4"
+            ]
+        ]
+    },
+    {
+        "id": "5b69c334.baf2d4",
+        "type": "rpi-gpio out",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pin": "3",
+        "set": "",
+        "level": "0",
+        "freq": "",
+        "out": "pwm",
+        "x": 130,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "b5cbbba5.2597d8",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 580,
+        "y": 1540,
+        "wires": [
+            [
+                "4acae1c8.00014"
+            ]
+        ]
+    },
+    {
+        "id": "4acae1c8.00014",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "msg",
+        "func": "msg.payload='hallo';\nnode.status({text:msg.payload})\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 640,
+        "y": 1640,
+        "wires": [
+            [
+                "c1dc927d.f99288"
+            ]
+        ]
+    },
+    {
+        "id": "c1dc927d.f99288",
+        "type": "debug",
+        "z": "1777d44f.558154",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 800,
+        "y": 1660,
+        "wires": []
     }
 ]
