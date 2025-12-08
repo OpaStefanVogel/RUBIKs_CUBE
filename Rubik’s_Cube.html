@@ -1096,10 +1096,13 @@ function Test() {
     +'extrep2 := ExtRepOfObj(word2);\n'
     +'t7 := ['+t7+'];\n'
     +'t8 := ['+t8+'];\n'
-    +'perm3 := MappingPermListList(t7,t8)\n'
+    +'perm3 := MappingPermListList(t8,t7);\n'
     +'t11 := ['+t11+'];\n'
     +'t12 := ['+t12+'];\n'
-    +'perm4 := MappingPermListList(t11,t12)\n\n'
+    +'perm4 := MappingPermListList(t12,t11);\n'
+    +'t13 := Concatenation(t7,t11);\n'
+    +'t14 := Concatenation(t8,t12);\n'
+    +'perm5 := MappingPermListList(t14,t13);\n\n'
   Log7.innerHTML=t4;
   return;
   //throw 111111;
@@ -1735,21 +1738,69 @@ hom:=EpimorphismFromFreeGroup(puzzle:names:=['V', 'R', 'H', 'L', 'O', 'U']);
 
 #V^-1*R*V^-1*R^-1*V^-2*O^-1*R^-1*V^-1*R*V*O*V*R*V^-1*O*V^-1*L*V*L^-1*O^-1*R^-1*V^-1*O*R^-1*H*R*H^-1*O^-1*R^-1*O^-1*R*O*R^-1*O^-1*V*R^-1*O^2*R^-1*O^-3*R^-2*H^-2*R
 
-perms0:=[(20,1,2,3),(20,8,6,9),(6,5,4,7),(2,10,4,11),(3,11,5,8),(1,9,7,10)];
-perms1:=[(12,13,14,15),(13,12,17,18),(18,17,16,19),(15,14,19,16),(12,15,16,17),(14,13,18,19)];
 perms2:=[
-  (20,1,2,3)(12,13,14,15),
-  (20,8,6,9)(13,12,17,18),
-  (6,5,4,7)(18,17,16,19),
-  (2,10,4,11)(15,14,19,16),
-  (3,11,5,8)(12,15,16,17),
-  (1,9,7,10)(14,13,18,19)
+  (1,2,3,4)(13,14,15,16),
+  (1,9,7,10)(14,13,18,19),
+  (7,6,5,8)(19,18,17,20),
+  (3,11,5,12)(16,15,20,17),
+  (4,12,6,9)(13,16,17,18),
+  (2,10,8,11)(15,14,19,20)
   ];
 puzzle2 := Group( perms2 );Size( puzzle2 );
 hom2:=EpimorphismFromFreeGroup(puzzle2:names:=["V", "R", "H", "L", "O", "U"]);
-perm2:=PermList([20,1,2,4,5,6,7,8,9,10,11,15,12,13,14,16,17,18,19,3]);//-V
-word2 := PreImagesRepresentative(hom2,perm2);//V
+perm2 := PermList([4,1,2,3,5,6,7,8,9,10,11,12,16,13,14,15,17,18,19,20]);#nach V
+word2 := PreImagesRepresentative(hom2,perm2);#V^-1
 extrep2 := ExtRepOfObj(word2);
+
+perms3 := [
+  (14,15,12,16)(41,51,21,61),
+  (21,25,23,26)(12,52,32,62),
+  (32,35,34,36)(23,53,43,63),
+  (43,45,41,46)(34,54,14,64),
+  (51,54,53,52)(15,45,35,25),
+  (61,62,63,64)(16,26,36,46)
+  ];
+puzzle3 := Group( perms3 );Size( puzzle3 );
+hom3:=EpimorphismFromFreeGroup(puzzle3:names:=["V", "R", "H", "L", "O", "U"]);
+t7 := [15,16,14,12,51,23,25,26,32,34,35,36,61,43,45,46,41,52,53,54,21,62,63,64];
+t8 := [12,14,15,16,21,23,25,26,32,34,35,36,41,43,45,46,51,52,53,54,61,62,63,64];
+perm3 := MappingPermListList(t8,t7);
+word3 := PreImagesRepresentative(hom3,perm3);#V^-1
+extrep3 := ExtRepOfObj(word3);
+
+
+perms4 := [
+  (146,154,125,162)(461,541,251,621)(614,415,512,216),
+  (216,251,235,263)(162,512,352,632)(621,125,523,326),
+  (326,352,345,364)(263,523,453,643)(632,235,534,436),
+  (436,453,415,461)(364,534,154,614)(643,345,541,146),
+  (512,541,534,523)(125,415,345,235)(251,154,453,352),
+  (614,621,632,643)(146,216,326,436)(461,162,263,364)
+  ];
+puzzle4 := Group( perms4 );Size( puzzle4 );
+hom4:=EpimorphismFromFreeGroup(puzzle4:names:=["V", "R", "H", "L", "O", "U"]);
+t11 := [154,162,146,125,512,235,541,263,326,345,352,364,614,436,453,621,415,523,534,461,216,251,632,643];
+t12 := [125,146,154,162,216,235,251,263,326,345,352,364,415,436,453,461,512,523,534,541,614,621,632,643];
+perm4 := MappingPermListList(t12,t11);
+word4 := PreImagesRepresentative(hom4,perm4);#V^-1
+extrep4 := ExtRepOfObj(word4);
+
+perms5 := [
+  perms3[1]*perms4[1],
+  perms3[2]*perms4[2],
+  perms3[3]*perms4[3],
+  perms3[4]*perms4[4],
+  perms3[5]*perms4[5],
+  perms3[6]*perms4[6]
+  ];
+puzzle5 := Group( perms5 );Size( puzzle5 );
+hom5:=EpimorphismFromFreeGroup(puzzle5:names:=["V", "R", "H", "L", "O", "U"]);
+t13:=Concatenation(t7,t11);
+t14:=Concatenation(t8,t12);
+perm5 := MappingPermListList(t14,t13);
+word5 := PreImagesRepresentative(hom5,perm5);#V^-1
+extrep5 := ExtRepOfObj(word5);
+
 </div>
 
 
