@@ -536,7 +536,7 @@ let Loesetext2=[
   ];
 let Loeseliste=[];
 function loese() {
-  if (id_mit_gap.checked==true) {websocket.send('#gap\n'+GAP_Suche());alert(GAP_Suche());return}
+  if (id_mit_gap.checked==true) {websocket.send('#gap\n'+GAP_Suche());Log7.innerHTML=GAP_Suche();return}
   beachte_Checkbox_Einzelschritte=true;
 /*//aus 
 const canvas = document.getElementById("canvas").firstChild;
@@ -1123,7 +1123,7 @@ function GAP_Suche() {
     +'perm5 := MappingPermListList(t14,t13);\n'
     +'word5 := PreImagesRepresentative(hom5,perm5);\n'
     +'extrep5 := ExtRepOfObj(word5);\n'
-    +'Print("extrep=",extrep5,"\\n")\n\n';
+    +'Print("extrep=",extrep5,"\\n");\n#\n#\n';
 
   return t4;
   }
@@ -1761,6 +1761,7 @@ button {font-size:1.3em}
 <div id='Log3' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
 <div id='Log8' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'> </div>
 <div id='Log7' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
+SetPrintFormattingStatus("*stdout*", false);
 perms3 := [
   (14,15,12,16)(41,51,21,61),
   (21,25,23,26)(12,52,32,62),
@@ -1787,6 +1788,15 @@ perms5 := [
   ];
 puzzle5 := Group( perms5 );Size( puzzle5 );
 hom5:=EpimorphismFromFreeGroup(puzzle5:names:=["V", "R", "H", "L", "O", "U"]);
+t8 := [12,14,15,16,21,23,25,26,32,34,35,36,41,43,45,46,51,52,53,54,61,62,63,64];
+t11 := [154,162,146,125,512,235,541,263,326,345,352,364,614,436,453,621,415,523,534,461,216,251,632,643];
+t12 := [125,146,154,162,216,235,251,263,326,345,352,364,415,436,453,461,512,523,534,541,614,621,632,643];
+t13 := Concatenation(t7,t11);
+t14 := Concatenation(t8,t12);
+perm5 := MappingPermListList(t14,t13);
+word5 := PreImagesRepresentative(hom5,perm5);
+extrep5 := ExtRepOfObj(word5);
+Print("extrep=",extrep5,"\n");
 </div>
 
 
