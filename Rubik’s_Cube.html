@@ -1072,7 +1072,8 @@ function GAP_Loesung(gap) {
     if (gap[i+1]==-2) {Ergaenze_Loeseliste_mit(gap[i]-1);Ergaenze_Loeseliste_mit(gap[i]-1);}
     if (gap[i+1]==-3) Ergaenze_Loeseliste_mit(gap[i]-1);
     }
-  Drehliste_gesamt=Loeseliste.slice();
+  //alert(Loeseliste);
+  //Drehliste_gesamt=Loeseliste.slice();
   WW=structuredClone(WWMERK);
   return Loeseliste;
   }
@@ -1112,18 +1113,18 @@ function GAP_Suche() {
     //+'perm2 := PermList(['+t6+']);\n'
     //+'word2 := PreImagesRepresentative(hom2,perm2);\n'
     //+'extrep2 := ExtRepOfObj(word2);\n'
-    +'t7 := ['+t7+'];\n'
-    +'t8 := ['+t8+'];\n'
+    +'t7 := ['+t7+'];;\n'
+    +'t8 := ['+t8+'];;\n'
     //+'perm3 := MappingPermListList(t8,t7);\n'
-    +'t11 := ['+t11+'];\n'
-    +'t12 := ['+t12+'];\n'
+    +'t11 := ['+t11+'];;\n'
+    +'t12 := ['+t12+'];;\n'
     //+'perm4 := MappingPermListList(t12,t11);\n'
-    +'t13 := Concatenation(t7,t11);\n'
-    +'t14 := Concatenation(t8,t12);\n'
-    +'perm5 := MappingPermListList(t14,t13);\n'
-    +'word5 := PreImagesRepresentative(hom5,perm5);\n'
-    +'extrep5 := ExtRepOfObj(word5);\n'
-    +'Print("extrep=",extrep5,"\\n");\n#\n#\n';
+    +'t13 := Concatenation(t7,t11);;\n'
+    +'t14 := Concatenation(t8,t12);;\n'
+    +'perm5 := MappingPermListList(t14,t13);;\n'
+    +'word5 := PreImagesRepresentative(hom5,perm5);;\n'
+    +'extrep5 := ExtRepOfObj(word5);;\n'
+    +'Print("extrep=",extrep5,"\\n");\n';
 
   return t4;
   }
@@ -1571,10 +1572,11 @@ function permutiere_die_Mitten(perm) {
   Ausrichtung_der_Mitten=RET;
   id_Ausrichtung_der_Mitten.innerHTML=Ausrichtung_der_Mitten;
   }
-   
+
+let extrep=[];
 function Antwort_auswerten(w) {
-  if (w.slice(0,6)=='extrep') alert(w);
-    else if (Loeseliste.length>0) setTimeout(function() {id_loese.click()},100);
+  if (w.indexOf('extrep')>-1) {let w2=w.slice(w.indexOf('extrep'),w.indexOf(']')+1);eval(w2);Log7.innerHTML=extrep.length/2+w2;GAP_Loesung(extrep)}
+    else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click()},100);
   }
 
   </script>
@@ -1761,7 +1763,7 @@ button {font-size:1.3em}
 <div id='Log3' style='display:flex; display:non; overflow:auto; font-family:Courier, monospace; white-space:pre;'> </div>
 <div id='Log8' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'> </div>
 <div id='Log7' style='display:flex; display:non; overflow:auto; font-family:monospace; white-space:pre; color:brown'>
-SetPrintFormattingStatus("*stdout*", false);
+SetPrintFormattingStatus("*stdout*", false);;
 perms3 := [
   (14,15,12,16)(41,51,21,61),
   (21,25,23,26)(12,52,32,62),
@@ -1769,7 +1771,7 @@ perms3 := [
   (43,45,41,46)(34,54,14,64),
   (51,54,53,52)(15,45,35,25),
   (61,62,63,64)(16,26,36,46)
-  ];
+  ];;
 perms4 := [
   (146,154,125,162)(461,541,251,621)(614,415,512,216),
   (216,251,235,263)(162,512,352,632)(621,125,523,326),
@@ -1777,7 +1779,7 @@ perms4 := [
   (436,453,415,461)(364,534,154,614)(643,345,541,146),
   (512,541,534,523)(125,415,345,235)(251,154,453,352),
   (614,621,632,643)(146,216,326,436)(461,162,263,364)
-  ];
+  ];;
 perms5 := [
   perms3[1]*perms4[1],
   perms3[2]*perms4[2],
@@ -1785,17 +1787,19 @@ perms5 := [
   perms3[4]*perms4[4],
   perms3[5]*perms4[5],
   perms3[6]*perms4[6]
-  ];
-puzzle5 := Group( perms5 );Size( puzzle5 );
-hom5:=EpimorphismFromFreeGroup(puzzle5:names:=["V", "R", "H", "L", "O", "U"]);
-t8 := [12,14,15,16,21,23,25,26,32,34,35,36,41,43,45,46,51,52,53,54,61,62,63,64];
-t11 := [154,162,146,125,512,235,541,263,326,345,352,364,614,436,453,621,415,523,534,461,216,251,632,643];
-t12 := [125,146,154,162,216,235,251,263,326,345,352,364,415,436,453,461,512,523,534,541,614,621,632,643];
-t13 := Concatenation(t7,t11);
-t14 := Concatenation(t8,t12);
-perm5 := MappingPermListList(t14,t13);
-word5 := PreImagesRepresentative(hom5,perm5);
-extrep5 := ExtRepOfObj(word5);
+  ];;
+puzzle5 := Group( perms5 );;
+Size( puzzle5 );;
+hom5:=EpimorphismFromFreeGroup(puzzle5:names:=["V", "R", "H", "L", "O", "U"]);;
+t7 := [15,16,14,12,51,23,25,26,32,34,35,36,61,43,45,46,41,52,53,54,21,62,63,64];;
+t8 := [12,14,15,16,21,23,25,26,32,34,35,36,41,43,45,46,51,52,53,54,61,62,63,64];;
+t11 := [154,162,146,125,512,235,541,263,326,345,352,364,614,436,453,621,415,523,534,461,216,251,632,643];;
+t12 := [125,146,154,162,216,235,251,263,326,345,352,364,415,436,453,461,512,523,534,541,614,621,632,643];;
+t13 := Concatenation(t7,t11);;
+t14 := Concatenation(t8,t12);;
+perm5 := MappingPermListList(t14,t13);;
+word5 := PreImagesRepresentative(hom5,perm5);;
+extrep5 := ExtRepOfObj(word5);;
 Print("extrep=",extrep5,"\n");
 </div>
 
