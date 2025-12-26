@@ -2145,5 +2145,42 @@
                 "f3b0edad.9b4fe8"
             ]
         ]
+    },
+    {
+        "id": "baceb067.9bf878",
+        "type": "file in",
+        "z": "1777d44f.558154",
+        "name": "",
+        "filename": "/home/pi/RUBIKs_CUBE/gap_start.txt",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 390,
+        "y": 2240,
+        "wires": [
+            [
+                "845ea610.cc6008"
+            ]
+        ]
+    },
+    {
+        "id": "d73c8590.1aea38",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "300",
+        "x": 110,
+        "y": 2240,
+        "wires": [
+            [
+                "baceb067.9bf878"
+            ]
+        ]
     }
 ]
