@@ -1443,7 +1443,7 @@ function MinDist(fr,fg,fb,fm,h,s,l) {
   let RET='gray';
   if (fr==99) if (fg>fb+25) RET='orange'; else RET='red';
   if (fg==99) RET='green';
-  if ((fr>70)&&(fg>70)) RET='yellow';
+  if ((fr>50)&&(fg>70)) RET='yellow';
   if (fb==99) if (fm<70) RET='blue'; else RET='white';
   	if (fm>70) RET='white';
   return RET;
