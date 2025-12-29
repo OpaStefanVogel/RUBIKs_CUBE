@@ -393,7 +393,7 @@ function animate_start() {
   //alert(Drehliste[0][3].toArray()+'\n'+Drehliste[0][4].toArray()+'\n'+Drehstart);
   }
 
-let Drehzeit=200;//100, 200 oder 600 oder 1400
+let Drehzeit=1400;//100, 200 oder 600 oder 1400
 let neue_Drehzeit=0;
 let weiter=1;
 let beachte_Checkbox_Einzelschritte=false;
@@ -422,6 +422,7 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
           }
         }
       if ((beachte_Checkbox_Einzelschritte==true)&&(id_Einzelschritte.checked==true)) weiter=0;
+      if (id_mit_gap.checked==true) weiter=0; 
       Drehzeit=Math.max(Drehzeit+neue_Drehzeit,100); neue_Drehzeit=0;
       let n=Drehliste_gesamt.shift();
       while (((n<0)||(n>14))&&Drehliste_gesamt.length>0) {n=Drehliste_gesamt.shift()}
@@ -538,7 +539,7 @@ let Loesetext2=[
   ];
 let Loeseliste=[];
 function loese() {
-  if (id_mit_gap.checked==true) {websocket.send('#gap\n'+GAP_Suche());Log7.innerHTML=GAP_Suche();return}
+  if (id_mit_gap.checked==true) {let t4=GAP_Suche(); websocket.send('#gap\n'+t4);Log7.innerHTML=t4;return}
   beachte_Checkbox_Einzelschritte=true;
 /*//aus 
 const canvas = document.getElementById("canvas").firstChild;
@@ -1097,8 +1098,9 @@ function GAP_Loesung(gap) {
     if (gap[i+1]==-3) Ergaenze_Loeseliste_mit(gap[i]-1);
     }
   //alert(Loeseliste);
-  //Drehliste_gesamt=Loeseliste.slice();
+  Drehliste_gesamt=Loeseliste.slice();
   WW=structuredClone(WWMERK);
+  Loesung_schicken.click();
   return Loeseliste;
   }
 
@@ -1604,7 +1606,7 @@ function permutiere_die_Mitten(perm) {
 let extrep=[];
 function Antwort_auswerten(w) {
   if (w.indexOf('extrep')>-1) {let w2=w.slice(w.indexOf('extrep'),w.indexOf(']')+1);eval(w2);Log7.innerHTML=extrep.length/2+w2;GAP_Loesung(extrep)}
-    else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click()},100);
+    else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click(); else weiter=1},100);
   }
 
   </script>
