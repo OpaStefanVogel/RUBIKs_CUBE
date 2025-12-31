@@ -434,6 +434,8 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       if (n==13) {Drehstart=frametime;Drehliste.length=0;id_Kippe.click();return}
       if (n==14) {Drehstart=frametime;Drehliste.length=0;id_DreheR.click();return}
       if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);//am Platz
+      ANZAHL_ZUEGE=ANZAHL_ZUEGE-1;
+      id_ANZAHL_ZUEGE.innerHTML='noch '+ANZAHL_ZUEGE+' Drehungen';
       //alert(n);
       animate_start();
       Drehstart=frametime;
@@ -539,7 +541,12 @@ let Loesetext2=[
   ];
 let Loeseliste=[];
 function loese() {
-  if (id_mit_gap.checked==true) {let t4=GAP_Suche(); websocket.send('#gap\n'+t4);Log7.innerHTML=t4;return}
+  id_Fokus.setAttribute('style','display:none');
+  if (id_mit_gap.checked==true) {
+    let t4=GAP_Suche(); 
+    websocket.send('#gap\n'+t4);
+    Log7.innerHTML=t4;
+    return}
   beachte_Checkbox_Einzelschritte=true;
 /*//aus 
 const canvas = document.getElementById("canvas").firstChild;
@@ -600,7 +607,6 @@ alert(pixels);
     } else Loesung=Loesung+', '+Loesetext2[-Loeseliste[i]-1]+' ist am Platz';
   Log6.innerHTML=Loesung;
   Drehnummer=0;
-  id_Fokus.setAttribute('style','display:none');
   }
 
 id_loese.addEventListener('click',function() {if (beachte_Checkbox_Einzelschritte==false) loese(); else {weiter=1}});
@@ -1604,9 +1610,16 @@ function permutiere_die_Mitten(perm) {
   }
 
 let extrep=[];
+let ANZAHL_ZUEGE=0;
 function Antwort_auswerten(w) {
-  if (w.indexOf('extrep')>-1) {let w2=w.slice(w.indexOf('extrep'),w.indexOf(']')+1);eval(w2);Log7.innerHTML=extrep.length/2+w2;GAP_Loesung(extrep)}
-    else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click(); else weiter=1},100);
+  if (w.indexOf('extrep')>-1) {
+    let w2=w.slice(w.indexOf('extrep'),w.indexOf(']')+1);
+    eval(w2);
+    ANZAHL_ZUEGE=extrep.length/2;
+    Log7.innerHTML='Anzahl_Zuege='+ANZAHL_ZUEGE+'; extrep=['+w2+']\n';
+    id_ANZAHL_ZUEGE.innerHTML='gesamt '+ANZAHL_ZUEGE+' Drehungen';
+    GAP_Loesung(extrep)
+    } else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click(); else weiter=1},100);
   }
 
   </script>
@@ -1748,6 +1761,7 @@ button {font-size:1.3em}
   </div>
 <!--div><button id='id_weiter' style='font-size:300%'>weiter</button></div-->
 <div id='Log0' style='display:flex; display:non; overflow:auto; font-family:monospace; font-size:90%; white-space:pre;'>1.</div>
+<div id='id_ANZAHL_ZUEGE' style='display:flex; display:non; overflow:auto; font-family:monospace; font-size:90%; white-space:pre;'>noch</div>
 <div><button id='id_nochmal' style='font-size:300%'>(nochmal)</button></div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
@@ -1912,6 +1926,12 @@ o. das tcl vom RPI4 mit auf RPI2 nauf
 .. Wanne auch aus Lego
 .. Farbband statt Sechseck
 .. usb-Verbindung zum Tablet
+.. bessere Übersicht:
+  .. wann gap geladen
+  ok wie weit schon, wieviel von wieviel Drehungen
+  .. wie viele schon richtig
+  .. die Farbzuordnung
+ok die Farbsensoren weg wenn Lösung läuft
 .. 
   </div>
 </body></html>
