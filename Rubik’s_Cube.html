@@ -435,7 +435,7 @@ function animate_go() {//Log2.innerHTML=frametime+' '+Drehstart+' noch '+Drehlis
       if (n==14) {Drehstart=frametime;Drehliste.length=0;id_DreheR.click();return}
       if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);//am Platz
       ANZAHL_ZUEGE=ANZAHL_ZUEGE-1;
-      id_ANZAHL_ZUEGE.innerHTML='noch '+ANZAHL_ZUEGE+' Drehungen';
+      id_ANZAHL_ZUEGE.innerHTML='noch '+(ANZAHL_ZUEGE+Zusatzdrehungen)+' Drehungen';
       //alert(n);
       animate_start();
       Drehstart=frametime;
@@ -1117,6 +1117,22 @@ function GAP_Loesung(gap) {
     }
   Ergaenze_Loeseliste_mit(5);
   Loeseliste.splice(Loeseliste.length-3,3);
+  switch (Ausrichtung_der_Mitten.indexOf(0)) {
+    case 0:
+      break;
+    case 1:
+      Loeseliste.push(14);permutiere_die_Mitten(DreheLpermutation);
+      break;
+    case 2:
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      Loeseliste.push(12);permutiere_die_Mitten(DreheLpermutation);
+      break;
+    case 3:
+      Loeseliste.push(12);permutiere_die_Mitten(DreheRpermutation);
+      break;
+    case 4:
+      break;
+    }
   //alert(Loeseliste);
   Drehliste_gesamt=Loeseliste.slice();
   WW=structuredClone(WWMERK);
@@ -1641,8 +1657,8 @@ function Antwort_auswerten(w) {
     eval(w2);
     ANZAHL_ZUEGE=extrep.length/2;
     Log7.innerHTML='Anzahl_Zuege='+ANZAHL_ZUEGE+'; extrep=['+w2+']\n';
+    GAP_Loesung(extrep);
     id_ANZAHL_ZUEGE.innerHTML='gesamt '+(ANZAHL_ZUEGE+Zusatzdrehungen)+' Drehungen';
-    GAP_Loesung(extrep)
     } else if (Loeseliste.length>0) setTimeout(function() {if (id_mit_gap.checked==false) id_loese.click(); else weiter=1},100);
   }
 
@@ -1968,5 +1984,10 @@ ok die schwarzen Punkte mit dazu.
 ok bis 0 herunterzählen statt -6
 .. Motoren mit Ministeps drehen
 .. Drehzeit bei websocket_Antwort separat einstellen.
+.. Bilder identisch groß
+.. bei Pause soll Bild 2 nicht extra weiterdrehen
+.. mehr offset bei drehung rechts
+.. am Ende noch auf rot
   </div>
+  
 </body></html>
