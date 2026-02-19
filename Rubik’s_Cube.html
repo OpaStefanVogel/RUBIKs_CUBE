@@ -1304,7 +1304,7 @@ let cc=structuredClone(cc0);
 let uv=[];
 const myImg = new Image();
 myImg.crossOrigin = "Anonymous";
-myImg.onload = () => {//alert('onload');
+myImg.onload = () => {//alert('onload mit scannum='+scannum+'; cc='+cc);
 //  const context = document.createElement('canvas').getContext('webgpu');
   const context = document.getElementById('canvas2').getContext('2d');//2d oder webgl2 geht auch und sogar auch webgpu!!!
   //alert(context);
@@ -1313,7 +1313,7 @@ myImg.onload = () => {//alert('onload');
   //let data = {};
 
   if (mit_Fokus.checked) ; else cc=structuredClone(cc1);
-  if (scannum==4&&cc[0][0]==144&&mit_Fokus.checked) {
+  if (scannum==4/*&&cc[0][0]==144*/&&mit_Fokus.checked) {
     Schattenarray=[];
     for (let i=48;i<220;i=i+1) {
       Schattenarray[i]=[];
@@ -1325,16 +1325,23 @@ myImg.onload = () => {//alert('onload');
         }
       //if (i>100&&i<130) alert(i+' '+Schattenarray[i].slice(100,130));
       }
-    //Log8.innerHTML=Schattenarray.slice(88,200).join('\n');
+    Log8.innerHTML=Schattenarray.slice(88,200).join('\n');
     let min=9999999;
     let s=0,t=Schattenarray,u=0,v=0,
     uv=[];
     for (let k=0;k<4;k++) {
       min=9999999;
       for (let i=106;i<180;i=i+1) for (let j=106;j<180;j=j+1) {
-        s=t[i][j]+t[i-1][j]+t[i-2][j]+t[i-3][j]+t[i-4][j]+t[i+1][j]+t[i+2][j]+t[i+3][j]+t[i+4][j]
-                 +t[i][j-1]+t[i][j-2]+t[i][j-3]+t[i][j-4]+t[i][j+1]+t[i][j+2]+t[i][j+3]+t[i][j+4]
-                 +t[i+1][j-1]+t[i+1][j-1]+t[i-1][j+1]+t[i-1][j-1];
+        s=t[i][j]
+          +t[i-1][j]+t[i-2][j]+t[i-3][j]+t[i-4][j]+t[i-5][j]
+          +t[i+1][j]+t[i+2][j]+t[i+3][j]+t[i+4][j]+t[i+5][j]
+          +t[i][j-1]+t[i][j-2]+t[i][j-3]+t[i][j-4]+t[i][j-5]
+          +t[i][j+1]+t[i][j+2]+t[i][j+3]+t[i][j+4]+t[i][j+5]
+          +t[i+1][j-1]+t[i+2][j-2]+t[i+3][j-3]+t[i+4][j-4]+t[i+5][j-5]
+          +t[i+1][j+1]+t[i+2][j+2]+t[i+3][j+3]+t[i+4][j+4]+t[i+5][j+5]
+          +t[i-1][j+1]+t[i-2][j+2]+t[i-3][j+3]+t[i-4][j+4]+t[i-5][j+5]
+          +t[i-1][j-1]+t[i-2][j-2]+t[i-3][j-3]+t[i-4][j-4]+t[i-5][j-5]
+          ;
         if (s<min) {min=s;u=i;v=j}
         }
       for (let i=u-30;i<u+30;i=i+1) for (let j=v-30;j<v+30;j=j+1) Schattenarray[i][j]=8;
@@ -1343,7 +1350,7 @@ myImg.onload = () => {//alert('onload');
     uv.sort();
     if (uv[0][1]>uv[1][1]) uv.splice(0,2,uv[1],uv[0]);
     if (uv[2][1]<uv[3][1]) uv.splice(2,2,uv[3],uv[2]);
-    Log8.innerHTML='uv=\n'+uv.join('\n')+'\n';//+Schattenarray.slice(88,200).join('\n');
+    //Log8.innerHTML='uv=\n'+uv.join('\n')+'\n'+Schattenarray.slice(88,200).join('\n');
     Mittelstein.setAttribute('d','M'+uv[0][0]+','+uv[0][1]
       +' L'+uv[1][0]+','+uv[1][1]
       +' '+uv[2][0]+','+uv[2][1]
@@ -1652,6 +1659,7 @@ function permutiere_die_Mitten(perm) {
 let extrep=[];
 let ANZAHL_ZUEGE=0;
 function Antwort_auswerten(w) {
+  Log8a.innerHTML=w;
   if (w.indexOf('extrep')>-1) {
     let w2=w.slice(w.indexOf('extrep'),w.indexOf(']')+1);
     eval(w2);
@@ -1825,7 +1833,7 @@ button {font-size:1.3em}
 <!--div>
 <button id='id_drehe0' style='background-color:red; font-size:200%'>↷</button>
 <button id='id_drehe1' style='background-color:green; font-size:200%'>↷</button>
-<button id='id_drehe2' style='background-color:orange; font-size:200%'>↷</button>
+<button id='id_drehe2' style='background-color:orange; font-.size:200%'>↷</button>
 <button id='id_drehe3' style='background-color:blue; font-size:200%'>↷</button>
 <button id='id_drehe4' style='background-color:yellow; font-size:200%'>↷</button>
 <button id='id_drehe5' style='background-color:white; font-size:200%'>↻</button>
@@ -1842,6 +1850,10 @@ button {font-size:1.3em}
 <button id='id_langsamer' style='background-color:white; font-size:200%'>langsamer</button>
 <button id='id_schneller' style='background-color:white; font-size:200%'>schneller</button><span id='log_id'> </span>
 
+
+<div id='Log8a' style='display:flex; overflow:auto; font-family:monospace; white-space:pre; color:red'>
+
+  </div>
 
 <div id='Log' style='display:non; font-family:Courier,monospace; white-space:wrap;'> </div>
 <div id='Tdok' style='display:none; font-family:Courier,monospace; white-space:wrap;'>raycaster</div>
@@ -1979,7 +1991,7 @@ ok hostname RUBIK_CUBE_PI ok jetzt RUBIKs_CUBE eingestellt mit nano /etc/hostnam
   .. die Farbzuordnung
 ok die Farbsensoren weg wenn Lösung läuft
 ok die schwarzen Punkte mit dazu.
-.. die Farbpunkte oben weit und unten schmal, deshalb die Lücken besser lokalisieren
+ok die Farbpunkte oben weit und unten schmal, deshalb die Lücken besser lokalisieren ok bis t[i+5][j+5]
 .. Zurückschubsen mit entgegengesetzter Drehung
 ok bis 0 herunterzählen statt -6
 .. Motoren mit Ministeps drehen
@@ -1988,6 +2000,7 @@ ok bis 0 herunterzählen statt -6
 .. bei Pause soll Bild 2 nicht extra weiterdrehen
 .. mehr offset bei drehung rechts
 .. am Ende noch auf rot
+.. am Ende von websocket.message ein >gap >gap wegmachen
   </div>
   
 </body></html>
