@@ -475,14 +475,14 @@ function Ergaenze_Loeseliste_mit(n) {
       Loeseliste.push(13,17);permutiere_die_Mitten(Kippepermutation);
       break;
     }
-  if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1);
+  if (n<6) drehe2(n,1,0); else drehe2(n-6,0,1); ANZAHL_ZUEGE=ANZAHL_ZUEGE+1;
   if (n<-66) {//das war n<6 alle Links- in Rechtsdrehungen umwandeln
     if ((Loeseliste.length>2)&&(Loeseliste[Loeseliste.length-2]==n+6)) {
       Loeseliste.pop();
       Loeseliste.pop();
       Loeseliste.push(16);
-      } else Loeseliste.push(15,n+6,n+6,n+6,16); 
-    } else Loeseliste.push(15,n,16);  
+      } else Loeseliste.push(15,n+6,n+6,n+6,16);
+    } else Loeseliste.push(15,n,16);
   }
 
 function suche(i) {//if (i==4) alert('suche(4) gestartet');
@@ -575,7 +575,7 @@ alert(pixels);
   let WWMERK=structuredClone(WW);
   //let LI=[];
   //for (let i=0;i<LISTE.length;i++) LI[i]=LISTE[i].rotation;
-  Loeseliste=[];
+  Loeseliste=[];ANZAHL_ZUEGE=0; Zusatzdrehungen=0;
   suche(1);
   suche(9);
   suche(7);
@@ -588,12 +588,13 @@ alert(pixels);
   suche(6);
   suche(4);
   suche(2)/**/
-  Ergaenze_Loeseliste_mit(11);
-  //Ergaenze_Loeseliste_mit(5);
+  Ergaenze_Loeseliste_mit(11); ANZAHL_ZUEGE=ANZAHL_ZUEGE-1;//geht nicht wegzumachen
+  //Ergaenze_Loeseliste_mit(5); ANZAHL_ZUEGE=ANZAHL_ZUEGE-1;
+  id_ANZAHL_ZUEGE.innerHTML='gesamt '+(ANZAHL_ZUEGE+Zusatzdrehungen)+' Drehungen';
   Loeseliste.pop();Loeseliste.pop();Loeseliste.pop();
   while (Ausrichtung_der_Mitten[0]>0) {Loeseliste.push(14);permutiere_die_Mitten(DreheRpermutation)}
   Ausrichtung_der_Mitten=[0,1,2,3,4,5];
-  //alert(Loeseliste);
+  //alert(Loeseliste.slice(-20));
   WW=structuredClone(WWMERK);
   //for (let i=0;i<LISTE.length;i++) LISTE[i].setRotationFromEuler(LI[i]);
   setTimeout(function() {Drehliste_gesamt=Loeseliste.slice()},100);
