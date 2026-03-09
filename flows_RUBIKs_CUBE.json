@@ -92,7 +92,7 @@
         "type": "rpi-gpio out",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "35",
+        "pin": "29",
         "set": true,
         "level": "1",
         "freq": "",
@@ -146,7 +146,7 @@
         "type": "rpi-gpio out",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "29",
+        "pin": "35",
         "set": true,
         "level": "1",
         "freq": "",
@@ -170,7 +170,7 @@
         "type": "rpi-gpio out",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "23",
+        "pin": "11",
         "set": true,
         "level": "1",
         "freq": "",
@@ -224,7 +224,7 @@
         "type": "rpi-gpio out",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "11",
+        "pin": "23",
         "set": true,
         "level": "1",
         "freq": "",
@@ -492,213 +492,8 @@
         "y": 560,
         "wires": [
             [
-                "681f320e.1093c4",
-                "b9558c61.7571f"
-            ]
-        ]
-    },
-    {
-        "id": "681f320e.1093c4",
-        "type": "switch",
-        "z": "1777d44f.558154",
-        "name": "",
-        "property": "payload",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "Motor_1_plus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_aus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_minus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_2_plus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_2_aus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_2_minus",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_Festhalten",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_Kippen",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_Loslassen",
-                "vt": "str"
-            },
-            {
-                "t": "cont",
-                "v": "Motor_LED",
-                "vt": "str"
-            },
-            {
-                "t": "regex",
-                "v": "Loeseliste*",
-                "vt": "str",
-                "case": false
-            },
-            {
-                "t": "regex",
-                "v": "Motor_Summer*",
-                "vt": "str",
-                "case": false
-            },
-            {
-                "t": "eq",
-                "v": "Motor_Testbeispiel",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_schnell_Kippen",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_Testbeispiel2",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_Pause",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_weiter",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_Testbeispiel_Y",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_Testbeispiel_Q",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_Hochkippen",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "Motor_1_Runterkippen",
-                "vt": "str"
-            },
-            {
-                "t": "regex",
-                "v": ".gap*",
-                "vt": "str",
-                "case": false
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 22,
-        "x": 330,
-        "y": 560,
-        "wires": [
-            [
-                "1e08c8c.20fbc37"
-            ],
-            [
-                "a034968.0baa268",
-                "31469676.19663a"
-            ],
-            [
-                "6fc0a8ed.a6e568"
-            ],
-            [
-                "98f86cbc.8653b8",
-                "6021b993.1a6ac8",
-                "30d7e4f9.41a73c",
-                "c6c280ac.a81a7"
-            ],
-            [
-                "31469676.19663a",
-                "8cdb281c.c88cd",
-                "a034968.0baa268"
-            ],
-            [
-                "81b39bde.744b58",
-                "6021b993.1a6ac8",
-                "30d7e4f9.41a73c",
-                "faec0a28.154268"
-            ],
-            [
-                "da7848c2.d67c08"
-            ],
-            [
-                "3ce7c0d7.cf1fd8"
-            ],
-            [
-                "1db66ff7.3572d"
-            ],
-            [
-                "1ca8da31.76b966"
-            ],
-            [
-                "182547ce.903f08"
-            ],
-            [
-                "8c339de4.4167d"
-            ],
-            [
-                "a9783c38.9ddef8"
-            ],
-            [
-                "d7efde5b.947a48"
-            ],
-            [
-                "927763a2.5a0db"
-            ],
-            [
-                "37dec65c.707fca"
-            ],
-            [
-                "615abcff.cba604"
-            ],
-            [
-                "423447f.8b18bb8"
-            ],
-            [
-                "31ce5720.301fe8"
-            ],
-            [
-                "ee79bfa2.b4a0d"
-            ],
-            [
-                "e1f0460c.caaf6"
-            ],
-            [
-                "ed4b5ae8.158fc"
+                "b9558c61.7571f",
+                "681f320e.1093c4"
             ]
         ]
     },
@@ -1197,7 +992,7 @@
         "type": "rpi-gpio in",
         "z": "1777d44f.558154",
         "name": "",
-        "pin": "40",
+        "pin": "38",
         "intype": "up",
         "debounce": "80",
         "read": true,
@@ -1397,8 +1192,8 @@
         "name": "",
         "server": "330aaaaf.0cce26",
         "client": "",
-        "x": 670,
-        "y": 1780,
+        "x": 810,
+        "y": 800,
         "wires": []
     },
     {
@@ -2174,12 +1969,234 @@
         "repeat": "",
         "crontab": "",
         "once": true,
-        "onceDelay": "300",
+        "onceDelay": "30",
         "x": 110,
         "y": 2240,
         "wires": [
             [
                 "baceb067.9bf878"
+            ]
+        ]
+    },
+    {
+        "id": "681f320e.1093c4",
+        "type": "switch",
+        "z": "1777d44f.558154",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Motor_1_plus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_aus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_minus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_2_plus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_2_aus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_2_minus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Festhalten",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Kippen",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Loslassen",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "Motor_LED",
+                "vt": "str"
+            },
+            {
+                "t": "regex",
+                "v": "Loeseliste*",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "regex",
+                "v": "Motor_Summer*",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_schnell_Kippen",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Pause",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_weiter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel_Y",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_Testbeispiel_Q",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Hochkippen",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Motor_1_Runterkippen",
+                "vt": "str"
+            },
+            {
+                "t": "regex",
+                "v": ".gap*",
+                "vt": "str",
+                "case": false
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 22,
+        "x": 330,
+        "y": 560,
+        "wires": [
+            [
+                "1e08c8c.20fbc37"
+            ],
+            [
+                "a034968.0baa268",
+                "31469676.19663a"
+            ],
+            [
+                "6fc0a8ed.a6e568"
+            ],
+            [
+                "98f86cbc.8653b8",
+                "6021b993.1a6ac8",
+                "30d7e4f9.41a73c",
+                "c6c280ac.a81a7"
+            ],
+            [
+                "31469676.19663a",
+                "8cdb281c.c88cd",
+                "a034968.0baa268"
+            ],
+            [
+                "81b39bde.744b58",
+                "6021b993.1a6ac8",
+                "30d7e4f9.41a73c",
+                "faec0a28.154268"
+            ],
+            [
+                "da7848c2.d67c08"
+            ],
+            [
+                "3ce7c0d7.cf1fd8"
+            ],
+            [
+                "1db66ff7.3572d"
+            ],
+            [
+                "1ca8da31.76b966"
+            ],
+            [
+                "182547ce.903f08"
+            ],
+            [
+                "8c339de4.4167d"
+            ],
+            [
+                "a9783c38.9ddef8"
+            ],
+            [
+                "d7efde5b.947a48"
+            ],
+            [
+                "927763a2.5a0db"
+            ],
+            [
+                "37dec65c.707fca"
+            ],
+            [
+                "615abcff.cba604",
+                "3c7d3b98.ebe38c"
+            ],
+            [
+                "423447f.8b18bb8"
+            ],
+            [
+                "31ce5720.301fe8"
+            ],
+            [
+                "ee79bfa2.b4a0d"
+            ],
+            [
+                "e1f0460c.caaf6"
+            ],
+            [
+                "ed4b5ae8.158fc"
+            ]
+        ]
+    },
+    {
+        "id": "3c7d3b98.ebe38c",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "delete msg._session;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 570,
+        "y": 740,
+        "wires": [
+            [
+                "30d7e4f9.41a73c"
             ]
         ]
     }
