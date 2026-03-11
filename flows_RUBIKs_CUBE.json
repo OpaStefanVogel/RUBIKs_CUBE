@@ -1300,7 +1300,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "global.get Drehung",
-        "func": "if (global.get('Drehung')=='Motor_2_plus') {\n  global.set('Drehung','');\n  return [msg,null];\n  }\nif (global.get('Drehung')=='Motor_2_minus') {\n  global.set('Drehung','');\n  return [null,msg];\n  }\n",
+        "func": "node.status({text:global.get('Drehung')});\nif (global.get('Drehung')=='Motor_2_plus') {\n  global.set('Drehung','');\n  return [msg,null];\n  }\nif (global.get('Drehung')=='Motor_2_minus') {\n  global.set('Drehung','');\n  return [null,msg];\n  }\n",
         "outputs": 2,
         "noerr": 0,
         "x": 930,
@@ -1438,11 +1438,11 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "Pause?",
-        "func": "if (global.get(\"Pause\")==false) return msg;",
+        "func": "node.status({text:global.get('Pause')});\nif (global.get(\"Pause\")==false) return msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 810,
-        "y": 980,
+        "x": 820,
+        "y": 960,
         "wires": [
             [
                 "8c339de4.4167d"
@@ -2197,6 +2197,279 @@
         "wires": [
             [
                 "30d7e4f9.41a73c"
+            ]
+        ]
+    },
+    {
+        "id": "22d3d9e.56028a6",
+        "type": "rpi-mouse",
+        "z": "1777d44f.558154",
+        "name": "",
+        "butt": "1",
+        "x": 190,
+        "y": 2360,
+        "wires": [
+            [
+                "2bf981fd.f13c96"
+            ]
+        ]
+    },
+    {
+        "id": "60365c62.c17b74",
+        "type": "link out",
+        "z": "1777d44f.558154",
+        "name": "",
+        "links": [
+            "2b7aa17f.c4b0d6"
+        ],
+        "x": 775,
+        "y": 2360,
+        "wires": []
+    },
+    {
+        "id": "864af68c.2ad678",
+        "type": "link out",
+        "z": "1777d44f.558154",
+        "name": "",
+        "links": [
+            "2b7aa17f.c4b0d6"
+        ],
+        "x": 775,
+        "y": 2520,
+        "wires": []
+    },
+    {
+        "id": "6705ceca.d15dd",
+        "type": "link out",
+        "z": "1777d44f.558154",
+        "name": "",
+        "links": [
+            "2b7aa17f.c4b0d6"
+        ],
+        "x": 775,
+        "y": 2440,
+        "wires": []
+    },
+    {
+        "id": "af78c4bd.eeac3",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "if (msg.payload) {msg.payload='Motor_2_plus'; return msg;}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 2360,
+        "wires": [
+            [
+                "60365c62.c17b74"
+            ]
+        ]
+    },
+    {
+        "id": "1626d675.c93c42",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "msg.payload='Motor_2_aus'; \nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 2440,
+        "wires": [
+            [
+                "6705ceca.d15dd"
+            ]
+        ]
+    },
+    {
+        "id": "a0649b99.8b56c",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "msg.payload='Motor_2_minus'; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 2520,
+        "wires": [
+            [
+                "864af68c.2ad678"
+            ]
+        ]
+    },
+    {
+        "id": "cd90cf4.822ef3",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 190,
+        "y": 2320,
+        "wires": [
+            [
+                "2bf981fd.f13c96"
+            ]
+        ]
+    },
+    {
+        "id": "63b50639.3d55b",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 190,
+        "y": 2400,
+        "wires": [
+            [
+                "e7ed245b.93b7d"
+            ]
+        ]
+    },
+    {
+        "id": "ea9747d4.5551",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 190,
+        "y": 2480,
+        "wires": [
+            [
+                "c0b89106.97311"
+            ]
+        ]
+    },
+    {
+        "id": "e479dc93.d4c6a8",
+        "type": "rpi-mouse",
+        "z": "1777d44f.558154",
+        "name": "",
+        "butt": "2",
+        "x": 200,
+        "y": 2520,
+        "wires": [
+            [
+                "c0b89106.97311"
+            ]
+        ]
+    },
+    {
+        "id": "c0b89106.97311",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 410,
+        "y": 2520,
+        "wires": [
+            [
+                "a0649b99.8b56c"
+            ]
+        ]
+    },
+    {
+        "id": "e7ed245b.93b7d",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 410,
+        "y": 2440,
+        "wires": [
+            [
+                "1626d675.c93c42"
+            ]
+        ]
+    },
+    {
+        "id": "2bf981fd.f13c96",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 410,
+        "y": 2360,
+        "wires": [
+            [
+                "af78c4bd.eeac3"
+            ]
+        ]
+    },
+    {
+        "id": "953a95ed.df4318",
+        "type": "rpi-mouse",
+        "z": "1777d44f.558154",
+        "name": "",
+        "butt": "4",
+        "x": 200,
+        "y": 2440,
+        "wires": [
+            [
+                "e7ed245b.93b7d"
+            ]
+        ]
+    },
+    {
+        "id": "2b7aa17f.c4b0d6",
+        "type": "link in",
+        "z": "1777d44f.558154",
+        "name": "select",
+        "links": [
+            "60365c62.c17b74",
+            "6705ceca.d15dd",
+            "864af68c.2ad678"
+        ],
+        "x": 155,
+        "y": 480,
+        "wires": [
+            [
+                "681f320e.1093c4"
             ]
         ]
     }
