@@ -1696,17 +1696,17 @@ button {font-size:1.3em}
   </style>
 
 <!---IP-Kamera:--->
-<div>Websocket <input id='websocket_Adresse' size='30' value="ws://RUBIKs_CUBE:1880/ws/motoren"/> <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
-  <button id='Lenken_linksrum'>Drehen→</button>, 
-  <button id='Lenken_rechtsrum'>Drehen←</button>,
-  <button id='Kippen_hochzu'>Kippen↑</button>,
-  <button id='Festhalten'>Festhalten</button>,
-  <button id='Loslassen'>Loslassen</button>,
+<div>Websocket <input id='websocket_Adresse' size='30' value="ws://192.168.43.39:1880/ws/motoren"/> <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
+  <button id='Lenken_linksrum'>Drehen↷</button>, 
+  <button id='Lenken_rechtsrum'>Drehen↶</button>,
+  <button id='Kippen_hochzu'>Kippen↓↑</button>,
+  <button id='Festhalten'>Festhalten↓</button>,
+  <button id='Loslassen'>Loslassen↑</button>,
   <button id='Loesung_schicken'>Lösung schicken</button>,
   gesendet: <span id='Antwort' style='display:flex; overflow:auto; white.space:pre'> </span>.
   </div>
 
-<div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> installieren, auf Videoauflösung 352x288 und Port <input id='id_port' value='http://localhost:56147'/> konfigurieren, dann starten und <button id='id_Test4'>verbinden</button>,
+<div><a href='https://play.google.com/store/apps/details?id=com.pas.webcam'>IP-Webcam</a> installieren, auf Videoauflösung 352x288 und Port 56147 konfigurieren und starten, IP-Adresse hier <input id='id_port' value='http://192.168.43.1:56147'/> eintragen, <button id='id_Test4'>verbinden</button>,
   <input id='mit_Fokus' type='checkbox' checked='checked'/> mit Fokus.
   </div>
 
@@ -1772,8 +1772,8 @@ button {font-size:1.3em}
 <div id='id_Ausrichtung_der_Mitten'>0,1,2,3,4,5</div>
 
 <div>
-<button id='id_DreheL' style='background-color:yellow; font-size:100%'>Drehen→</button>
-<button id='id_DreheR' style='background-color:yellow; font-size:100%'>Drehen←</button>
+<button id='id_DreheR' style='background-color:yellow; font-size:100%'>alles Drehen↷</button>
+<button id='id_DreheL' style='background-color:yellow; font-size:100%'>alles Drehen↶</button>
 <button id='id_Kippe' style='background-color:yellow; font-size:100%'>Kippen↑</button>
   </div>
 
