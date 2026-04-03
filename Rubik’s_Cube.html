@@ -1604,7 +1604,7 @@ window.onerror=function(message, file, line, col, error) {alert('message '+messa
 var websocket;
 function websocket_verbinden() {
   websocket = new WebSocket(websocket_Adresse.value,"fiktiv");
-  websocket.onerror=function(event) {
+  websocket.onerror=function(event) {alert(event);
     };
   websocket.onmessage = function(event) {
     var w=event.data;
@@ -1637,6 +1637,7 @@ function websocket_verbunden() {
 setTimeout(websocket_verbinden,200);
 setInterval(websocket_verbunden,1000);
 
+Websocket_verbinden.addEventListener('click',function() {history.replaceState({}, "hallo", "http://192.168.43.39:1880/Rubik%E2%80%99s_Cube.html");websocket_verbinden()});
 Lenken_linksrum.addEventListener('click',function() {wsend('Motor_2_minus')});
 Lenken_rechtsrum.addEventListener('click',function() {wsend('Motor_2_plus')});
 Kippen_hochzu.addEventListener('click',function() {wsend('Motor_1_Kippen')});
@@ -1697,6 +1698,7 @@ button {font-size:1.3em}
 
 <!---IP-Kamera:--->
 <div>Websocket <input id='websocket_Adresse' size='30' value="ws://192.168.43.39:1880/ws/motoren"/> <a href="http://www.w3.org/TR/2012/CR-websockets-20120920/#the-websocket-interface" id="Websocket_Status">CLOSED</a>.
+  <button id='Websocket_verbinden'>verbinden</button>, 
   <button id='Lenken_linksrum'>Drehen↷</button>, 
   <button id='Lenken_rechtsrum'>Drehen↶</button>,
   <button id='Kippen_hochzu'>Kippen↓↑</button>,
@@ -1715,7 +1717,7 @@ button {font-size:1.3em}
 <svg width="352" height="288">
 
 <foreignObject x="0" y="0" width="352" height="288" style="border:none">
-  <iframe id='canvas4' src='../KLETTERN_UND_RUTSCHEN/threejs2024/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/textures/World_ap.11_baseColor.jpeg' width="352" height="288" style="border:none"> jjj</iframe>
+  <iframe id='canvas4' src='photo_2025-06-05_10-47.jpg' width="352" height="288" style="border:none"> jjj</iframe>
   </foreignObject>
  
 <rect id='id_rectangle' x='0' y='0' width='288' height='288' fill='white' opacity='0'/>

@@ -488,7 +488,7 @@
         "name": "",
         "server": "330aaaaf.0cce26",
         "client": "",
-        "x": 100,
+        "x": 90,
         "y": 560,
         "wires": [
             [
@@ -546,7 +546,8 @@
         "y": 1180,
         "wires": [
             [
-                "de47e45.4043c18"
+                "de47e45.4043c18",
+                "26a1d61f.5fd652"
             ]
         ]
     },
@@ -565,8 +566,8 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 240,
-        "y": 1420,
+        "x": 260,
+        "y": 1400,
         "wires": [
             [
                 "c8dcd8e0.140c7",
@@ -589,7 +590,8 @@
         "y": 1400,
         "wires": [
             [
-                "de47e45.4043c18"
+                "de47e45.4043c18",
+                "128cacb3.19fe6b"
             ]
         ]
     },
@@ -712,7 +714,7 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 240,
+        "x": 260,
         "y": 1340,
         "wires": [
             [
@@ -891,7 +893,8 @@
         "wires": [
             [
                 "7a515ccc.76b344",
-                "35e0cad4.cd6f66"
+                "35e0cad4.cd6f66",
+                "128cacb3.19fe6b"
             ]
         ]
     },
@@ -1255,7 +1258,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "0.01",
+        "timeout": "0.05",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -1287,8 +1290,8 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 840,
-        "y": 1120,
+        "x": 880,
+        "y": 1080,
         "wires": [
             [
                 "f3b0edad.9b4fe8"
@@ -1300,11 +1303,11 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "global.get Drehung",
-        "func": "node.status({text:global.get('Drehung')});\nif (global.get('Drehung')=='Motor_2_plus') {\n  global.set('Drehung','');\n  return [msg,null];\n  }\nif (global.get('Drehung')=='Motor_2_minus') {\n  global.set('Drehung','');\n  return [null,msg];\n  }\n",
-        "outputs": 2,
+        "func": "node.status({text:global.get('Drehung')});\nif (global.get('Drehung')=='Motor_2_plus') {\n  global.set('Drehung','');\n  if (global.get('Festhalten')) return [null,null,msg,null]; else return [msg,null,null,null];\n  }\nif (global.get('Drehung')=='Motor_2_minus') {\n  global.set('Drehung','');\n  if (global.get('Festhalten')) return [null,null,null,msg]; else return [null,msg,null,null];\n  }\n",
+        "outputs": 4,
         "noerr": 0,
-        "x": 930,
-        "y": 880,
+        "x": 910,
+        "y": 860,
         "wires": [
             [
                 "82b5c82a.6b04b",
@@ -1313,6 +1316,14 @@
             [
                 "d004ecd9.2341f8",
                 "aca9621.434a1a"
+            ],
+            [
+                "82b5c82a.6b04b",
+                "c15467c5.a06198"
+            ],
+            [
+                "d004ecd9.2341f8",
+                "33e17686.74bb7a"
             ]
         ]
     },
@@ -1526,7 +1537,7 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 60,
+        "x": 100,
         "y": 1340,
         "wires": [
             [
@@ -1570,8 +1581,8 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 900,
-        "y": 1040,
+        "x": 920,
+        "y": 1020,
         "wires": [
             [
                 "82b5c82a.6b04b"
@@ -1584,7 +1595,7 @@
         "z": "1777d44f.558154",
         "name": "",
         "pauseType": "delay",
-        "timeout": "0.01",
+        "timeout": "0.04",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -2103,7 +2114,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 22,
-        "x": 330,
+        "x": 350,
         "y": 560,
         "wires": [
             [
@@ -2271,7 +2282,7 @@
         "type": "function",
         "z": "1777d44f.558154",
         "name": "",
-        "func": "msg.payload='Motor_2_aus'; \nreturn msg;\n",
+        "func": "msg.payload='Motor_Testbeispiel'; \nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "x": 610,
@@ -2471,6 +2482,208 @@
             [
                 "681f320e.1093c4"
             ]
+        ]
+    },
+    {
+        "id": "de9cbe8f.d3e11",
+        "type": "http in",
+        "z": "1777d44f.558154",
+        "name": "",
+        "url": "/Rubik%E2%80%99s_Cube.html",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 2680,
+        "wires": [
+            [
+                "46f6f1b1.fae4b",
+                "cb531272.ef7c18"
+            ]
+        ]
+    },
+    {
+        "id": "46f6f1b1.fae4b",
+        "type": "file in",
+        "z": "1777d44f.558154",
+        "name": "",
+        "filename": "/home/pi/RUBIKs_CUBE/Rubik’s_Cube.html",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 570,
+        "y": 2680,
+        "wires": [
+            [
+                "85033c72.7c0018"
+            ]
+        ]
+    },
+    {
+        "id": "85033c72.7c0018",
+        "type": "http response",
+        "z": "1777d44f.558154",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 850,
+        "y": 2680,
+        "wires": []
+    },
+    {
+        "id": "cb531272.ef7c18",
+        "type": "debug",
+        "z": "1777d44f.558154",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 450,
+        "y": 2760,
+        "wires": []
+    },
+    {
+        "id": "c15467c5.a06198",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.07",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 1130,
+        "y": 960,
+        "wires": [
+            [
+                "31469676.19663a"
+            ]
+        ]
+    },
+    {
+        "id": "33e17686.74bb7a",
+        "type": "delay",
+        "z": "1777d44f.558154",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0.11",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 1129.170654296875,
+        "y": 1017.8037719726562,
+        "wires": [
+            [
+                "31469676.19663a"
+            ]
+        ]
+    },
+    {
+        "id": "5313ef66.938fe",
+        "type": "comment",
+        "z": "1777d44f.558154",
+        "name": "↶",
+        "info": "",
+        "x": 1210,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "2f2905da.bd3d62",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 1380,
+        "wires": [
+            [
+                "e1f0460c.caaf6"
+            ]
+        ]
+    },
+    {
+        "id": "de8c17d4.96d098",
+        "type": "inject",
+        "z": "1777d44f.558154",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 1420,
+        "wires": [
+            [
+                "ee79bfa2.b4a0d"
+            ]
+        ]
+    },
+    {
+        "id": "128cacb3.19fe6b",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "global.set('Festhalten',false);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 1400,
+        "wires": [
+            [
+                "496bfaf6.39caec"
+            ]
+        ]
+    },
+    {
+        "id": "26a1d61f.5fd652",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "global.set('Festhalten',true);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 1280,
+        "wires": [
+            [
+                "496bfaf6.39caec"
+            ]
+        ]
+    },
+    {
+        "id": "496bfaf6.39caec",
+        "type": "function",
+        "z": "1777d44f.558154",
+        "name": "",
+        "func": "node.status({text:'Festhalten=='+global.get('Festhalten')})\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 850,
+        "y": 1340,
+        "wires": [
+            []
         ]
     }
 ]
