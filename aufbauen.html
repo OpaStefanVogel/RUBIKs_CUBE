@@ -155,12 +155,10 @@ let axisY=new THREE.Vector3(0,1,0);
 let axisZ=new THREE.Vector3(0,0,1);
 
 function animate(timestamp,frame) {
-  Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
-  //Schneckenradachse.rotateZ(Math.PI/2);
-  //Schneckenradachse.setRotationFromAxisAngle(axisZ,Math.PI/2);
-  //Schneckenradachse.setRotationFromAxisAngle(axisY,timestamp/1000*Math.PI/5);
-  //Schneckenradachse.rotateY(0.01);
-  Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,timestamp/1000*Math.PI/5,Math.PI/2,'ZYX'));
+  //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
+  Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
+  Kippantriebsachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
+  Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
   controls.update();
   controllerTarget.position.copy(controls.target);
   renderer.render( scene, camera );
@@ -193,7 +191,7 @@ let P=0.008*4; //8 mm https://de.wikipedia.org/wiki/Datei:Lego_dimensions.svg
 let H=1.2*P;
 let f=0xeeddcc;
 
-function b(px,py,pz3,dx,dy,dz3) {
+function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
   let RET=new THREE.Mesh(
     new THREE.BoxGeometry(dx*P,dy*P,dz3/3*H),
     new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
@@ -204,21 +202,26 @@ function b(px,py,pz3,dx,dy,dz3) {
   return RET;
   }
 THREE.CylinderGeometry
-function c(px,py,pz3,dy) {
-  let RET=new THREE.Mesh(
+
+function a(px,py,pz3,dy) {//Achse
+  const RET=new THREE.Object3D();
+  const RET2=new THREE.Mesh(
     new THREE.CylinderGeometry(0.2*P,0.2*P,dy*P,6),
-    new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
+    new THREE.MeshStandardMaterial( {color: 'gray', metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
     );
-  RET.add(new THREE.AxesHelper(0.04));
+  RET2.rotateX(Math.PI/2);
+  RET2.position.set(0,0,dy/2*P);
+  RET.add(RET2,new THREE.AxesHelper(0.04));
   //RET.rotateZ(Math.PI/2);
-  RET.position.set((px+dy/2)*P,(py)*P,pz3/3*H);
-  f=(f+0x080808)%0x800000+0x776655;
+  RET.position.set(px*P,py*P,pz3/3*H);
   //alert(f);
   return RET;
   }
 
 const Grundplattenebene=new THREE.Object3D();
-const Schneckenradachse=c( 3, 0,  5*3+2,10);
+const Schneckenradachse=a( 3, 0,  5*3+2,10);
+const Kippantriebsachse=a( 3, 10,  5*3+2,8);
+const Drehtellerachse=a( 8, 3,  1,8);
 Grundplattenebene.position.set(-8*P,-3*P,0.02);
 Schreibtischebene.add(Grundplattenebene);
 let Grundplatte=b(0,0,-1,16,8,1); Grundplatte.userData={txt:'Grundplatte'};
@@ -239,6 +242,9 @@ Grundplattenebene.add(
   b(11,-4,5*3,1,12,3),//rechtes Lager für Schneckenachse
   b( 2, 6,  0,12,1,5*3),//hintere Stütze für Schneckenlager
   Schneckenradachse,
+  Kippantriebsachse,
+  Drehtellerachse,
+  b(-2,0,7*3,2,10,1),  //verbindet die beiden Motorblöcke
   
   
   
@@ -246,8 +252,9 @@ Grundplattenebene.add(
   );
 
 const Drehplattenebene=new THREE.Object3D();
-Drehplattenebene.position.set(8*P,3*P,7.5*H);
-Grundplattenebene.add(Drehplattenebene);
+Drehplattenebene.position.set(0,0,7.5*H);
+//Drehplattenebene.rotateX(Math.PI/2);
+Drehtellerachse.add(Drehplattenebene);
 Drehplattenebene.add(
   new THREE.AxesHelper(0.3),
   b(-6,-6,-1,12,12,1),
