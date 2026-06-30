@@ -150,7 +150,17 @@ function Interpretiere(text) {
     }
   }
 
+let axisX=new THREE.Vector3(1,0,0);
+let axisY=new THREE.Vector3(0,1,0);
+let axisZ=new THREE.Vector3(0,0,1);
+
 function animate(timestamp,frame) {
+  Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
+  //Schneckenradachse.rotateZ(Math.PI/2);
+  //Schneckenradachse.setRotationFromAxisAngle(axisZ,Math.PI/2);
+  //Schneckenradachse.setRotationFromAxisAngle(axisY,timestamp/1000*Math.PI/5);
+  //Schneckenradachse.rotateY(0.01);
+  Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,timestamp/1000*Math.PI/5,Math.PI/2,'ZYX'));
   controls.update();
   controllerTarget.position.copy(controls.target);
   renderer.render( scene, camera );
@@ -177,7 +187,7 @@ let Schreibtisch=new THREE.Mesh(
   );
 Schreibtisch.userData={txt:'Schreibtisch'};
 Schreibtischebene.add(Schreibtisch);
-Schreibtisch.position.set(0,0,-0.025);//scene-Koordinaten
+Schreibtisch.position.set(0,0.2,-0.025);//Schreibtischebene-Koordinaten
 
 let P=0.008*4; //8 mm https://de.wikipedia.org/wiki/Datei:Lego_dimensions.svg
 let H=1.2*P;
@@ -186,22 +196,39 @@ let f=0xeeddcc;
 function b(px,py,pz3,dx,dy,dz3) {
   let RET=new THREE.Mesh(
     new THREE.BoxGeometry(dx*P,dy*P,dz3/3*H),
-    new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.3, transparent:true, opacity:1} )
+    new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
     );
   RET.position.set((px+dx/2)*P,(py+dy/2)*P,(pz3/3+dz3/6)*H);
   f=(f+0x080808)%0x800000+0x776655;
   //alert(f);
   return RET;
   }
+THREE.CylinderGeometry
+function c(px,py,pz3,dy) {
+  let RET=new THREE.Mesh(
+    new THREE.CylinderGeometry(0.2*P,0.2*P,dy*P,6),
+    new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
+    );
+  RET.add(new THREE.AxesHelper(0.04));
+  //RET.rotateZ(Math.PI/2);
+  RET.position.set((px+dy/2)*P,(py)*P,pz3/3*H);
+  f=(f+0x080808)%0x800000+0x776655;
+  //alert(f);
+  return RET;
+  }
 
 const Grundplattenebene=new THREE.Object3D();
-Grundplattenebene.position.set(-8*P,-3*P,0.1);
+const Schneckenradachse=c( 3, 0,  5*3+2,10);
+Grundplattenebene.position.set(-8*P,-3*P,0.02);
 Schreibtischebene.add(Grundplattenebene);
-let Grundplatte=b(0,0,-1,16,12,1); Grundplatte.userData={txt:'Grundplatte'};
+let Grundplatte=b(0,0,-1,16,8,1); Grundplatte.userData={txt:'Grundplatte'};
 Grundplattenebene.add(
+  new THREE.AxesHelper(0.5),
   Grundplatte,
-  b(6,12,0,1,12,5*3),
-  b(9,12,0,1,12,5*3),
+  b(6,7,0,1,12,5*3),
+  b(9,7,0,1,12,5*3),
+  b(6,6,5*3,1,16,1*3),
+  b(9,6,5*3,1,16,1*3),
   b(0,-2,0,2,4,4*3+1),//Ständer für Motorblock
   b(0, 8,0,2,4,4*3+1),//Ständer für Motorblock
   b(-2,-2,4*3+1,4,4,2*3+2),//Motorblock
@@ -211,11 +238,23 @@ Grundplattenebene.add(
   b( 4,-4,5*3,1,12,3),//linkes Lager für Schneckenachse
   b(11,-4,5*3,1,12,3),//rechtes Lager für Schneckenachse
   b( 2, 6,  0,12,1,5*3),//hintere Stütze für Schneckenlager
+  Schneckenradachse,
   
   
   
   
   );
 
+const Drehplattenebene=new THREE.Object3D();
+Drehplattenebene.position.set(8*P,3*P,7.5*H);
+Grundplattenebene.add(Drehplattenebene);
+Drehplattenebene.add(
+  new THREE.AxesHelper(0.3),
+  b(-6,-6,-1,12,12,1),
+  b( 5,-7, 4, 2,12,1),
+  b(-7,-7, 4,12, 2,1),
+  b(-7,-5, 4, 2,12,1),
+  b(-5, 5, 4,12, 2,1),
+  );
 
   </script></body></html>
