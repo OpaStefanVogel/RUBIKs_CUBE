@@ -9,9 +9,14 @@
 
 <body>
 <div id="canvas"></div>
+<button id='id_weiter'>weiter</button> <button id='id_zurueck'>zurueck</button>
 <div id='Log' style='font-family:Courier,monospace; white-space:pre;'> </div>
 <div id='Tdok' style='font-family:Courier,monospace; white-space:pre;'> </div>
-<div><i>"one-touchmove"→drehen, "two-touchmove"→verschieben+zoomen</i></div>
+  </body>
+
+<style>
+button {font-size:300%}
+  </style>
 
 <script>
 addEventListener('error',function(event) {alert('Fehlerausgabe von window.addEventListener("error",...)\n'+event+'\n'+event.error.name+'\n'+event.error.cause+'\n'+event.error.stack+'\n'+event.error.columnNumber+'\n'+event.error.fileName+'\n'+event.error.lineNumber+'\n'+event.error.message)});
@@ -50,35 +55,42 @@ const XRButt=XRButton.createButton( renderer );
   document.body.appendChild( XRButt);
 
 const scene = new THREE.Scene();
-  scene.background = new THREE.Color( 0xcccc66 );
+  scene.background = new THREE.Color('gainsboro');
 
-const light = new THREE.HemisphereLight();//( 0xfff0f0, 0x606066 );
-//  light.position.set( 1, 1, 1 );
-  scene.add( light );
+const light = new THREE.HemisphereLight();
+  light.position.set( 2, 2, 2 );
+//  scene.add( light );
 
-const directionalLight = new THREE.DirectionalLight( 0xffeeee, 1 );
-  directionalLight.position.set(-40,-1,0);
+const light2 = new THREE.AmbientLight( 0x404040 ); // soft white light
+//scene.add( light2 );
+
+const light3 = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+//const helper3 = new THREE.HemisphereLightHelper( light3, 5 );
+scene.add( light3 );
+
+const directionalLight = new THREE.DirectionalLight( 0x888888, 1 );
+  directionalLight.position.set(-10,0,0);
   scene.add( directionalLight );
 
-const directionalLight2 = new THREE.DirectionalLight( 0xeeffee, 1 );
-  directionalLight2.position.set(0,-40,0);
-  scene.add( directionalLight2);
+const directionalLight2 = new THREE.DirectionalLight( 0x666666, 1 );
+  directionalLight2.position.set(0,-10,0);
+  scene.add( directionalLight2);//von unten
 
-const directionalLight3 = new THREE.DirectionalLight( 0xeeeeff, 1 );
-  directionalLight3.position.set(40,-1,0);
-  scene.add( directionalLight3);
+const directionalLight3 = new THREE.DirectionalLight( 0xaaaaaa, 1 );
+  directionalLight3.position.set(0,0,-10);
+  scene.add( directionalLight3);//von hinten
 
-const directionalLight4 = new THREE.DirectionalLight( 0xffffff, 1 );
-  directionalLight4.position.set(0,0,40);
-  scene.add( directionalLight4);
+const directionalLight4 = new THREE.DirectionalLight( 0xcccccc, 1 );
+  directionalLight4.position.set(10,0,10);
+  scene.add( directionalLight4);//von vorn
 
-const directionalLight5 = new THREE.DirectionalLight( 0xffffee, 1 );
-  directionalLight5.position.set(0,40,0);
-  scene.add( directionalLight5);
+const directionalLight5 = new THREE.DirectionalLight( 0xffffff, 1 );
+  directionalLight5.position.set(1,10,0);
+  scene.add( directionalLight5);//von oben
 
-const directionalLight6 = new THREE.DirectionalLight( 0xccffff, 1 );
-  directionalLight6.position.set(0,0,-40);
-  scene.add( directionalLight6);
+const directionalLight6 = new THREE.DirectionalLight( 0xeeeeee, 1 );
+  directionalLight6.position.set(10,1,0);
+  scene.add( directionalLight6);//von rechts
 
 const camera = new THREE.PerspectiveCamera( 50, canvas_width / canvas_height, 0.1, 500 );
   scene.add( camera );
@@ -92,8 +104,8 @@ const controls = new OrbitControls( camera, renderer.domElement );
   controls.maxDistance = 100;
   controls.maxPolarAngle = 2*Math.PI / 2;//das geht, original 1*
   controls.minPolarAngle = 0;
-  controls.target.set(0,0.5,0);
-  controls.object.position.set(0,0.5,1.5);
+  controls.target.set(0,0.2,0);
+  controls.object.position.set(-0.4,0.5,1);
 
 const controller1 = renderer.xr.getController( 0 );
   controller1.addEventListener( 'selectstart', onSelectStart );
@@ -157,20 +169,25 @@ let axisZ=new THREE.Vector3(0,0,1);
 function animate(timestamp,frame) {
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
   Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
-  Kippantriebsachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
+  Kippantriebsachse1.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
+  Kippantriebsachse2.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-timestamp/1000*Math.PI/5,'XYZ'));
+  Kippantriebsachse3.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
+  Kippantriebsachse4.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-timestamp/1000*Math.PI/5,'XYZ'));
   Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
   controls.update();
   controllerTarget.position.copy(controls.target);
   renderer.render( scene, camera );
   }
 
-
+id_weiter.addEventListener('click',weiter);
+id_zurueck.addEventListener('click',zurueck);
 
 let Ecken=[];
 let controllerTarget=new THREE.Mesh(
   new THREE.SphereGeometry(0.04,32,32),
   new THREE.MeshStandardMaterial( {color: 'red', transparent:true, opacity:0.8} )
   );
+controllerTarget.visible=false;
 scene.add(controllerTarget);
 
 
@@ -187,18 +204,28 @@ Schreibtisch.userData={txt:'Schreibtisch'};
 Schreibtischebene.add(Schreibtisch);
 Schreibtisch.position.set(0,0.2,-0.025);//Schreibtischebene-Koordinaten
 
-let P=0.008*4; //8 mm https://de.wikipedia.org/wiki/Datei:Lego_dimensions.svg
-let H=1.2*P;
-let f=0xeeddcc;
+const P=0.008*4; //8 mm https://de.wikipedia.org/wiki/Datei:Lego_dimensions.svg
+const H=1.2*P;
+let f=0;
+const recorder=[];
+let recind=0;
+
+function Farbwechsel() {
+  f=(f+1)%6;
+  return ['blue','green','red','orange','white','DarkSlateGray'][f];
+  }
+  
 
 function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
   let RET=new THREE.Mesh(
     new THREE.BoxGeometry(dx*P,dy*P,dz3/3*H),
-    new THREE.MeshStandardMaterial( {color: new THREE.Color(f), metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
+    new THREE.MeshPhysicalMaterial( {color: Farbwechsel(), metalness: 0, roughness: 0.3, reflexivity:1} )
     );
   RET.position.set((px+dx/2)*P,(py+dy/2)*P,(pz3/3+dz3/6)*H);
-  f=(f+0x080808)%0x800000+0x776655;
+  //f=(f+0x080808)%0x800000+0x776655;
   //alert(f);
+  RET.visible=false;
+  recorder.push(RET);//recind=recind+1;
   return RET;
   }
 THREE.CylinderGeometry
@@ -207,21 +234,19 @@ function a(px,py,pz3,dy) {//Achse
   const RET=new THREE.Object3D();
   const RET2=new THREE.Mesh(
     new THREE.CylinderGeometry(0.2*P,0.2*P,dy*P,6),
-    new THREE.MeshStandardMaterial( {color: 'gray', metalness: 0, roughness: 0.8, transparent:false, opacity:0.8} )
+    new THREE.MeshStandardMaterial( {color: 'gray', metalness: 0, roughness: 0.3, } )
     );
   RET2.rotateX(Math.PI/2);
   RET2.position.set(0,0,dy/2*P);
   RET.add(RET2,new THREE.AxesHelper(0.04));
-  //RET.rotateZ(Math.PI/2);
   RET.position.set(px*P,py*P,pz3/3*H);
-  //alert(f);
+  RET.visible=false;
+  recorder.push(RET);//recind=recind+1;
   return RET;
   }
 
+let Drehtellerachse=0;
 const Grundplattenebene=new THREE.Object3D();
-const Schneckenradachse=a( 3, 0,  5*3+2,10);
-const Kippantriebsachse=a( 3, 10,  5*3+2,8);
-const Drehtellerachse=a( 8, 3,  1,8);
 Grundplattenebene.position.set(-8*P,-3*P,0.02);
 Schreibtischebene.add(Grundplattenebene);
 let Grundplatte=b(0,0,-1,16,8,1); Grundplatte.userData={txt:'Grundplatte'};
@@ -241,20 +266,14 @@ Grundplattenebene.add(
   b( 4,-4,5*3,1,12,3),//linkes Lager für Schneckenachse
   b(11,-4,5*3,1,12,3),//rechtes Lager für Schneckenachse
   b( 2, 6,  0,12,1,5*3),//hintere Stütze für Schneckenlager
-  Schneckenradachse,
-  Kippantriebsachse,
-  Drehtellerachse,
   b(-2,0,7*3,2,10,1),  //verbindet die beiden Motorblöcke
-  
-  
-  
-  
+  (Drehtellerachse=a( 8, 3,  1,8)),
   );
 
 const Drehplattenebene=new THREE.Object3D();
 Drehplattenebene.position.set(0,0,7.5*H);
-//Drehplattenebene.rotateX(Math.PI/2);
 Drehtellerachse.add(Drehplattenebene);
+//Drehplattenebene.rotateX(Math.PI/2);
 Drehplattenebene.add(
   new THREE.AxesHelper(0.3),
   b(-6,-6,-1,12,12,1),
@@ -264,4 +283,39 @@ Drehplattenebene.add(
   b(-5, 5, 4,12, 2,1),
   );
 
-  </script></body></html>
+let Schneckenradachse=0;
+let Kippantriebsachse1=0;
+let Kippantriebsachse2=0;
+let Kippantriebsachse3=0;
+let Kippantriebsachse4=0;
+Grundplattenebene.add(
+  (Schneckenradachse=a( 3, 0,  5*3+2,10)),
+  (Kippantriebsachse1=a( 3, 10,  5*3+2,8)),
+  (Kippantriebsachse2=a( 4, 12,  5*3+2,8)),
+  (Kippantriebsachse3=a( 1, 14,  5*3+2,10)),
+  (Kippantriebsachse4=a( 1, 16,  5*3+2,12)),
+  );
+
+
+function weiter() {
+  if (recind==recorder.length) return;
+  recorder[recind].visible=true;
+  recind=recind+1;
+  }
+  
+function zurueck() {
+  if (recind>0) recind=recind-1;
+  recorder[recind].visible=false;
+  }
+
+function aufbauen() {
+  if (recind==recorder.length) return;
+  weiter();
+  setTimeout(aufbauen,1000);  
+  }
+
+aufbauen();
+
+  </script>
+  
+  </html>
