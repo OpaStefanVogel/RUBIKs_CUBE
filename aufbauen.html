@@ -106,6 +106,7 @@ const controls = new OrbitControls( camera, renderer.domElement );
   controls.minPolarAngle = 0;
   controls.target.set(0,0.2,0);
   controls.object.position.set(-0.4,0.5,1);
+  controls.object.position.set(-0.4,0.5,-1);
 
 const controller1 = renderer.xr.getController( 0 );
   controller1.addEventListener( 'selectstart', onSelectStart );
@@ -169,10 +170,11 @@ let axisZ=new THREE.Vector3(0,0,1);
 function animate(timestamp,frame) {
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
   Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
-  Kippantriebsachse1.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
-  Kippantriebsachse2.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-timestamp/1000*Math.PI/5,'XYZ'));
-  Kippantriebsachse3.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
-  Kippantriebsachse4.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-timestamp/1000*Math.PI/5,'XYZ'));
+  let Motor2Winkel=-Math.abs((timestamp/1000)%10-5)*Math.PI*3;
+  Kippantriebsachse1.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,Motor2Winkel,'XYZ'));
+  Kippantriebsachse2.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/3,'XYZ'));
+  Kippantriebsachse3.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,Motor2Winkel/9,'XYZ'));
+  Kippantriebsachse4.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/45,'XYZ'));
   Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
   controls.update();
   controllerTarget.position.copy(controls.target);
@@ -245,6 +247,24 @@ function a(px,py,pz3,dy) {//Achse
   return RET;
   }
 
+function Doppelbuegel(px,py,pz3,dy) {//Achse
+  const RET=new THREE.Object3D();
+  const RET2=b(-0.5,-0.5,0*3,1,6,1*3);
+//  RET2.add(new THREE.AxesHelper(0.4));
+  RET2.rotateY(Math.PI/2);
+//  RET2.position.set(0,0,dy/2*P+3*P);
+  const RET3=b(-6.1,0,0*3,1,10,1*3);
+//  RET3.add(new THREE.AxesHelper(0.4));
+  RET3.rotateY(Math.PI/2);
+  RET3.rotateX(Math.PI/2);
+  RET.add(RET2,RET3,new THREE.AxesHelper(0.4));
+  RET.position.set(px*P,py*P,pz3/3*H);
+  RET.visible=false;
+  recorder.push(RET);//recind=recind+1;
+  return RET;
+  }
+
+
 let Drehtellerachse=0;
 const Grundplattenebene=new THREE.Object3D();
 Grundplattenebene.position.set(-8*P,-3*P,0.02);
@@ -292,9 +312,16 @@ Grundplattenebene.add(
   (Schneckenradachse=a( 3, 0,  5*3+2,10)),
   (Kippantriebsachse1=a( 3, 10,  5*3+2,8)),
   (Kippantriebsachse2=a( 4, 12,  5*3+2,8)),
-  (Kippantriebsachse3=a( 1, 14,  5*3+2,10)),
-  (Kippantriebsachse4=a( 1, 16,  5*3+2,12)),
+  (Kippantriebsachse3=a( 5, 14,  5*3+2,7)),
+  (Kippantriebsachse4=a( 1, 17,  5*3+2,12)),
   );
+  
+Kippantriebsachse4.add(
+  Doppelbuegel(0,0,3*3,1*3),
+  Doppelbuegel(0,0,7.5*3,1*3),
+  
+  );
+
 
 
 function weiter() {
@@ -311,7 +338,7 @@ function zurueck() {
 function aufbauen() {
   if (recind==recorder.length) return;
   weiter();
-  setTimeout(aufbauen,1000);  
+  setTimeout(aufbauen,10);  
   }
 
 aufbauen();
@@ -319,3 +346,5 @@ aufbauen();
   </script>
   
   </html>
+
+
