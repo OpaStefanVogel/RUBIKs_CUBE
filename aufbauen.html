@@ -9,7 +9,7 @@
 
 <body>
 <div id="canvas"></div>
-<button id='id_weiter'>weiter</button> <button id='id_zurueck'>zurueck</button>
+<button id='id_weiter'>weiter</button> <button id='id_zurueck'>zurueck</button> <span id='id_log1'> </span>
 <div id='Log' style='font-family:Courier,monospace; white-space:pre;'> </div>
 <div id='Tdok' style='font-family:Courier,monospace; white-space:pre;'> </div>
   </body>
@@ -167,8 +167,12 @@ function Interpretiere(text) {
 let axisX=new THREE.Vector3(1,0,0);
 let axisY=new THREE.Vector3(0,1,0);
 let axisZ=new THREE.Vector3(0,0,1);
+let gwd=new THREE.Vector3(0,0,0);
+let gdw=0;
 
 function animate(timestamp,frame) {
+  controls.update();
+  controllerTarget.position.copy(controls.target);
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
   Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
   let Motor2Winkel=-Math.abs((timestamp/1000)%10-5)*Math.PI*3;
@@ -177,8 +181,13 @@ function animate(timestamp,frame) {
   Kippantriebsachse3.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,Motor2Winkel/9,'XYZ'));
   Kippantriebsachse4.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/45-1,'XYZ'));
   Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
-  controls.update();
-  controllerTarget.position.copy(controls.target);
+  //Deckelklappachse.lookAt(controllerTarget);
+  Deckelplattenebene.getWorldDirection(gwd);
+  gdw=gwd.angleTo(axisZ);
+  if (gdw>1) gdw=gdw-Math.PI/2;
+  Deckelklappachse.rotateZ(gdw);
+  //id_log1.innerText=JSON.stringify(controls.object.position);
+  //id_log1.innerText=gdw;
   renderer.render( scene, camera );
   }
 
@@ -338,6 +347,7 @@ Deckelklappachse.add(
 Deckelplattenebene.add(
   new THREE.AxesHelper(0.8),
   b(-0.5,0.5,-1,5,1,1*3),
+  b(-0.5,11,-1,5,1,1*3),
   );
 
 
