@@ -258,6 +258,21 @@ function a(px,py,pz3,dy) {//Achse
   return RET;
   }
 
+function z(px,py,pz3,zz) {//Zahnrad 8, 16, 24, 40,
+  const RET=new THREE.Object3D();
+  const RET2=new THREE.Mesh(
+    new THREE.CylinderGeometry(zz*P/16,zz*P/16,P/4,zz),
+    new THREE.MeshStandardMaterial( {color: 'lightgray', metalness: 0, roughness: 0.3, } )
+    );
+  RET2.rotateX(Math.PI/2);
+  RET2.position.set(0,0,P/8);
+  RET.add(RET2,new THREE.AxesHelper(0.04));
+  RET.position.set(px*P,py*P,pz3/3*H);
+  RET.visible=false;
+  recorder.push(RET);//recind=recind+1;
+  return RET;
+  }
+
 function Doppelbuegel(px,py,pz3,dy) {//Achse
   const RET=new THREE.Object3D();
   const RET2=b(-0.5,-0.5,0*3,1,6,1*3);
@@ -329,12 +344,25 @@ Grundplattenebene.add(
   Kippantriebsachse3=a( 5, 14,  5*3+2,7),
   Kippantriebsachse4=a( 1, 17,  5*3+2,12),
   );
+
+Drehtellerachse.add( z(0,0,5*3+0.4,40) );
+Kippantriebsachse1.add( z(0,0,2*3+0.4,8) );
+Kippantriebsachse2.add( z(0,0,5*3+0.4,8), z(0,0,1*3+0.8,24)  );
+Kippantriebsachse3.add( z(0,0,2.2*3+0.4,8), z(0,0,4*3+1,24)  );
+Kippantriebsachse4.add( z(0,0,5.5*3+0.4,40));
+
   
+const Kippplattenebene=new THREE.Object3D();
+Kippplattenebene.add(
+  new THREE.AxesHelper(1.5),
+  );
+
 Kippantriebsachse4.add(
   Doppelbuegel(0,0,1*3,1*3),
   Doppelbuegel(-10,-5,4*3,1*3).rotateZ(Math.PI).rotateX(Math.PI),
   Doppelbuegel(-10,-5,8.5*3,1*3).rotateZ(Math.PI).rotateX(Math.PI),
   Doppelbuegel(0,0,9.5*3,1*3),
+  Kippplattenebene.rotateY(-Math.PI/2).rotateZ(-Math.PI/2).translateX(-4*P),
   Deckelklappachse=a( -10, -5, 2,12),
   a( -10,  5, 2,12),
   b(-10.4,-10,2*3,1,16,1*3).rotateY(Math.PI/2),
