@@ -179,8 +179,8 @@ function animate(timestamp,frame) {
   controls.update();
   controllerTarget.position.copy(controls.target);
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
-  Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI/5,'XYZ'));
   let Motor2Winkel=-Math.abs((timestamp/1000)%10-5)*Math.PI*3;
+  Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI*3,'XYZ'));
   Kippantriebsachse1.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,Motor2Winkel,'XYZ'));
   Kippantriebsachse2.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/3,'XYZ'));
   Kippantriebsachse3.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,Motor2Winkel/9,'XYZ'));
@@ -319,7 +319,7 @@ let Drehtellerachse=0;
 const Grundplattenebene=new THREE.Object3D();
 Grundplattenebene.position.set(-8*P,-3*P,0.02);
 Schreibtischebene.add(Grundplattenebene);
-let Grundplatte=b(0,0,-1,16,8,1); Grundplatte.userData={txt:'Grundplatte'};
+let Grundplatte=b(0,0,-1,24,8,1); Grundplatte.userData={txt:'Grundplatte'};
 Grundplattenebene.add(
   new THREE.AxesHelper(0.5),
   Grundplatte,
@@ -416,6 +416,20 @@ Deckelplattenebene.add(
   a(16.5,-0.25,1*3+2,12).rotateX(-Math.PI/2),
   );
 
+let Sensorachse=0;
+Grundplattenebene.add(
+  (Sensorachse=a( 20, 3,  1,12)),
+  );
+
+let vvv=new THREE.Vector3();
+let Sensorebene=new THREE.Object3D();
+Sensorebene.position.set(0,0,7.5*H);
+Sensorachse.add(Sensorebene);
+Sensorebene.add(
+  new THREE.AxesHelper(0.3),
+  );
+controls.object.position.set(0.8,1,0.5);
+Sensorebene.getWorldPosition(controls.target);
 
 
 function weiter() {
@@ -440,12 +454,14 @@ aufbauen();
   </script>
 
 <script>
+/*
 let context = new AudioContext();
 
 let source3 = context.createOscillator();
 source3.frequency.value = 440;
 source3.connect(context.destination);
 source3.start(0);
+*/
 //alert(source3);
   </script>
   
