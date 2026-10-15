@@ -178,6 +178,7 @@ function animate(timestamp,frame) {
   frametime=timestamp;
   controls.update();
   controllerTarget.position.copy(controls.target);
+  bewege_aktuellen_Klotz();
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
   let Motor2Winkel=-Math.abs((timestamp/1000)%10-5)*Math.PI*3;
   Schneckenradachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,timestamp/1000*Math.PI*3,'XYZ'));
@@ -438,8 +439,13 @@ function weiter() {
   recind=recind+1;
   }
   
+let aktueller_Klotz=0;
 function zurueck() {
   if (recind>0) recind=recind-1;
+  aktueller_Klotz=[recind,recorder[recind].clone(),0];
+  recorder[recind].getWorldPosition(aktueller_Klotz[1].position);
+  recorder[recind].getWorldQuaternion(aktueller_Klotz[1].quaternion);
+  scene.attach(aktueller_Klotz[1]);
   recorder[recind].visible=false;
   }
 
@@ -448,20 +454,34 @@ function aufbauen() {
   weiter();
   setTimeout(aufbauen,10);  
   }
+  
+function bewege_aktuellen_Klotz() {
+  if (aktueller_Klotz!=0) {
+    //alert(aktueller_Klotz);
+    if (aktueller_Klotz[2]<1) {
+      aktueller_Klotz[2]=aktueller_Klotz[2]+0.01;
+      aktueller_Klotz[1].position.addScalar(0.01);
+      
+      } else {
+        aktueller_Klotz[1].removeFromParent();
+        aktueller_Klotz=0;
+        }
+    }
+  }
 
 aufbauen();
 
   </script>
 
 <script>
-/*
+
 let context = new AudioContext();
 
 let source3 = context.createOscillator();
-source3.frequency.value = 440;
+source3.frequency.value = 220;
 source3.connect(context.destination);
 source3.start(0);
-*/
+setTimeout(function() {source3.stop()},1000);
 //alert(source3);
   </script>
   
