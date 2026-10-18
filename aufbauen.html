@@ -178,6 +178,7 @@ function animate(timestamp,frame) {
   frametime=timestamp;
   controls.update();
   controllerTarget.position.copy(controls.target);
+  controls.object.getWorldQuaternion(controllerTarget.quaternion);
   bewege_aktuellen_Klotz();
   //Drehplattenebene.setRotationFromAxisAngle(axisZ,timestamp/1000*Math.PI/5);
   let Motor2Winkel=-Math.abs((timestamp/1000)%10-5)*Math.PI*3;
@@ -432,19 +433,47 @@ Sensorebene.add(
 controls.object.position.set(0.8,1,0.5);
 Sensorebene.getWorldPosition(controls.target);
 
+let Startplatz=new THREE.Object3D(); //b(70,30,-180,6,1,1*3);
+Startplatz.position.set(1.6,0.8,-1);
+Startplatz.add(
+  new THREE.AxesHelper(8),
+  //b(70,30,-180,6,1,1*3),
+  );
+
+controllerTarget.add(
+  Startplatz,
+  new THREE.AxesHelper(8),
+  );
+
+//alert(JSON.stringify(controls.object.toJSON()));
 
 function weiter() {
   if (recind==recorder.length) return;
   recorder[recind].visible=true;
   recind=recind+1;
+  if (aktueller_Klotz!=0) {
+    aktueller_Klotz[1].removeFromParent();
+    if (recind<recorder.length) {
+      aktueller_Klotz=[recind,recorder[recind].clone(),0]; 
+      aktueller_Klotz[1].visible=true;
+      scene.attach(aktueller_Klotz[1]);
+      recorder[recind].getWorldPosition(Endposition);
+      recorder[recind].getWorldQuaternion(Endquaternion);
+      } else aktueller_Klotz=0;
+    }
   }
   
 let aktueller_Klotz=0;
+let Endposition=new THREE.Vector3();
+let Endquaternion=new THREE.Quaternion();
 function zurueck() {
+  if (aktueller_Klotz!=0) {aktueller_Klotz[1].removeFromParent(); recorder[recind].visible=false;}
   if (recind>0) recind=recind-1;
   aktueller_Klotz=[recind,recorder[recind].clone(),0];
   recorder[recind].getWorldPosition(aktueller_Klotz[1].position);
   recorder[recind].getWorldQuaternion(aktueller_Klotz[1].quaternion);
+  recorder[recind].getWorldPosition(Endposition);
+  recorder[recind].getWorldQuaternion(Endquaternion);
   scene.attach(aktueller_Klotz[1]);
   recorder[recind].visible=false;
   }
@@ -460,11 +489,17 @@ function bewege_aktuellen_Klotz() {
     //alert(aktueller_Klotz);
     if (aktueller_Klotz[2]<1) {
       aktueller_Klotz[2]=aktueller_Klotz[2]+0.01;
-      aktueller_Klotz[1].position.addScalar(0.01);
-      
+      let p1=new THREE.Vector3();
+      let p4=new THREE.Vector3();
+      let p2=new THREE.Quaternion();
+      let p3=new THREE.Quaternion();
+      aktueller_Klotz[1].position.lerpVectors(Endposition,Startplatz.getWorldPosition(p4),aktueller_Klotz[2]);
+      aktueller_Klotz[1].quaternion.slerpQuaternions(Endquaternion,Startplatz.getWorldQuaternion(p3),aktueller_Klotz[2]);
+      if (Math.round(frametime/500)%2==0) recorder[recind].visible=false; else recorder[recind].visible=true;
       } else {
-        aktueller_Klotz[1].removeFromParent();
-        aktueller_Klotz=0;
+          aktueller_Klotz[2]=0;
+          recorder[recind].getWorldPosition(Endposition);
+          recorder[recind].getWorldQuaternion(Endquaternion);
         }
     }
   }
