@@ -573,14 +573,11 @@ function setze_Rotation(timestamp) {
   Kippantriebsachse4.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/45-1,'XYZ'));
   Rueckdrueckachse.setRotationFromEuler(new THREE.Euler(0,Math.PI/2,-Motor2Winkel/45+1.2,'XYZ'));
   Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
-  //Deckelklappachse.lookAt(controllerTarget);
-  Deckelplattenebene.getWorldDirection(gwd);
-  gdw=gwd.angleTo(axisZ);
-  if (gdw>1) gdw=gdw-Math.PI/2;
-  if (Motor2Winkel<-10) Deckelklappachse.rotateZ(gdw);
+  if (Motor2Winkel<-10) {
+    Deckelklappachse.lookAt(100,0,0);Deckelklappachse.rotateZ(-1.85);
+
+    }
   //id_log1.innerText=JSON.stringify(controls.object.position);
-  //id_log1.innerText=gdw;//♥
-  //id_log1.innerText=Motor2Winkel;
   }
 
 
@@ -602,7 +599,7 @@ setTimeout(function() {source3.stop()},1000);
   
 <!--
 .. ein alerp welches die aktuelle Bewegung berücksichtigt
-
+.. Deckelklappachse.rotateZ(-1.85) verbessern
   </html>
 
 
