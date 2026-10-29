@@ -222,7 +222,6 @@ function Farbwechsel() {
   
 
 function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
-  const RET0=new THREE.Object3D();
   let RET=new THREE.Mesh(
     new THREE.BoxGeometry(dx*P-0.01*P,dy*P-0.01*P,dz3/3*H-0.01*H),
 //    new THREE.BoxGeometry(dx*P-0.01*P,dy*P-0.01*P,dz3/3*H-0.01*H,dx,dy,Math.max(dz3/3,1)),
@@ -230,24 +229,21 @@ function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
     );
   //f=(f+0x080808)%0x800000+0x776655;
   //alert(f);
-  RET0.add(RET);
-  RET0.position.set((px+dx/2)*P,(py+dy/2)*P,(pz3/3+dz3/6)*H);
-  RET0.visible=false;
-  recorder.push(RET0);//recind=recind+1;
-  return RET0;
+  RET.position.set((px+dx/2)*P,(py+dy/2)*P,(pz3/3+dz3/6)*H);
+  recorder.push(RET);//recind=recind+1;
+  return RET;
   }
 
 function a(px,py,pz3,dy) {//Achse
   const RET=new THREE.Object3D();
   const RET2=new THREE.Mesh(
-    new THREE.CylinderGeometry(0.2*P,0.2*P,dy*P,6),
+    new THREE.CylinderGeometry(0.2*P,0.2*P,dy*P-0.03*P,6),
     new THREE.MeshStandardMaterial( {color: 'gray', metalness: 0, roughness: 0.3, } )
     );
   RET2.rotateX(Math.PI/2);
   RET2.position.set(0,0,dy/2*P);
   RET.add(RET2,new THREE.AxesHelper(0.01));
   RET.position.set(px*P,py*P,pz3/3*H);
-  RET.visible=false;
   recorder.push(RET);//recind=recind+1;
   return RET;
   }
@@ -255,17 +251,16 @@ function a(px,py,pz3,dy) {//Achse
 //  b(-2,-2,4*3+1,4,4,2*3+1),//Motorblock1
 //  b(-2,-2,6*3+2,2,4,2),//noch Motorblock1
 function m(px,py,pz3) {//Motorblock
-  const RET0=new THREE.Object3D();
-  RET0.add(b(0,0,0,4,4,2*3+1).children[0].translateX(2*P).translateY(2*P).translateZ((2*3+1)/6*H));
-  RET0.add(b(0,0,0,2,4,2).children[0].translateX(1*P).translateY(2*P).translateZ((5*3+1)/6*H));
-  RET0.add(a(0,0,0,1).children[0].translateX(4*P).translateY((11)/12*H).translateZ(-2*P).rotateZ(1*Math.PI/2));
-  RET0.position.set(px*P,py*P,pz3/3*H);
-  RET0.visible=false;
+  const RET=new THREE.Object3D();
+  RET.add(b(0,0,0,4,4,2*3+1));
+  RET.add(b(0,0,2*3+1,2,4,2));
+  RET.add(a(1,2,1*3+1,4).rotateY(Math.PI/2));
+  RET.position.set(px*P,py*P,pz3/3*H);
   recorder.pop();
   recorder.pop();
   recorder.pop();
-  recorder.push(RET0);//recind=recind+1;
-  return RET0;
+  recorder.push(RET);//recind=recind+1;
+  return RET;
   }
 
 
@@ -279,7 +274,6 @@ function z(px,py,pz3,zz) {//Zahnrad 8, 16, 24, 40,
   RET2.position.set(0,0,P/8);
   RET.add(RET2,new THREE.AxesHelper(0.002*zz));
   RET.position.set(px*P,py*P,pz3/3*H);
-  RET.visible=false;
   recorder.push(RET);//recind=recind+1;
   return RET;
   }
@@ -315,7 +309,6 @@ function Doppelbuegel(px,py,pz3) {//Achse
 //  RET.add(new THREE.AxesHelper(0.4));
   RET.add(RET2,RET3,RET4);
   RET.position.set(px*P,py*P,pz3/3*H);
-  RET.visible=false;
   recorder.push(RET);//recind=recind+1;
   return RET;
   }
@@ -340,7 +333,6 @@ function P345(px,py,pz3) {
 //  RET.add(new THREE.AxesHelper(0.4));
   RET.add(RET2,RET4);
   RET.position.set(px*P,py*P,pz3/3*H);
-  RET.visible=false;
   recorder.push(RET);//recind=recind+1;
   return RET;
   }
@@ -493,13 +485,14 @@ function weiter() {
   if (recind==recorder.length) return; 
   control_time=frametime;
   recorder[recind].visible=true;//nur für recind=0;
-  for (let ri of recorder[recind].children) if (ri.isMesh) ri.material.wireframe=false;
+  for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=false;
   if (aktueller_Klotz!=0) aktueller_Klotz[1].removeFromParent(); 
   recind=recind+1;
   if (recind==recorder.length) {aktueller_Klotz=0; return} 
   recorder[recind].visible=true;
+  for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=true;
   aktueller_Klotz=[recind,recorder[recind].clone(),0]; 
-  for (let ri of aktueller_Klotz[1].children) if (ri.isMesh) {
+  for (let ri of aktueller_Klotz[1].getObjectsByProperty('isMesh',true)) {
     ri.material=ri.material.clone();
     ri.material.wireframe=false;
     }
@@ -532,16 +525,10 @@ function zurueck() {
   recorder[recind].getWorldPosition(Anfangsposition);
   recorder[recind].getWorldQuaternion(Anfangsquaternion);
   recorder[recind].getWorldPosition(neue_Targetposition);
-  for (let ri of aktueller_Klotz[1].children) if (ri.isMesh) ri.material=ri.material.clone();
-  for (let ri of recorder[recind].children) if (ri.isMesh) ri.material.wireframe=true;
+  for (let ri of aktueller_Klotz[1].getObjectsByProperty('isMesh',true)) ri.material=ri.material.clone();
+  for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=true;
   }
 
-function aufbauen() {
-  if (recind==recorder.length) return;
-  weiter();
-  setTimeout(aufbauen,10);  
-  }
-  
 function control_cos(t) {
   let RET=(1-Math.cos(t*Math.PI))/2;
   return RET;
@@ -596,7 +583,8 @@ function setze_Rotation(timestamp) {
   }
 
 
-aufbauen();
+//aufbauen();
+recind=recorder.length;
 
   </script>
 
@@ -615,6 +603,10 @@ setTimeout(function() {source3.stop()},1000);
 <!--
 .. ein alerp welches die aktuelle Bewegung berücksichtigt
 .. Deckelklappachse.rotateZ(-1.85) verbessern
+.. Das Anfangssystem wieder auf das originale XYZ zurück
+.. neue_Targetposition verschiebbar machen
+.. recorder.pop() vermeiden
+.. Ausgangskasten
   </html>
 
 
