@@ -575,8 +575,8 @@ function setze_Rotation(timestamp) {
   Drehtellerachse.setRotationFromEuler(new THREE.Euler(0,0,timestamp/1000*Math.PI/5,'XYZ'));
   if (Motor2Winkel<-10) {
     Deckelklappachse.lookAt(100,0,0);Deckelklappachse.rotateZ(-1.85);
-
-    }
+    //id_log1.innerText=JSON.stringify(Deckelklappachse.quaternion);
+    } else Deckelklappachse.quaternion.set(0,0,0.-0.240,-1);
   //id_log1.innerText=JSON.stringify(controls.object.position);
   }
 
