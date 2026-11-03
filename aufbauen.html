@@ -223,6 +223,7 @@ function Farbwechsel() {
   
 
 function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
+  let RET0=new THREE.Object3D();
   let RET=new THREE.Mesh(
     new THREE.BoxGeometry(dx*P-0.01*P,dy*P-0.01*P,dz3/3*H-0.01*H),
 //    new THREE.BoxGeometry(dx*P-0.01*P,dy*P-0.01*P,dz3/3*H-0.01*H,dx,dy,Math.max(dz3/3,1)),
@@ -230,9 +231,11 @@ function b(px,py,pz3,dx,dy,dz3) {//Bausteinklötzer mehrere
     );
   //f=(f+0x080808)%0x800000+0x776655;
   //alert(f);
-  RET.position.set((px+dx/2)*P,(py+dy/2)*P,(pz3/3+dz3/6)*H);
-  recorder.push(RET);//recind=recind+1;
-  return RET;
+  RET.position.set(dx/2*P,dy/2*P,dz3/6*H);
+  RET0.add(RET);
+  RET0.position.set(px*P,py*P,pz3/3*H);
+  recorder.push(RET0);//recind=recind+1;
+  return RET0;
   }
 
 function a(px,py,pz3,dy) {//Achse
@@ -535,6 +538,8 @@ function weiter() {
   for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=true;
   aktueller_Klotz=[recind,recorder[recind].clone(),0]; 
   recorder[recind].parent.add(Bezugssystem);
+  let p=recorder[recind].position;
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+(Math.round(3*p.z/H)/3)+'*H;</span>';
   for (let ri of aktueller_Klotz[1].getObjectsByProperty('isMesh',true)) {
     ri.material=ri.material.clone();
     ri.material.wireframe=false;
@@ -558,6 +563,8 @@ function zurueck() {
     }
   recind=recind-1;
   recorder[recind].parent.add(Bezugssystem);
+  let p=recorder[recind].position;
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+(Math.round(3*p.z/H)/3)+'*H;</span>';
   aktueller_Klotz=[recind,recorder[recind].clone(),0];
   scene.attach(aktueller_Klotz[1]);
   recorder[recind].getWorldPosition(aktueller_Klotz[1].position);
