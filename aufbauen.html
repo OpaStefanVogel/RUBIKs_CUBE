@@ -268,6 +268,20 @@ function m(px,py,pz3) {//Motorblock
   }
 
 
+function r(pz3,rad,dicke) {//Rad
+  const RET=new THREE.Object3D();
+  const RET2=new THREE.Mesh(
+    new THREE.CylinderGeometry(rad*P,rad*P,dicke*P,32),
+    new THREE.MeshStandardMaterial( {color: 'darkgray', metalness: 0, roughness: 0.3, } )
+    );
+  RET2.rotateX(Math.PI/2);
+  RET2.position.set(0,0,P/8);
+  RET.add(RET2,new THREE.AxesHelper(0.002*rad));
+  RET.position.set(0,0,pz3/3*H);
+  recorder.push(RET);//recind=recind+1;
+  return RET;
+  }
+
 function z(px,py,pz3,zz) {//Zahnrad 8, 16, 24, 40,
   const RET=new THREE.Object3D();
   const RET2=new THREE.Mesh(
@@ -472,10 +486,10 @@ Deckelplattenebene.add(
   b(1,0,2*3,6,1,1*3),
   b(1,10.2,2*3,6,1,1*3),
   a(2,-0.25,3*3-1,12).rotateX(-Math.PI/2).add(z(0,0,2*3-1,6),z(0,0,8*3,6)),
-  a(16,-0.25,2*3-1,12).rotateX(-Math.PI/2),
+  a(16,-0.25,2*3-1,12).rotateX(-Math.PI/2).add(r(3*3-1,1,1),r(7*3,1,1)),
   b(12, 0  ,2*3,2,1,2*3),
   b(12,10.2,2*3,2,1,2*3),
-  a(13,-0.25,4*3-1,12).rotateX(-Math.PI/2),
+  a(13,-0.25,4*3-1,12).rotateX(-Math.PI/2).add(r(3*3-1,2,0.3),r(7*3,2,0.3)),
   b(11, 0  ,-1*3,8,1,2*3),
   b(11,10.2,-1*3,8,1,2*3),
   b(11, 0  ,-2*3,4,1,1*3),
@@ -525,6 +539,14 @@ let Endquaternion=new THREE.Quaternion();
 let neue_Targetposition=controls.target.clone();
 let control_time=0;
 let Bezugssystem=new THREE.AxesHelper(10);
+  
+function ein_oder_zwei_drittel(pz) {
+  let RES=pz%3;
+  let RET=Math.round((pz-RES)/3)+'';
+  if (RES==2) RES='&frac23;'; else if (RES==1) RES='&frac13;'; else RES='';
+  RET=RET+RES;  
+  return (Math.round(3*pz/H)/3);//♥noch zusätzlich in P umrechnen
+  }
 
 function weiter() {
   if (recind==recorder.length) return; 
@@ -536,10 +558,11 @@ function weiter() {
   if (recind==recorder.length) {aktueller_Klotz=0; return} 
   recorder[recind].visible=true;
   for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=true;
-  aktueller_Klotz=[recind,recorder[recind].clone(),0]; 
+  aktueller_Klotz=[recind,recorder[recind].clone(),0];
+  aktueller_Klotz[1].add(new THREE.AxesHelper(0.5)); 
   recorder[recind].parent.add(Bezugssystem);
   let p=recorder[recind].position;
-  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+(Math.round(3*p.z/H)/3)+'*H;</span>';
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+ein_oder_zwei_drittel(p.z)+'*H;</span>';
   for (let ri of aktueller_Klotz[1].getObjectsByProperty('isMesh',true)) {
     ri.material=ri.material.clone();
     ri.material.wireframe=false;
@@ -553,7 +576,7 @@ function weiter() {
   recorder[recind].getWorldQuaternion(Anfangsquaternion);
   recorder[recind].getWorldPosition(neue_Targetposition);
   }
-  
+
 function zurueck() {
   if (recind==0) return;
   control_time=frametime;
@@ -564,8 +587,9 @@ function zurueck() {
   recind=recind-1;
   recorder[recind].parent.add(Bezugssystem);
   let p=recorder[recind].position;
-  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+(Math.round(3*p.z/H)/3)+'*H;</span>';
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+ein_oder_zwei_drittel(p.z)+'*H;</span>';
   aktueller_Klotz=[recind,recorder[recind].clone(),0];
+  aktueller_Klotz[1].add(new THREE.AxesHelper(0.5)); 
   scene.attach(aktueller_Klotz[1]);
   recorder[recind].getWorldPosition(aktueller_Klotz[1].position);
   recorder[recind].getWorldQuaternion(aktueller_Klotz[1].quaternion);
