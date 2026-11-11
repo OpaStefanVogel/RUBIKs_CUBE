@@ -426,15 +426,6 @@ Grundplattenebene.add(//new THREE.AxesHelper(0.5),
   b(11,-4,5*3,1,12,3),//rechtes Lager für Schneckenachse
   b( 2, 6,  0,10,1,5*3),//hintere Stütze für Schneckenlager
   b(-2,1,7*3+1,2,8,1),  //verbindet die beiden Motorblöcke
-  Drehtellerachse=a( 8, 3, 0,8).add(
-    Drehplattenebene.translateZ(8*H+H/3).add(//new THREE.AxesHelper(0.3),
-      b(-6,-6,-1,12,12,1),
-      b( 5,-7, 4, 2,12,1),
-      b(-7,-7, 4,12, 2,1),
-      b(-7,-5, 4, 2,12,1),
-      b(-5, 5, 4,12, 2,1),
-      ),
-    ),
   );
 
 let Schneckenradachse=0;
@@ -446,7 +437,19 @@ let Endachse=0;
 let Deckelklappachse=0;
 let Rueckdrueckachse=0;
 Grundplattenebene.add(
-  Schneckenradachse=a( 3, 0,  6*3-1,10),
+  Schneckenradachse=a( 3, 0,  6*3-1,10).add(
+    r(12.45,0.5,1),
+    ),
+  Drehtellerachse=a( 8, 3, 0,8).add(
+    z(0,0,5*3+1.5,40),
+    Drehplattenebene.translateZ(8*H+H/3).add(//new THREE.AxesHelper(0.3),
+      b(-6,-6,-1,12,12,1),
+      b( 5,-7, 4, 2,12,1),
+      b(-7,-7, 4,12, 2,1),
+      b(-7,-5, 4, 2,12,1),
+      b(-5, 5, 4,12, 2,1),
+      ),
+    ),
   Kippantriebsachse1=a( 3, 10,  6*3-1,8).add(
     z(0,0,2*3+0.4,8),
     ),
@@ -475,7 +478,6 @@ Grundplattenebene.add(
     ),
   );
 
-Drehtellerachse.add( z(0,0,5*3+0.4,40) );
   
 const Kippplattenebene=new THREE.Object3D();
 
@@ -574,13 +576,25 @@ let Endquaternion=new THREE.Quaternion();
 let neue_Targetposition=controls.target.clone();
 let control_time=0;
 let Bezugssystem=new THREE.AxesHelper(10);
+let Transportsystem=new THREE.AxesHelper(10).setColors("gray","gray","gray");
   
-function ein_oder_zwei_drittel(pz) {
-  let RES=pz%3;
-  let RET=Math.round((pz-RES)/3)+'';
-  if (RES==2) RES='&frac23;'; else if (RES==1) RES='&frac13;'; else RES='';
-  RET=RET+RES;  
-  return (Math.round(3*pz/H)/3);//♥noch zusätzlich in P umrechnen
+function xytel(p) {
+  let RET=p.toFixed(2);
+  let RES=RET.slice(-3);
+  let RER=RET.slice(0,-3);
+  if (RER=='0'&&RES!='.00') RER='';
+  if (RER=='-0'&&RES!='.00') RER='-';
+  if (RES=='.00') RET=RER;
+  if (RES=='.20') RET=RER+'&frac15;';
+  if (RES=='.25') RET=RER+'&frac14;';
+  if (RES=='.33') RET=RER+'&frac13;';
+  if (RES=='.40') RET=RER+'&frac25;';
+  if (RES=='.50') RET=RER+'&frac12;';
+  if (RES=='.60') RET=RER+'&frac35;';
+  if (RES=='.67') RET=RER+'&frac23;';
+  if (RES=='.75') RET=RER+'&frac34;';
+  if (RES=='.80') RET=RER+'&frac45;';
+  return RET;
   }
 
 function weiter() {
@@ -594,10 +608,10 @@ function weiter() {
   recorder[recind].visible=true;
   for (let ri of recorder[recind].getObjectsByProperty('isMesh',true)) ri.material.wireframe=true;
   aktueller_Klotz=[recind,recorder[recind].clone(),0];
-  aktueller_Klotz[1].add(new THREE.AxesHelper(0.5)); 
+  aktueller_Klotz[1].add(Transportsystem); 
   recorder[recind].parent.add(Bezugssystem);
   let p=recorder[recind].position;
-  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+ein_oder_zwei_drittel(p.z)+'*H;</span>';
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+xytel(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+xytel(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+xytel(p.z/P)+'*P = '+xytel(p.z/H)+'*H;</span>';
   for (let ri of aktueller_Klotz[1].getObjectsByProperty('isMesh',true)) {
     ri.material=ri.material.clone();
     ri.material.wireframe=false;
@@ -622,9 +636,9 @@ function zurueck() {
   recind=recind-1;
   recorder[recind].parent.add(Bezugssystem);
   let p=recorder[recind].position;
-  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+Math.round(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+Math.round(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+ein_oder_zwei_drittel(p.z)+'*H;</span>';
+  id_log1.innerHTML='<span style="color:red">d<sub>rot</sub> = '+xytel(p.x/P)+'*P,</span>&nbsp;&nbsp;&nbsp;<span style="color:green">d<sub>grün</sub> = '+xytel(p.y/P)+'*P;</span>&nbsp;&nbsp;&nbsp;<span style="color:blue">d<sub>blau</sub> = '+xytel(p.z/P)+'*P = '+xytel(p.z/H)+'*H;</span>';
   aktueller_Klotz=[recind,recorder[recind].clone(),0];
-  aktueller_Klotz[1].add(new THREE.AxesHelper(0.5)); 
+  aktueller_Klotz[1].add(Transportsystem); 
   scene.attach(aktueller_Klotz[1]);
   recorder[recind].getWorldPosition(aktueller_Klotz[1].position);
   recorder[recind].getWorldQuaternion(aktueller_Klotz[1].quaternion);
@@ -645,7 +659,7 @@ function control_cos(t) {
   }
 
 function bewege_aktuellen_Klotz() {
-  Log_controls.innerHTML=JSON.stringify(controllerTarget.position)+' '+JSON.stringify(controls.object.position);
+//  Log_controls.innerHTML=JSON.stringify(controllerTarget.position)+' '+JSON.stringify(controls.object.position);
   controls.object.getWorldQuaternion(controllerTarget.quaternion);
   if (recind<recorder.length) controls.target.lerp(neue_Targetposition,(frametime-control_time)/100000);
   if (aktueller_Klotz!=0) {
